@@ -1,6 +1,55 @@
 [package]
-name = "finnhub-rs"
+name = "finnhub"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+authors = ["Sabrient AI <dev@sabrient.ai>"]
+description = "A comprehensive Rust client for the Finnhub.io financial data API"
+documentation = "https://docs.rs/finnhub"
+homepage = "https://gitlab.com/sabrient-ai/finnhub-rs"
+repository = "https://gitlab.com/sabrient-ai/finnhub-rs"
+readme = "README.md"
+keywords = ["finnhub", "finance", "api", "stocks", "trading"]
+categories = ["api-bindings", "finance"]
+license = "MIT OR Apache-2.0"
+
+[features]
+default = []
+websocket = ["tokio-tungstenite"]
 
 [dependencies]
+tokio = { version = "1.40", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+url = "2.5"
+futures = "0.3"
+tokio-tungstenite = { version = "0.24", features = ["rustls-tls-native-roots"], optional = true }
+tracing = "0.1"
+tower = { version = "0.5", features = ["limit", "retry", "timeout"] }
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio-test = "0.4"
+wiremock = "0.6"
+criterion = { version = "0.5", features = ["html_reports"] }
+pretty_assertions = "1.4"
+proptest = "1.5"
+dotenv = "0.15"
+
+[[bench]]
+name = "finnhub_benchmarks"
+harness = false
+
+[profile.release]
+lto = true
+opt-level = 3
+
+[lib]
+name = "finnhub"
+path = "src/lib.rs"
+
+[[example]]
+name = "basic_usage"
+path = "examples/basic_usage.rs"
