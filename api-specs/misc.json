@@ -1,0 +1,1015 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Finnhub API - Misc",
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "Finnhub API endpoints for misc"
+  },
+  "host": "finnhub.io",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "token",
+      "in": "query"
+    }
+  },
+  "paths": {
+    "/ai-chat": {
+      "post": {
+        "summary": "AI Copilot",
+        "description": "<p>Chat with our AI copilot powered by Neyman AI trained on the extensive Finnhub's global data. You can ask it any finance-related questions just like with other LLM models and receive results in texts and widgets.</p>",
+        "operationId": "ai-chat",
+        "navHeader": "AI Copilot",
+        "urlId": "ai-copilot-llm",
+        "title": "AI Copilot",
+        "examples": [
+          {
+            "url": "/ai-chat?token=<token>",
+            "text": "/ai-chat"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Enterprise data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "search",
+            "description": "Search body",
+            "schema": {
+              "$ref": "#/definitions/AIChatBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/AIChatResponse"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "curl --request POST 'https://finnhub.io/api/v1/ai-chat?token=<token>' \\\n--data-raw '{\n    \"messages\": [\n            {\n                \"role\": \"system\",\n                \"content\": \"Be precise and concise.\"\n            },\n            {\n                \"role\": \"user\",\n                \"content\": \"What is the current price of NVDA?\"\n            }\n        ]\n}'",
+          "python": "import requests\nimport json\n\nurl = \"https://finnhub.io/api/v1/ai-chat?token=<token>\"\n\npayload = json.dumps({\n    \"messages\": [\n            {\n                \"role\": \"system\",\n                \"content\": \"Be precise and concise.\"\n            },\n            {\n                \"role\": \"user\",\n                \"content\": \"What is the current price of NVDA?\"\n            }\n        ]\n})\n\n\nresponse = requests.request(\"POST\", url, data=payload)\n\nprint(response.json())",
+          "javascript": "var raw = JSON.stringify({\n    \"messages\": [\n            {\n                \"role\": \"system\",\n                \"content\": \"Be precise and concise.\"\n            },\n            {\n                \"role\": \"user\",\n                \"content\": \"What is the current price of NVDA?\"\n            }\n        ]\n});\n\nvar requestOptions = {\n  method: 'POST',\n  body: raw,\n};\n\nfetch(\"https://finnhub.io/api/v1/ai-chat?token=<token>\", requestOptions)\n  .then(response => response.json())"
+        },
+        "sampleResponse": "{\n  \"chatId\": \"uQElLdY7vZ\",\n  \"content\": \"The current price of NVIDIA Corp (NVDA) is $124.92. The price has increased by 3.97% in the past 24 hours.\\n\",\n  \"querySummary\": \"NVDA Stock Price\",\n  \"relatedQueries\": [\n    \"What is NVDA's price target?\",\n    \"Is NVDA a good stock to buy?\",\n    \"What factors affect NVDA's price?\"\n  ],\n  \"sources\": [\n    {\n      \"link\": \"https://finnhub.io/docs/api\",\n      \"shortURL\": \"finnhub.io\",\n      \"snippet\": \"Comprehensive stock API for realtime market data, global company fundamentals, economic data, and alternative data...\",\n      \"title\": \"Finnhub API Documentation\",\n      \"websiteName\": \"Finnhub\"\n    }\n  ],\n  \"tickers\": [\n    {\n      \"priceCurrency\": \"USD\",\n      \"reportingCurrency\": \"USD\",\n      \"ticker\": \"NVDA\"\n    }\n  ],\n  \"widgets\": [\n    \"https://neyman.ai/widget?ticker=NVDA&which=historical-price\"\n  ]\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/airline/price-index": {
+      "get": {
+        "summary": "Airline Price Index",
+        "description": "<p>The Flight Ticket Price Index API provides comprehensive data on airline ticket prices, including the average daily ticket price and its percentage change (price index). This data, collected weekly and projected two weeks ahead, aggregates daily prices and indexes from the 50 busiest and largest airports across the USA. The dataset includes detailed information on airlines, dates, and average ticket prices, offering valuable insights for market analysis and pricing strategies.</p><p>The price index is calculated as percentage change of average daily ticket price from the previous weekly reading. Raw ticket prices data is available for Enterprise users. <a href=\"mailto:support@finnhub.io\">Contact us</a> to inquire about the raw price data.</p>",
+        "operationId": "airline-price-index",
+        "navHeader": "Airline Price Index",
+        "urlId": "airline-price-index",
+        "title": "Airline Ticket Price Index API",
+        "examples": [
+          {
+            "url": "/airline/price-index?airline=united&from=2024-06-01&to=2024-07-15&token=<token>",
+            "text": "/airline/price-index?airline=united&from=2024-06-01&to=2024-07-15"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Accessible with Fundamental data or All in One subscription.",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Alternative Data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "airline",
+            "description": "Filter data by airline. Accepted values: <code>united</code>,<code>delta</code>,<code>american_airlines</code>,<code>southwest</code>,<code>southern_airways_express</code>,<code>alaska_airlines</code>,<code>frontier_airlines</code>,<code>jetblue_airways</code>,<code>spirit_airlines</code>,<code>sun_country_airlines</code>,<code>breeze_airways</code>,<code>hawaiian_airlines</code>",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "description": "From date <code>YYYY-MM-DD</code>.",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "description": "To date <code>YYYY-MM-DD</code>.",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/AirlinePriceIndexData"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.airline_price_index('united', _from=\"2024-06-01\", to=\"2024-07-10\"))",
+          "go": "res, _, err := finnhubClient.AirlinePriceIndex(context.Background()).Airline(\"united\").From(\"2024-06-01\").To(\"2024-07-10\").Execute()",
+          "javascript": "finnhubClient.airlinePriceIndex(\"united\", \"2024-06-01\", \"2024-07-10\", (error, data, response) => {\n\tconsole.log(data)\n});",
+          "ruby": "puts(finnhub_client.airline_price_index('united', \"2024-06-01\", \"2024-07-10\"))",
+          "kotlin": "println(apiClient.airlinePriceIndex(\"united\", from = \"2024-06-01\", to = \"2024-07-10\"))",
+          "php": "print_r($client->airlinePriceIndex(\"united\", \"2024-06-01\", \"2024-07-10\"));",
+          "useTemplate": true
+        },
+        "sampleResponse": "{\n  \"data\": [\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-17\",\n      \"priceIndex\": 0.832755,\n      \"dailyAvgPrice\": 360.918\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-19\",\n      \"priceIndex\": 0.850855,\n      \"dailyAvgPrice\": 307.089\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-20\",\n      \"priceIndex\": 1.33928,\n      \"dailyAvgPrice\": 411.278\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-21\",\n      \"priceIndex\": 1.0872,\n      \"dailyAvgPrice\": 447.143\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-22\",\n      \"priceIndex\": 0.994883,\n      \"dailyAvgPrice\": 444.855\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-23\",\n      \"priceIndex\": 1,\n      \"dailyAvgPrice\": 784.301\n    },\n    {\n      \"airline\": \"united\",\n      \"date\": \"2024-06-24\",\n      \"priceIndex\": 0.857554,\n      \"dailyAvgPrice\": 672.58\n    }\n  ],\n  \"from\": \"2024-04-04\",\n  \"to\": \"2024-07-10\",\n  \"airline\": \"united\"\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/country": {
+      "get": {
+        "summary": "Country Metadata",
+        "description": "List all countries and metadata.",
+        "operationId": "country",
+        "navHeader": "Country List",
+        "urlId": "country",
+        "title": "Country List",
+        "examples": [
+          {
+            "url": "/country?token=<token>",
+            "text": "/country"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": null,
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Economic",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CountryMetadata"
+              }
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.country())",
+          "go": "res, _, err := finnhubClient.Country(context.Background()).Execute()",
+          "javascript": "finnhubClient.country((error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.country())",
+          "kotlin": "println(apiClient.country())",
+          "php": "print_r($client->country());",
+          "useTemplate": true
+        },
+        "sampleResponse": "[\n  {\n    \"code2\": \"US\",\n    \"code3\": \"USA\",\n    \"codeNo\": \"840\",\n    \"country\": \"United States\",\n    \"countryRiskPremium\": 0,\n    \"currency\": \"US Dollar\",\n    \"currencyCode\": \"USD\",\n    \"defaultSpread\": 0,\n    \"equityRiskPremium\": 5,\n    \"rating\": \"Aaa\",\n    \"region\": \"Americas\",\n    \"subRegion\": \"Northern America\"\n  },\n  {\n    \"code2\": \"GB\",\n    \"code3\": \"GBR\",\n    \"codeNo\": \"826\",\n    \"country\": \"United Kingdom of Great Britain and Northern Ireland\",\n    \"countryRiskPremium\": 0.91,\n    \"currency\": \"Sterling\",\n    \"currencyCode\": \"GBP\",\n    \"defaultSpread\": 0.64,\n    \"equityRiskPremium\": 5.91,\n    \"rating\": \"Aa3\",\n    \"region\": \"Europe\",\n    \"subRegion\": \"Northern Europe\"\n  }\n]",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/covid19/us": {
+      "get": {
+        "summary": "COVID-19",
+        "description": "Get real-time updates on the number of COVID-19 (Corona virus) cases in the US with a state-by-state breakdown. Data is sourced from CDC and reputable sources. You can also access this API <a href=\"https://rapidapi.com/Finnhub/api/finnhub-real-time-covid-19\" target=\"_blank\" rel=\"nofollow\">here</a>",
+        "operationId": "covid-19",
+        "navHeader": "COVID-19",
+        "urlId": "covid-19",
+        "title": "Real-time COVID-19 data API",
+        "examples": [
+          {
+            "url": "/covid19/us?token=<token>",
+            "text": "/covid19/us"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": null,
+        "newEndpoint": null,
+        "highUsage": "High Usage",
+        "tags": [
+          "Default"
+        ],
+        "section": "Alternative Data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CovidInfo"
+              }
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.covid19())",
+          "go": "res, _, err := finnhubClient.Covid19(context.Background()).Execute()",
+          "javascript": "finnhubClient.covid19((error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.covid19())",
+          "kotlin": "println(apiClient.covid19())",
+          "php": "print_r($client->covid19());",
+          "useTemplate": true
+        },
+        "sampleResponse": "[\n  {\n    \"state\": \"New York\",\n    \"case\": 8403,\n    \"death\": 46,\n    \"updated\": \"2020-03-20 21:38:50\"\n  },\n  {\n    \"state\": \"Washington\",\n    \"case\": 1524,\n    \"death\": 83,\n    \"updated\": \"2020-03-20 21:38:50\"\n  }\n]",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/fda-advisory-committee-calendar": {
+      "get": {
+        "summary": "FDA Committee Meeting Calendar",
+        "description": "FDA's advisory committees are established to provide functions which support the agency's mission of protecting and promoting the public health, while meeting the requirements set forth in the Federal Advisory Committee Act. Committees are either mandated by statute or established at the discretion of the Department of Health and Human Services. Each committee is subject to renewal at two-year intervals unless the committee charter states otherwise.",
+        "operationId": "fda-committee-meeting-calendar",
+        "navHeader": "FDA Calendar",
+        "urlId": "fda-committee-meeting-calendar",
+        "title": "FDA Calendar | Finnhub",
+        "examples": [
+          {
+            "url": "/fda-advisory-committee-calendar?token=<token>",
+            "text": "/fda-advisory-committee-calendar"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": null,
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Alternative Data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FDAComitteeMeeting"
+              }
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.fda_calendar())",
+          "go": "res, _, err := finnhubClient.FdaCommitteeMeetingCalendar(context.Background()).Execute()",
+          "javascript": "finnhubClient.fdaCommitteeMeetingCalendar((error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.fda_committee_meeting_calendar())",
+          "kotlin": "println(apiClient.fdaCommitteeMeetingCalendar())",
+          "php": "print_r($client->fdaCommitteeMeetingCalendar());",
+          "useTemplate": true
+        },
+        "sampleResponse": "[\n  {\n    \"fromDate\": \"2016-01-11 19:00:00\",\n    \"toDate\": \"2016-01-11 19:00:00\",\n    \"eventDescription\": \"January 12, 2016: Meeting of the Psychopharmacologic Drugs Advisory Committee Meeting Announcement - 01/11/2016 - 01/11/2016\",\n    \"url\": \"https://www.fda.gov/advisory-committees/advisory-committee-calendar/january-12-2016-meeting-psychopharmacologic-drugs-advisory-committee-meeting-announcement-01112016\"\n  },\n  {\n    \"fromDate\": \"2016-01-14 13:00:00\",\n    \"toDate\": \"2016-01-14 17:00:00\",\n    \"eventDescription\": \"January 14, 2016: Vaccines and Related Biological Products Advisory Committee Meeting Announcement - 01/14/2016 - 01/14/2016\",\n    \"url\": \"https://www.fda.gov/advisory-committees/advisory-committee-calendar/january-14-2016-vaccines-and-related-biological-products-advisory-committee-meeting-announcement\"\n  }\n]",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/indicator": {
+      "get": {
+        "summary": "Technical Indicators",
+        "description": "Return technical indicator with price data. List of supported indicators can be found <a href=\"https://docs.google.com/spreadsheets/d/1ylUvKHVYN2E87WdwIza8ROaCpd48ggEl1k5i5SgA29k/edit?usp=sharing\" target=\"_blank\">here</a>.",
+        "operationId": "technical-indicator",
+        "navHeader": "Technical Indicators",
+        "urlId": "technical-indicator",
+        "title": "Technical Indicators API for Stocks, Forex, Crypto",
+        "examples": [
+          {
+            "url": "/indicator?symbol=AAPL&resolution=D&from=1583098857&to=1584308457&indicator=sma&timeperiod=3&token=<token>",
+            "text": "/indicator?symbol=symbol=AAPL&resolution=D&from=1583098857&to=1584308457&indicator=sma&timeperiod=3"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Technical Analysis",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "symbol",
+            "description": "symbol",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "resolution",
+            "description": "Supported resolution includes <code>1, 5, 15, 30, 60, D, W, M </code>.Some timeframes might not be available depending on the exchange.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "description": "UNIX timestamp. Interval initial value.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "description": "UNIX timestamp. Interval end value.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "query",
+            "name": "indicator",
+            "description": "Indicator name. Full list can be found <a href=\"https://docs.google.com/spreadsheets/d/1ylUvKHVYN2E87WdwIza8ROaCpd48ggEl1k5i5SgA29k/edit?usp=sharing\" target=\"_blank\">here</a>.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "indicator_fields",
+            "description": "Check out <a href=\"https://docs.google.com/spreadsheets/d/1ylUvKHVYN2E87WdwIza8ROaCpd48ggEl1k5i5SgA29k/edit?usp=sharing\" target=\"_blank\">this page</a> to see which indicators and params are supported.",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/IndicatorFields"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/TechnicalIndicator"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.technical_indicator(symbol=\"AAPL\", resolution='D', _from=1583098857, to=1584308457, indicator='rsi', indicator_fields={\"timeperiod\": 3}))",
+          "go": "res, _, err := finnhubClient.TechnicalIndicator(context.Background()).Symbol(\"AAPL\").Resolution(\"D\").From(1583098857).To(1584308457).Indicator(\"sma\").IndicatorFields(map[string]interface{}{\"timeperiod\": 3}).Execute()",
+          "javascript": "finnhubClient.technicalIndicator(\"AAPL\", \"D\", 1580988249, 1591852249, \"macd\", {}, (error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.technical_indicator(\"AAPL\", 'D', 1583098857, 1584308457, 'rsi', {indicator_fields:{'timeperiod': 3}}))\n",
+          "kotlin": "println(\n            apiClient.technicalIndicator(\n                symbol = \"AAPL\",\n                resolution = \"D\",\n                from = 1583098857L,\n                to = 1584308457L,\n                indicator = \"sma\",\n                indicatorFields = mapOf<String, Any>(\"timeperiod\" to 3)\n            )\n        )",
+          "php": "$indicatorFields = new stdClass();\n$indicatorFields->timeperiod = 3;\nprint_r($client->technicalIndicator(\"AAPL\", \"D\", 1583098857, 1584308457, \"rsi\", $indicatorFields));",
+          "useTemplate": true
+        },
+        "sampleResponse": "{\"sma\":[0,0,74.23916,73.74833,73.72416,70.676666,70.045,68.911,67.41666,66.802],\"t\":[1583107200,1583193600,1583280000,1583366400,1583452800,1583712000,1583798400,1583884800,1583971200,1584057600]}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/press-releases": {
+      "get": {
+        "summary": "Major Press Releases",
+        "description": "<p>Get latest major press releases of a company. This data can be used to highlight the most significant events comprised of mostly press releases sourced from the exchanges, BusinessWire, AccessWire, GlobeNewswire, Newsfile, and PRNewswire.</p><p>Full-text press releases data is available for Enterprise clients. <a href=\"mailto:support@finnhub.io\">Contact Us</a> to learn more.</p>",
+        "operationId": "press-releases",
+        "navHeader": "Press Releases",
+        "urlId": "press-releases",
+        "title": "Real-time Press Releases API",
+        "examples": [
+          {
+            "url": "/press-releases?symbol=AAPL&token=<token>",
+            "text": "/press-releases?symbol=AAPL"
+          },
+          {
+            "url": "/press-releases?symbol=IBM&from=2019-11-01&to=2020-02-15&token=<token>",
+            "text": "/press-releases?symbol=IBM&from=2019-11-01&to=2020-02-15"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Stock Fundamentals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "symbol",
+            "description": "Company symbol.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "description": "From time: 2020-01-01.",
+            "required": false,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "description": "To time: 2020-01-05.",
+            "required": false,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/PressRelease"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.press_releases('AAPL'))",
+          "go": "res, _, err := finnhubClient.PressReleases(context.Background()).Symbol(\"AAPL\").Execute()",
+          "javascript": "finnhubClient.pressReleases(\"AAPL\", {}, (error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.press_releases('AAPL', {from: \"2020-01-01\", to: \"2020-12-31\"}))\n",
+          "kotlin": "println(apiClient.pressReleases(\"AAPL\", from = \"2020-01-01\", to = \"2020-12-31\"))",
+          "php": "print_r($client->pressReleases(\"AAPL\", \"2020-01-01\", \"2020-12-31\"));",
+          "useTemplate": true
+        },
+        "sampleResponse": "{\n  \"majorDevelopment\": [\n    {\n      \"symbol\": \"AAPL\",\n      \"datetime\": \"2020-08-04 17:06:32\",\n      \"headline\": \"27-inch iMac Gets a Major Update\",\n      \"description\": \"CUPERTINO, Calif.--(BUSINESS WIRE)-- Apple today announced a major update to its 27-inch iMac\u00ae. By far the most powerful and capable iMac ever, it features faster Intel processors up to 10 cores, double the memory capacity, next-generation AMD graphics, superfast SSDs across the line with four times the storage capacity, a new nano-texture glass option for an even more stunning Retina\u00ae 5K display, a 1080p FaceTime\u00ae HD camera, higher fidelity speakers, and studio-quality mics. For the consumer using their iMac all day, every day, to the aspiring creative looking for inspiration, to the serious pro pushing the limits of their creativity, the new 27-inch iMac delivers the ultimate desktop experience that is now better in every way.\"\n    },\n    {\n      \"symbol\": \"AAPL\",\n      \"datetime\": \"2020-03-28 09:41:23\",\n      \"headline\": \"Apple Central World Opens Friday in Thailand\",\n      \"description\": \"BANGKOK--(BUSINESS WIRE)-- Apple\u00ae today previewed Apple Central World, its second and largest retail location in Thailand. Nestled in the heart of Ratchaprasong, Bangkok\u2019s iconic intersection, the store provides a completely new and accessible destination within the lively city. Apple Central World\u2019s distinctive architecture is brought to life with the first-ever all-glass design, housed under a cantilevered Tree Canopy roof. Once inside, customers can travel between two levels via a spiral staircase that wraps around a timber core, or riding a unique cylindrical elevator clad in mirror-polished stainless steel. Guests can enter from the ground or upper level, which provides a direct connection to the Skytrain and the city\u2019s largest shopping center. The outdoor plaza offers a place for the community to gather, with benches and large Terminalia trees surrounding the space.\"\n    }\n  ],\n   \"symbol\": \"AAPL\"\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Symbol Lookup",
+        "description": "Search for best-matching symbols based on your query. You can input anything from symbol, security's name to ISIN and Cusip.",
+        "operationId": "symbol-search",
+        "navHeader": "Symbol Lookup",
+        "urlId": "symbol-search",
+        "title": "Global Stocks Search",
+        "examples": [
+          {
+            "url": "/search?q=apple&exchange=US&token=<token>",
+            "text": "/search?q=apple&exchange=US"
+          },
+          {
+            "url": "/search?q=US5949181045&token=<token>",
+            "text": "/search?q=US5949181045"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": null,
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Stock Fundamentals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "description": "Query text can be symbol, name, isin, or cusip.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "exchange",
+            "description": "Exchange limit.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/SymbolLookup"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.symbol_lookup('apple'))",
+          "go": "res, _, err := finnhubClient.SymbolSearch(context.Background()).Q(\"AAPL\").Execute()",
+          "javascript": "finnhubClient.symbolSearch('AAPL', (error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.symbol_search('AAPL'))",
+          "kotlin": "println(apiClient.symbolSearch(\"AAPL\"))",
+          "php": "print_r($client->symbolSearch(\"AAPL\"));",
+          "useTemplate": true
+        },
+        "sampleResponse": "{\n  \"count\": 4,\n  \"result\": [\n    {\n      \"description\": \"APPLE INC\",\n      \"displaySymbol\": \"AAPL\",\n      \"symbol\": \"AAPL\",\n      \"type\": \"Common Stock\"\n    },\n    {\n      \"description\": \"APPLE INC\",\n      \"displaySymbol\": \"AAPL.SW\",\n      \"symbol\": \"AAPL.SW\",\n      \"type\": \"Common Stock\"\n    },\n    {\n      \"description\": \"APPLE INC\",\n      \"displaySymbol\": \"APC.BE\",\n      \"symbol\": \"APC.BE\",\n      \"type\": \"Common Stock\"\n    },\n    {\n      \"description\": \"APPLE INC\",\n      \"displaySymbol\": \"APC.DE\",\n      \"symbol\": \"APC.DE\",\n      \"type\": \"Common Stock\"\n    }\n  ]\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/sector/metrics": {
+      "get": {
+        "summary": "Sector Metrics",
+        "description": "Get ratios for different sectors and regions/indices.",
+        "operationId": "sector-metric",
+        "navHeader": "Sector Metrics",
+        "urlId": "sector-metrics",
+        "title": "Get ratios for different sectors and regions/indices (S&P500, Nasdaq 100).",
+        "examples": [
+          {
+            "url": "/sector/metrics?region=NA&token=<token>",
+            "text": "/sector/metrics?region=NA"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Stock Fundamentals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "region",
+            "description": "Region. A list of supported values for this field can be found <a href=\"https://docs.google.com/spreadsheets/d/1afedyv7yWJ-z7pMjaAZK-f6ENY3mI3EBCk95QffpoHw/edit?usp=sharing\" target=\"_blank\">here</a>.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/SectorMetric"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "autoGenerated",
+          "python": "print(finnhub_client.sector_metric('NA'))",
+          "go": "res, _, err := finnhubClient.SectorMetric(context.Background()).Region(\"NA\").Execute()",
+          "javascript": "finnhubClient.sectorMetric(\"NA\", (error, data, response) => {\n  console.log(data)\n});",
+          "ruby": "puts(finnhub_client.sector_metric('NA'))",
+          "kotlin": "println(apiClient.sectorMetric(\"NA\"))",
+          "php": "print_r($client->sectorMetric(\"NA\"));",
+          "useTemplate": true
+        },
+        "sampleResponse": "{\n  \"data\": [\n    {\n      \"metrics\": {\n        \"assetTurnoverAnnual\": {\n          \"a\": 0.7245,\n          \"m\": 0.5426\n        },\n        \"assetTurnoverTTM\": {\n          \"a\": 0.7254,\n          \"m\": 0.5463\n        },\n      },\n      \"sector\": \"Communication Services\"\n    },\n    {\n      \"metrics\": {\n        \"currentDividendYieldTTM\": {\n          \"a\": 30.9763,\n          \"m\": 2.09\n        },\n        \"currentEv/freeCashFlowAnnual\": {\n          \"a\": 286.4793,\n          \"m\": 19.8488\n        },\n      },\n      \"sector\": \"Consumer Discretionary\"\n    }\n  ],\n  \"region\": \"Asia_Ocenia\"\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AIChatBody": {
+      "type": "object",
+      "required": [
+        "messages"
+      ],
+      "properties": {
+        "messages": {
+          "description": "Messages",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AIChatMessage"
+          }
+        },
+        "stream": {
+          "description": "Stream responses",
+          "type": "boolean"
+        }
+      }
+    },
+    "AIChatMessage": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "description": "Role system/user",
+          "type": "string"
+        },
+        "content": {
+          "description": "Content",
+          "type": "string"
+        }
+      }
+    },
+    "AIChatResponse": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "description": "Chat ID.",
+          "type": "string"
+        },
+        "content": {
+          "description": "Response text.",
+          "type": "string"
+        },
+        "querySummary": {
+          "description": "Query summary",
+          "type": "string"
+        },
+        "relatedQueries": {
+          "description": "Related queries.",
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "tickers": {
+          "description": "List of tickers mentioned.",
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "sources": {
+          "description": "Sources.",
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "widgets": {
+          "description": "Widgets.",
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "AirlinePriceIndex": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "description": "Date",
+          "type": "string"
+        },
+        "priceIndex": {
+          "description": "Price Index",
+          "type": "number",
+          "format": "float"
+        },
+        "dailyAvgPrice": {
+          "description": "Daily average ticket price.",
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "AirlinePriceIndexData": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AirlinePriceIndex"
+          },
+          "description": "Array of price index."
+        },
+        "airline": {
+          "description": "Airline name",
+          "type": "string"
+        },
+        "from": {
+          "description": "From date",
+          "type": "string"
+        },
+        "to": {
+          "description": "To date",
+          "type": "string"
+        }
+      }
+    },
+    "CountryMetadata": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "description": "Country name",
+          "type": "string"
+        },
+        "code2": {
+          "description": "Alpha 2 code",
+          "type": "string"
+        },
+        "code3": {
+          "description": "Alpha 3 code",
+          "type": "string"
+        },
+        "codeNo": {
+          "description": "UN code",
+          "type": "string"
+        },
+        "currency": {
+          "description": "Currency name",
+          "type": "string"
+        },
+        "currencyCode": {
+          "description": "Currency code",
+          "type": "string"
+        },
+        "region": {
+          "description": "Region",
+          "type": "string"
+        },
+        "subRegion": {
+          "description": "Sub-Region",
+          "type": "string"
+        },
+        "rating": {
+          "description": "Moody's credit risk rating.",
+          "type": "string"
+        },
+        "defaultSpread": {
+          "description": "Default spread",
+          "type": "number",
+          "format": "float"
+        },
+        "countryRiskPremium": {
+          "description": "Country risk premium",
+          "type": "number",
+          "format": "float"
+        },
+        "equityRiskPremium": {
+          "description": "Equity risk premium",
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "CovidInfo": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "description": "State.",
+          "type": "string"
+        },
+        "case": {
+          "description": "Number of confirmed cases.",
+          "type": "number",
+          "format": "float"
+        },
+        "death": {
+          "description": "Number of confirmed deaths.",
+          "type": "number",
+          "format": "float"
+        },
+        "updated": {
+          "description": "Updated time.",
+          "type": "string",
+          "formatIgnore": "date-time"
+        }
+      }
+    },
+    "Development": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "description": "Company symbol.",
+          "type": "string"
+        },
+        "datetime": {
+          "description": "Published time in <code>YYYY-MM-DD HH:MM:SS</code> format.",
+          "type": "string",
+          "formatIgnore": "date-time"
+        },
+        "headline": {
+          "description": "Development headline.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Development description.",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL.",
+          "type": "string"
+        }
+      }
+    },
+    "FDAComitteeMeeting": {
+      "type": "object",
+      "properties": {
+        "fromDate": {
+          "description": "Start time of the event in EST.",
+          "type": "string",
+          "formatIgnore": "date-time"
+        },
+        "toDate": {
+          "description": "End time of the event in EST.",
+          "type": "string",
+          "formatIgnore": "date-time"
+        },
+        "eventDescription": {
+          "description": "Event's description.",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL.",
+          "type": "string"
+        }
+      }
+    },
+    "IndicatorFields": {
+      "type": "object"
+    },
+    "PressRelease": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "description": "Company symbol.",
+          "type": "string"
+        },
+        "majorDevelopment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Development"
+          },
+          "description": "Array of major developments."
+        }
+      }
+    },
+    "SectorMetric": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "description": "Region.",
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SectorMetricData"
+          },
+          "description": "Metrics for each sector."
+        }
+      }
+    },
+    "SectorMetricData": {
+      "type": "object",
+      "properties": {
+        "sector": {
+          "description": "Sector",
+          "type": "string"
+        },
+        "metrics": {
+          "description": "Metrics data in key-value format. <code>a</code> and <code>m</code> fields are for average and median respectively.",
+          "type": "object"
+        }
+      }
+    },
+    "SymbolLookup": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SymbolLookupInfo"
+          },
+          "description": "Array of search results."
+        },
+        "count": {
+          "description": "Number of results.",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "SymbolLookupInfo": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Symbol description",
+          "type": "string"
+        },
+        "displaySymbol": {
+          "description": "Display symbol name.",
+          "type": "string"
+        },
+        "symbol": {
+          "description": "Unique symbol used to identify this symbol used in <code>/stock/candle</code> endpoint.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Security type.",
+          "type": "string"
+        }
+      }
+    },
+    "TechnicalIndicator": {
+      "type": "object"
+    }
+  }
+}

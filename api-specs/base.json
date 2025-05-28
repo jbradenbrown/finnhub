@@ -1,0 +1,304 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Finnhub API",
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "finnhub.io",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "token",
+      "in": "query"
+    }
+  },
+  "extraDocs": [
+    {
+      "section": null,
+      "subSection": [
+        {
+          "navHeader": "Introduction",
+          "urlId": "introduction",
+          "summary": "API Documentation",
+          "description": "<p class=\"lead\">The API is organized around REST. Our API has predictable resource-oriented URLs, accepts form-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs. This is 1 of the most comprehensive financial API available on the market.</p> <p><strong>Base URL</strong>: <code>/api/v1</code></p><p><strong>Swagger schema</strong>: <a target=\"_blank\" href=\"/static/swagger.json\">Download</a></p>"
+        },
+        {
+          "navHeader": "Authentication",
+          "urlId": "authentication",
+          "summary": "Authentication",
+          "description": "<p>All GET request require a token parameter <code>token=apiKey</code> in the URL or a header <code>X-Finnhub-Token : apiKey</code>. You can find your API Key under <a target=\"_blank\" href=\"/dashboard\">Dashboard</a>. If you are logged in, your API key will be automatically used in the examples so you can copy and paste them as is.</p>"
+        },
+        {
+          "navHeader": "Limits",
+          "urlId": "rate-limit",
+          "summary": "Rate Limits",
+          "description": "<p>If your limit is exceeded, you will receive a response with status code <code>429</code>.</p><p>On top of all plan's limit, there is a 30 API calls/ second limit.</p>"
+        },
+        {
+          "navHeader": "Excel & Google Spreadsheet",
+          "urlId": "excel-plugin-google-spreadsheet",
+          "newEndpoint": "New Endpoint",
+          "summary": "FinSheet Excel & Google Sheets plugin",
+          "description": "<p><a href=\"https://finsheet.io/\" target=\"_blank\">Finsheet</a> is the official spreadsheet's plugin partner using fundamental data and estimates data from Finnhub. If you are looking to complement the stock price data you already got directly from Excel and Google Sheets with some advanced data, <a href=\"https://finsheet.io/\" target=\"_blank\">Finsheet's Excel and Google Sheets plugin</a> offer an affordable way to access global fundamentals and estimates right in your spreadsheet.</p><span><img src=\"https://finsheet.io/static/img/candles.png\"></img></span>"
+        }
+      ]
+    },
+    {
+      "section": "Open Source",
+      "subSection": [
+        {
+          "navHeader": "Libraries",
+          "urlId": "library",
+          "summary": "Libraries",
+          "description": "<p>We have been incredibly humbled by the support of the open-source community. Beside these incredible projects, here are our own official libraries: </p><table class=\"table table-hover\">\n  <thead>\n    <tr>\n      <th>Language</th>\n      <th>Homepage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td class=\"text-blue\">Python</th>\n      <td><a href=\"https://github.com/Finnhub-Stock-API/finnhub-python\" target=\"_blank\" rel=\"noopener nofollow\">finnhub-python</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">Go</th>\n      <td><a href=\"https://github.com/Finnhub-Stock-API/finnhub-go\" target=\"_blank\" rel=\"noopener nofollow\">finnhub-go</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">Javascript</th>\n      <td><a href=\"https://www.npmjs.com/package/finnhub\" target=\"_blank\" rel=\"noopener nofollow\">Finnhub NPM</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">Ruby</th>\n      <td><a href=\"https://github.com/Finnhub-Stock-API/finnhub-ruby\" target=\"_blank\" rel=\"noopener nofollow\">Finnhub Ruby</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">Kotlin</th>\n      <td><a href=\"https://github.com/Finnhub-Stock-API/finnhub-kotlin\" target=\"_blank\" rel=\"noopener nofollow\">Finnhub Kotlin</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">PHP</th>\n      <td><a href=\"https://packagist.org/packages/finnhub/client\" target=\"_blank\" rel=\"noopener nofollow\">Finnhub PHP</a></td>\n    </tr>\n  </tbody>\n</table>"
+        },
+        {
+          "navHeader": "Open Data",
+          "urlId": "open-data",
+          "summary": "Open Data",
+          "description": "<p>We understand the importance of data for students, researchers,and investors. That's why at Finnhub, we have decided to create multiple Open Datasets for the community which can be downloaded in bulk below:</p><table class=\"table table-hover\">\n  <thead>\n    <tr>\n      <th>Datasets</th>\n      <th>Download</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td class=\"text-blue\">SEC Financials As Reported</th>\n      <td><a href=\"https://www.kaggle.com/finnhub/reported-financials\" target=\"_blank\" rel=\"noopener\">Kaggle</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">SEC Filings Metadata</th>\n      <td><a href=\"https://www.kaggle.com/finnhub/sec-filings\" target=\"_blank\" rel=\"noopener\">Kaggle</a></td>\n    </tr>\n    <tr>\n      <td class=\"text-blue\">S&P 500 futures tick data</th>\n      <td><a href=\"https://www.kaggle.com/finnhub/sp-500-futures-tick-data-sp\" target=\"_blank\" rel=\"noopener\">Kaggle</a></td>\n    </tr>\n  </tbody>\n</table>"
+        }
+      ]
+    },
+    {
+      "section": "Websocket",
+      "subSection": [
+        {
+          "navHeader": "Trades",
+          "urlId": "websocket-trades",
+          "summary": "Trades - Last Price Updates",
+          "title": "Websocket - Realtime streaming for US Full SIP, LSE, Forex and Crypto",
+          "highUsage": "High Usage",
+          "description": "<p>Stream real-time trades for US stocks, forex and crypto. Trades might not be available for some forex and crypto exchanges. In that case, a price update will be sent with volume = 0. A message can contain multiple trades. 1 API key can only open 1 connection at a time.</p> <p>The following FX brokers do not support streaming: FXCM, Forex.com, FHFX. To get latest price for FX, please use the Forex Candles or All Rates endpoint.</p>",
+          "method": [
+            "Websocket"
+          ],
+          "examples": [
+            {
+              "url": "wss://ws.finnhub.io?token=<token>",
+              "text": "wss://ws.finnhub.io"
+            }
+          ],
+          "arguments": null,
+          "responseAttributes": [
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Message type."
+            },
+            {
+              "name": "data",
+              "type": "list",
+              "description": "List of trades or price updates.",
+              "item": {
+                "type": "object",
+                "definition": "Trade",
+                "attributes": [
+                  {
+                    "name": "s",
+                    "type": "string",
+                    "description": "Symbol."
+                  },
+                  {
+                    "name": "p",
+                    "type": "float",
+                    "description": "Last price."
+                  },
+                  {
+                    "name": "t",
+                    "type": "int",
+                    "description": "UNIX milliseconds timestamp."
+                  },
+                  {
+                    "name": "v",
+                    "type": "float",
+                    "description": "Volume."
+                  },
+                  {
+                    "name": "c",
+                    "type": "list",
+                    "description": "List of trade conditions. A comprehensive list of trade conditions code can be found <a target=\"_blank\" href=\"https://docs.google.com/spreadsheets/d/1PUxiSWPHSODbaTaoL2Vef6DgU-yFtlRGZf19oBb9Hp0/edit?usp=sharing\">here</a>",
+                    "item": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "sampleCode": {
+            "autoGenerated": false,
+            "javascript": "const socket = new WebSocket('wss://ws.finnhub.io?token=<token>');\n\n// Connection opened -> Subscribe\nsocket.addEventListener('open', function (event) {\n    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AAPL'}))\n    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'BINANCE:BTCUSDT'}))\n    socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'IC MARKETS:1'}))\n});\n\n// Listen for messages\nsocket.addEventListener('message', function (event) {\n    console.log('Message from server ', event.data);\n});\n\n// Unsubscribe\n var unsubscribe = function(symbol) {\n    socket.send(JSON.stringify({'type':'unsubscribe','symbol': symbol}))\n}\n",
+            "go": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"github.com/gorilla/websocket\"\n)\n\nfunc main() {\n\tw, _, err := websocket.DefaultDialer.Dial(\"wss://ws.finnhub.io?token=<token>\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer w.Close()\n\n\tsymbols := []string{\"AAPL\", \"AMZN\", \"BINANCE:BTCUSDT\", \"IC MARKETS:1\"}\n\tfor _, s := range symbols {\n\t\tmsg, _ := json.Marshal(map[string]interface{}{\"type\": \"subscribe\", \"symbol\": s})\n\t\tw.WriteMessage(websocket.TextMessage, msg)\n\t}\n\n\tvar msg interface{}\n\tfor {\n\t\terr := w.ReadJSON(&msg);\n\t\tif err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t\tfmt.Println(\"Message from server \", msg)\n\t}\n}\n",
+            "python": "#https://pypi.org/project/websocket_client/\nimport websocket\n\ndef on_message(ws, message):\n    print(message)\n\ndef on_error(ws, error):\n    print(error)\n\ndef on_close(ws):\n    print(\"### closed ###\")\n\ndef on_open(ws):\n    ws.send('{\"type\":\"subscribe\",\"symbol\":\"AAPL\"}')\n    ws.send('{\"type\":\"subscribe\",\"symbol\":\"AMZN\"}')\n    ws.send('{\"type\":\"subscribe\",\"symbol\":\"BINANCE:BTCUSDT\"}')\n    ws.send('{\"type\":\"subscribe\",\"symbol\":\"IC MARKETS:1\"}')\n\nif __name__ == \"__main__\":\n    websocket.enableTrace(True)\n    ws = websocket.WebSocketApp(\"wss://ws.finnhub.io?token=<token>\",\n                              on_message = on_message,\n                              on_error = on_error,\n                              on_close = on_close)\n    ws.on_open = on_open\n    ws.run_forever()"
+          },
+          "sampleResponse": "{\n  \"data\": [\n    {\n      \"p\": 7296.89,\n      \"s\": \"BINANCE:BTCUSDT\",\n      \"t\": 1575526691134,\n      \"v\": 0.011467\n    }\n  ],\n  \"type\": \"trade\"\n}"
+        },
+        {
+          "navHeader": "News",
+          "title": "Websocket - Realtime News Streaming",
+          "urlId": "websocket-news",
+          "summary": "News",
+          "premium": "Premium Access Required",
+          "description": "Stream real-time news for US and Canadian stocks.",
+          "method": [
+            "Websocket"
+          ],
+          "examples": [
+            {
+              "url": "wss://ws.finnhub.io?token=<token>",
+              "text": "wss://ws.finnhub.io"
+            }
+          ],
+          "arguments": null,
+          "responseAttributes": [
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Message type: <code>news</code>."
+            },
+            {
+              "name": "data",
+              "type": "list",
+              "description": "List of news.",
+              "item": {
+                "type": "object",
+                "definition": "News",
+                "attributes": [
+                  {
+                    "name": "category",
+                    "type": "string",
+                    "description": "News category."
+                  },
+                  {
+                    "name": "datetime",
+                    "type": "timestamp",
+                    "description": "Published time in UNIX timestamp."
+                  },
+                  {
+                    "name": "headline",
+                    "type": "string",
+                    "description": "News headline."
+                  },
+                  {
+                    "name": "urlId",
+                    "type": "int",
+                    "description": "News ID."
+                  },
+                  {
+                    "name": "image",
+                    "type": "string",
+                    "description": "Thumbnail image URL."
+                  },
+                  {
+                    "name": "related",
+                    "type": "string",
+                    "description": "Related stocks and companies mentioned in the article."
+                  },
+                  {
+                    "name": "source",
+                    "type": "string",
+                    "description": "News source."
+                  },
+                  {
+                    "name": "summary",
+                    "type": "string",
+                    "description": "News summary."
+                  },
+                  {
+                    "name": "url",
+                    "type": "string",
+                    "description": "URL of the original article."
+                  }
+                ]
+              }
+            }
+          ],
+          "sampleCode": {
+            "autoGenerated": false,
+            "javascript": "const socket = new WebSocket('wss://ws.finnhub.io?token=<token>');\n\n// Connection opened -> Subscribe\nsocket.addEventListener('open', function (event) {\n    socket.send(JSON.stringify({'type':'subscribe-news', 'symbol': 'AAPL'}))\n    socket.send(JSON.stringify({'type':'subscribe-news', 'symbol': 'MSFT'}))\n    socket.send(JSON.stringify({'type':'subscribe-news', 'symbol': 'AMZN'}))\n});\n\n// Listen for messages\nsocket.addEventListener('message', function (event) {\n    console.log('Message from server ', event.data);\n});\n\n// Unsubscribe\n var unsubscribe = function(symbol) {\n    socket.send(JSON.stringify({'type':'unsubscribe-news','symbol': symbol}))\n}\n",
+            "go": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"github.com/gorilla/websocket\"\n)\n\nfunc main() {\n\tw, _, err := websocket.DefaultDialer.Dial(\"wss://ws.finnhub.io?token=<token>\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer w.Close()\n\n\tsymbols := []string{\"AAPL\", \"AMZN\", \"MSFT\", \"BYND\"}\n\tfor _, s := range symbols {\n\t\tmsg, _ := json.Marshal(map[string]interface{}{\"type\": \"subscribe-news\", \"symbol\": s})\n\t\tw.WriteMessage(websocket.TextMessage, msg)\n\t}\n\n\tvar msg interface{}\n\tfor {\n\t\terr := w.ReadJSON(&msg);\n\t\tif err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t\tfmt.Println(\"Message from server \", msg)\n\t}\n}\n",
+            "python": "#https://pypi.org/project/websocket_client/\nimport websocket\n\ndef on_message(ws, message):\n    print(message)\n\ndef on_error(ws, error):\n    print(error)\n\ndef on_close(ws):\n    print(\"### closed ###\")\n\ndef on_open(ws):\n    ws.send('{\"type\":\"subscribe-news\",\"symbol\":\"AAPL\"}')\n    ws.send('{\"type\":\"subscribe-news\",\"symbol\":\"AMZN\"}')\n    ws.send('{\"type\":\"subscribe-news\",\"symbol\":\"MSFT\"}')\n    ws.send('{\"type\":\"subscribe-news\",\"symbol\":\"BYND\"}')\n\nif __name__ == \"__main__\":\n    websocket.enableTrace(True)\n    ws = websocket.WebSocketApp(\"wss://ws.finnhub.io?token=<token>\",\n                              on_message = on_message,\n                              on_error = on_error,\n                              on_close = on_close)\n    ws.on_open = on_open\n    ws.run_forever()"
+          },
+          "sampleResponse": "{\n  \"data\": [\n    {\n      \"category\": \"company\",\n      \"datetime\": 1679920200,\n      \"headline\": \"CanAlaska Uranium Announces Airborne Electromagnetic Survey Completed at Geikie Project in Athabasca Basin\",\n      \"id\": 119440189,\n      \"image\": \"https://media.zenfs.com/en/newsfile_64/0522ee5d9e134e6f966c6ecdfc50fb46\",\n      \"related\": \"CVVUF\",\n      \"source\": \"Yahoo\",\n      \"summary\": \"Multiple Priority Targets Associated with Regional Scale Fault Structures Preparation Underway for First Drill ProgramDrilling Continues at West McArthur JV and Key Extension ProjectsVancouver, British Columbia--(Newsfile Corp. - March 27, 2023) - CanAlaska Uranium Ltd. (TSXV: CVV) (OTCQX: CVVUF) (FSE: DH7N) (\\\"CanAlaska\\\" or the \\\"Company\\\") is pleased to announce completion of a high-resolution airborne Versatile Time Domain Electromagnetic (\\\"VTEM Plus\\\") survey on it's 60%-owned Geikie project in\",\n      \"url\": \"https://finance.yahoo.com/news/canalaska-uranium-announces-airborne-electromagnetic-123000318.html\"\n    }\n  ],\n  \"type\": \"news\"\n}"
+        },
+        {
+          "navHeader": "Press Releases",
+          "title": "Websocket - Realtime Press Releases Streaming",
+          "urlId": "websocket-press-releases",
+          "summary": "Press Releases",
+          "premium": "Premium Access Required",
+          "description": "Stream real-time press releases data for global companies. This feature is only available for Enterprise users.",
+          "method": [
+            "Websocket"
+          ],
+          "examples": [
+            {
+              "url": "wss://ws.finnhub.io?token=<token>",
+              "text": "wss://ws.finnhub.io"
+            }
+          ],
+          "arguments": null,
+          "responseAttributes": [
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Message type: <code>news</code>."
+            },
+            {
+              "name": "data",
+              "type": "list",
+              "description": "List of news.",
+              "item": {
+                "type": "object",
+                "definition": "News",
+                "attributes": [
+                  {
+                    "name": "datetime",
+                    "type": "timestamp",
+                    "description": "Published time in UNIX timestamp."
+                  },
+                  {
+                    "name": "headline",
+                    "type": "string",
+                    "description": "News headline."
+                  },
+                  {
+                    "name": "symbol",
+                    "type": "string",
+                    "description": "Related stocks and companies mentioned in the article."
+                  },
+                  {
+                    "name": "fullText",
+                    "type": "string",
+                    "description": "URL to download the full-text data."
+                  },
+                  {
+                    "name": "url",
+                    "type": "string",
+                    "description": "URL to read the article."
+                  }
+                ]
+              }
+            }
+          ],
+          "sampleCode": {
+            "autoGenerated": false,
+            "javascript": "const socket = new WebSocket('wss://ws.finnhub.io?token=<token>');\n\n// Connection opened -> Subscribe\nsocket.addEventListener('open', function (event) {\n    socket.send(JSON.stringify({'type':'subscribe-pr', 'symbol': 'AAPL'}))\n    socket.send(JSON.stringify({'type':'subscribe-pr', 'symbol': 'MSFT'}))\n    socket.send(JSON.stringify({'type':'subscribe-pr', 'symbol': 'AMZN'}))\n});\n\n// Listen for messages\nsocket.addEventListener('message', function (event) {\n    console.log('Message from server ', event.data);\n});\n\n// Unsubscribe\n var unsubscribe = function(symbol) {\n    socket.send(JSON.stringify({'type':'unsubscribe-pr','symbol': symbol}))\n}\n",
+            "go": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"github.com/gorilla/websocket\"\n)\n\nfunc main() {\n\tw, _, err := websocket.DefaultDialer.Dial(\"wss://ws.finnhub.io?token=<token>\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer w.Close()\n\n\tsymbols := []string{\"AAPL\", \"AMZN\", \"MSFT\", \"BYND\"}\n\tfor _, s := range symbols {\n\t\tmsg, _ := json.Marshal(map[string]interface{}{\"type\": \"subscribe-pr\", \"symbol\": s})\n\t\tw.WriteMessage(websocket.TextMessage, msg)\n\t}\n\n\tvar msg interface{}\n\tfor {\n\t\terr := w.ReadJSON(&msg);\n\t\tif err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t\tfmt.Println(\"Message from server \", msg)\n\t}\n}\n",
+            "python": "#https://pypi.org/project/websocket_client/\nimport websocket\n\ndef on_message(ws, message):\n    print(message)\n\ndef on_error(ws, error):\n    print(error)\n\ndef on_close(ws):\n    print(\"### closed ###\")\n\ndef on_open(ws):\n    ws.send('{\"type\":\"subscribe-pr\",\"symbol\":\"AAPL\"}')\n    ws.send('{\"type\":\"subscribe-pr\",\"symbol\":\"AMZN\"}')\n    ws.send('{\"type\":\"subscribe-pr\",\"symbol\":\"MSFT\"}')\n    ws.send('{\"type\":\"subscribe-pr\",\"symbol\":\"BYND\"}')\n\nif __name__ == \"__main__\":\n    websocket.enableTrace(True)\n    ws = websocket.WebSocketApp(\"wss://ws.finnhub.io?token=<token>\",\n                              on_message = on_message,\n                              on_error = on_error,\n                              on_close = on_close)\n    ws.on_open = on_open\n    ws.run_forever()"
+          },
+          "sampleResponse": "{\n  \"data\": [\n    {\n      \"datetime\": 1637696940,\n      \"fullText\": \"https://static2.finnhub.io/file/publicdatany/pr/0eb7fb4118ec53204755719b4cc4d57e9370d3caa2fa15d5e7a8f3b4d99cc881.html\",\n      \"headline\": \"STOCKHOLDER ALERT: Monteverde &amp; Associates PC Continues to Investigate the Following Merger\",\n      \"symbol\": \"PAE,ZIXI,KRA\",\n      \"url\": \"https://finnhub.io/api/press-releases?id=0eb7fb4118ec53204755719b4cc4d57e9370d3caa2fa15d5e7a8f3b4d99cc881\"\n    }\n  ],\n  \"type\": \"pr\"\n}"
+        }
+      ]
+    }
+  ]
+}

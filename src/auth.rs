@@ -32,7 +32,7 @@ impl Auth {
             method: AuthMethod::default(),
         }
     }
-    
+
     /// Create authentication with specific method.
     pub fn with_method(api_key: impl Into<String>, method: AuthMethod) -> Self {
         Self {
@@ -40,25 +40,24 @@ impl Auth {
             method,
         }
     }
-    
+
     /// Get the API key.
     pub fn api_key(&self) -> &str {
         &self.api_key
     }
-    
+
     /// Get the authentication method.
     pub fn method(&self) -> &AuthMethod {
         &self.method
     }
-    
+
     /// Apply authentication to a URL.
     pub fn apply_to_url(&self, url: &mut url::Url) {
         if matches!(self.method, AuthMethod::UrlParameter) {
-            url.query_pairs_mut()
-                .append_pair("token", &self.api_key);
+            url.query_pairs_mut().append_pair("token", &self.api_key);
         }
     }
-    
+
     /// Create headers for authentication.
     pub fn headers(&self) -> HeaderMap {
         let mut headers = HeaderMap::new();

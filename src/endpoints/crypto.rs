@@ -12,12 +12,12 @@ impl<'a> CryptoEndpoints<'a> {
     pub fn new(client: &'a FinnhubClient) -> Self {
         Self { client }
     }
-    
+
     /// Get supported crypto exchanges.
     pub async fn exchanges(&self) -> Result<Vec<CryptoExchange>> {
         self.client.get("/crypto/exchange").await
     }
-    
+
     /// Get supported crypto symbols.
     pub async fn symbols(&self, exchange: &str) -> Result<Vec<CryptoSymbol>> {
         self.client

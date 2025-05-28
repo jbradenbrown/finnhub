@@ -1,0 +1,81 @@
+{
+  "total_endpoints": 107,
+  "total_definitions": 185,
+  "categories": {
+    "stock": {
+      "endpoints": 54,
+      "definitions": 92,
+      "file": "swagger_split/stock.json"
+    },
+    "forex": {
+      "endpoints": 4,
+      "definitions": 4,
+      "file": "swagger_split/forex.json"
+    },
+    "crypto": {
+      "endpoints": 4,
+      "definitions": 3,
+      "file": "swagger_split/crypto.json"
+    },
+    "bond": {
+      "endpoints": 4,
+      "definitions": 5,
+      "file": "swagger_split/bond.json"
+    },
+    "etf": {
+      "endpoints": 4,
+      "definitions": 8,
+      "file": "swagger_split/etf.json"
+    },
+    "mutual-fund": {
+      "endpoints": 6,
+      "definitions": 12,
+      "file": "swagger_split/mutual-fund.json"
+    },
+    "institutional": {
+      "endpoints": 3,
+      "definitions": 8,
+      "file": "swagger_split/institutional.json"
+    },
+    "calendar": {
+      "endpoints": 3,
+      "definitions": 6,
+      "file": "swagger_split/calendar.json"
+    },
+    "news": {
+      "endpoints": 3,
+      "definitions": 5,
+      "file": "swagger_split/news.json"
+    },
+    "economic": {
+      "endpoints": 2,
+      "definitions": 3,
+      "file": "swagger_split/economic.json"
+    },
+    "index": {
+      "endpoints": 2,
+      "definitions": 4,
+      "file": "swagger_split/index.json"
+    },
+    "scanner": {
+      "endpoints": 3,
+      "definitions": 7,
+      "file": "swagger_split/scanner.json"
+    },
+    "filings": {
+      "endpoints": 4,
+      "definitions": 8,
+      "file": "swagger_split/filings.json"
+    },
+    "corporate-actions": {
+      "endpoints": 2,
+      "definitions": 4,
+      "file": "swagger_split/corporate-actions.json"
+    },
+    "misc": {
+      "endpoints": 9,
+      "definitions": 16,
+      "file": "swagger_split/misc.json"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 //! Stock-related data models.
 
-use serde::{Deserialize, Serialize};
 use super::common::Currency;
+use serde::{Deserialize, Serialize};
 
 /// Stock quote data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -83,4 +83,74 @@ pub struct Symbol {
     pub isin: Option<String>,
     /// MIC code.
     pub mic: Option<String>,
+}
+
+/// Stock candles (OHLCV) data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StockCandles {
+    /// List of open prices.
+    #[serde(rename = "o")]
+    pub open: Vec<f64>,
+    /// List of high prices.
+    #[serde(rename = "h")]
+    pub high: Vec<f64>,
+    /// List of low prices.
+    #[serde(rename = "l")]
+    pub low: Vec<f64>,
+    /// List of close prices.
+    #[serde(rename = "c")]
+    pub close: Vec<f64>,
+    /// List of volume data.
+    #[serde(rename = "v")]
+    pub volume: Vec<f64>,
+    /// List of timestamps.
+    #[serde(rename = "t")]
+    pub timestamp: Vec<i64>,
+    /// Status of the response.
+    #[serde(rename = "s")]
+    pub status: String,
+}
+
+/// Candle resolution.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum CandleResolution {
+    /// 1 minute
+    #[serde(rename = "1")]
+    OneMinute,
+    /// 5 minutes
+    #[serde(rename = "5")]
+    FiveMinutes,
+    /// 15 minutes
+    #[serde(rename = "15")]
+    FifteenMinutes,
+    /// 30 minutes
+    #[serde(rename = "30")]
+    ThirtyMinutes,
+    /// 60 minutes
+    #[serde(rename = "60")]
+    SixtyMinutes,
+    /// Daily
+    #[serde(rename = "D")]
+    Daily,
+    /// Weekly
+    #[serde(rename = "W")]
+    Weekly,
+    /// Monthly
+    #[serde(rename = "M")]
+    Monthly,
+}
+
+impl std::fmt::Display for CandleResolution {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CandleResolution::OneMinute => write!(f, "1"),
+            CandleResolution::FiveMinutes => write!(f, "5"),
+            CandleResolution::FifteenMinutes => write!(f, "15"),
+            CandleResolution::ThirtyMinutes => write!(f, "30"),
+            CandleResolution::SixtyMinutes => write!(f, "60"),
+            CandleResolution::Daily => write!(f, "D"),
+            CandleResolution::Weekly => write!(f, "W"),
+            CandleResolution::Monthly => write!(f, "M"),
+        }
+    }
 }

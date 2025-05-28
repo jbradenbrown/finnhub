@@ -12,7 +12,7 @@ impl<'a> ForexEndpoints<'a> {
     pub fn new(client: &'a FinnhubClient) -> Self {
         Self { client }
     }
-    
+
     /// Get supported forex symbols.
     pub async fn symbols(&self, exchange: &str) -> Result<Vec<ForexSymbol>> {
         self.client

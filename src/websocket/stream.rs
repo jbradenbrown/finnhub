@@ -67,22 +67,22 @@ impl WebSocketClient {
             api_key: api_key.into(),
         }
     }
-    
+
     /// Connect to the WebSocket API.
     pub async fn connect(&self) -> Result<WebSocketStream> {
         let url = Url::parse(&format!("{}?token={}", WEBSOCKET_URL, self.api_key))?;
-        
+
         let (ws_stream, _) = connect_async(url).await?;
-        
-        Ok(WebSocketStream {
-            inner: ws_stream,
-        })
+
+        Ok(WebSocketStream { inner: ws_stream })
     }
 }
 
 /// Active WebSocket stream.
 pub struct WebSocketStream {
-    inner: tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>,
+    inner: tokio_tungstenite::WebSocketStream<
+        tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+    >,
 }
 
 impl WebSocketStream {
@@ -92,26 +92,26 @@ impl WebSocketStream {
             request_type: "subscribe".to_string(),
             symbol: symbol.to_string(),
         };
-        
+
         let message = Message::Text(serde_json::to_string(&request)?);
         self.inner.send(message).await?;
-        
+
         Ok(())
     }
-    
+
     /// Unsubscribe from a symbol.
     pub async fn unsubscribe(&mut self, symbol: &str) -> Result<()> {
         let request = SubscribeRequest {
             request_type: "unsubscribe".to_string(),
             symbol: symbol.to_string(),
         };
-        
+
         let message = Message::Text(serde_json::to_string(&request)?);
         self.inner.send(message).await?;
-        
+
         Ok(())
     }
-    
+
     /// Receive the next message from the stream.
     pub async fn next(&mut self) -> Result<Option<WebSocketMessage>> {
         match self.inner.next().await {

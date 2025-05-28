@@ -1,0 +1,595 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Finnhub API - Filings",
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "Finnhub API endpoints for filings"
+  },
+  "host": "finnhub.io",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "token",
+      "in": "query"
+    }
+  },
+  "paths": {
+    "/global-filings/download": {
+      "get": {
+        "summary": "Download Filings",
+        "description": "<p>Download filings using document ids.</p>",
+        "operationId": "global-filings-download",
+        "navHeader": "Download Filings",
+        "urlId": "global-filings-download",
+        "title": "Download Global Filings",
+        "examples": [
+          {
+            "url": "/global-filings/download?documentId=76a87562f08df43a653d00bed73f467be4a6b045ffe72abd20ddc66f2c471f9c&token=<token>",
+            "text": "/global-filings/download?documentId=76a87562f08df43a653d00bed73f467be4a6b045ffe72abd20ddc66f2c471f9c"
+          },
+          {
+            "url": "/global-filings/download?documentId=3c020f32c165752dfcbc80bff8bb9aac6ac8bac31c400882bfee4b8ddc135165&token=<token>",
+            "text": "/global-filings/download?documentId=3c020f32c165752dfcbc80bff8bb9aac6ac8bac31c400882bfee4b8ddc135165"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Global Filings Search",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "documentId",
+            "description": "Document's id. Note that this is different from filingId as 1 filing can contain multiple documents.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": null,
+        "sampleCode": {
+          "curl": "curl --request GET 'https://finnhub.io/api/v1/global-filings/download?documentId=AAPL_1113753&token=<token>'",
+          "python": "import requests\n\nurl = \"https://finnhub.io/api/v1/global-filings/download?documentId=AAPL_1113753&token=<token>\"\n\nresponse = requests.request(\"GET\", url)\n\nprint(response.json())",
+          "javascript": "var requestOptions = {\n  method: 'GET'\n};\n\nfetch(\"https://finnhub.io/api/v1/global-filings/download?documentId=AAPL_1113753&token=<token>\", requestOptions)\n  .then(response => response.json())\n"
+        },
+        "sampleResponse": null,
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/global-filings/filter": {
+      "get": {
+        "summary": "Search Filter",
+        "description": "<p>Get available values for each filter in search body.</p>",
+        "operationId": "global-filings-search-filter",
+        "navHeader": "Search Filter",
+        "urlId": "global-filings-search-filter",
+        "title": "Search Filter",
+        "examples": [
+          {
+            "url": "/global-filings/filter?field=forms&source=SEC&token=<token>",
+            "text": "/global-filings/filter?field=forms&source=SEC"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Global Filings Search",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "field",
+            "description": "Field to get available filters. Available filters are \"countries\", \"exchanges\", \"exhibits\", \"forms\", \"gics\", \"naics\", \"caps\", \"acts\", and \"sort\".",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "description": "Get available forms for each source.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/SearchFilter"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "curl --request GET 'https://finnhub.io/api/v1/global-filings/filter?field=sources&token=<token>'",
+          "python": "import requests\n\nurl = \"https://finnhub.io/api/v1/global-filings/filter?field=sources&token=<token>\"\n\nresponse = requests.request(\"GET\", url)\n\nprint(response.json())",
+          "javascript": "var requestOptions = {\n  method: 'GET'\n};\n\nfetch(\"https://finnhub.io/api/v1/global-filings/filter?field=sources&token=<token>\", requestOptions)\n  .then(response => response.json())\n"
+        },
+        "sampleResponse": "[\n    {\n        \"id\": \"SEC\",\n        \"name\": \"US SEC Edgar Filings\"\n    },\n    {\n        \"id\": \"TR\",\n        \"name\": \"Event Transcripts\"\n    },\n    {\n        \"id\": \"SEDAR\",\n        \"name\": \"Canada SEDAR Filings\"\n    },\n    {\n        \"id\": \"CH\",\n        \"name\": \"UK Companies House Filings\"\n    },\n    {\n        \"id\": \"PR\",\n        \"name\": \"Press Releases\"\n    },\n    {\n        \"id\": \"RR\",\n        \"name\": \"Research Reports\"\n    },\n    {\n        \"id\": \"GF\",\n        \"name\": \"Global Filings\"\n    }\n]",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/global-filings/search": {
+      "post": {
+        "summary": "Global Filings Search",
+        "description": "<p>Search for best-matched filings across global companies' filings, transcripts and press releases. You can filter by anything from symbol, ISIN to form type, and document sources.</p><p>This endpoint will return a list of documents that match your search criteria. If you would like to get the excerpts as well, please set <code>highlighted</code> to <code>true</code>. Once you have the list of documents, you can get a list of excerpts and positions to highlight the document using the <code>/search-in-filing</code> endpoint</p>",
+        "operationId": "global-filings-search",
+        "navHeader": "Filings Search",
+        "urlId": "global-filings-search",
+        "title": "Global Filings Search API | Earnings call transcripts",
+        "examples": [
+          {
+            "url": "/global-filings/search?token=<token>",
+            "text": "/global-filings/search"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Global Filings Search",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "search",
+            "description": "Search body",
+            "schema": {
+              "$ref": "#/definitions/SearchBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/SearchResponse"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "curl --request POST 'https://finnhub.io/api/v1/global-filings/search?token=<token>' \\\n--data-raw '{\n    \"query\": \"artificial intelligence\",\n    \"symbols\": \"AAPL,GOOGL,TSLA\",\n    \"fromDate\": \"2010-01-01\",\n    \"toDate\": \"2022-09-30\"\n}'",
+          "python": "import requests\nimport json\n\nurl = \"https://finnhub.io/api/v1/global-filings/search?token=<token>\"\n\npayload = json.dumps({\n  \"query\": \"artificial intelligence\",\n  \"symbols\": \"AAPL,GOOGL,TSLA\",\n  \"fromDate\": \"2010-01-01\",\n  \"toDate\": \"2022-09-30\"\n})\n\n\nresponse = requests.request(\"POST\", url, data=payload)\n\nprint(response.json())",
+          "javascript": "var raw = JSON.stringify({\n  \"query\": \"artificial intelligence\",\n  \"symbols\": \"AAPL,GOOGL,TSLA\",\n  \"fromDate\": \"2010-01-01\",\n  \"toDate\": \"2022-09-30\"\n});\n\nvar requestOptions = {\n  method: 'POST',\n  body: raw,\n};\n\nfetch(\"https://finnhub.io/api/v1/global-filings/search?token=<token>\", requestOptions)\n  .then(response => response.json())"
+        },
+        "sampleResponse": "{\n    \"count\": 8,\n    \"filings\": [\n        {\n            \"acceptanceDate\": \"2022-10-27 00:00:00\",\n            \"amend\": false,\n            \"documentCount\": 1,\n            \"filedDate\": \"2022-10-27\",\n            \"filerId\": \"3285503214\",\n            \"filingId\": \"AAPL_1113753\",\n            \"form\": \"TR/E\",\n            \"name\": \"Apple Inc\",\n            \"pageCount\": 4,\n            \"reportPeriod\": \"\",\n            \"source\": \"TR\",\n            \"symbols\": [\n                \"AAPL\"\n            ],\n            \"title\": \"AAPL - Earnings call Q4 2022\",\n            \"url\": \"https://alpharesearch.io/platform/share?filingId=AAPL_1113753\"\n        }\n        ...\n    ],\n    \"page\": 1,\n    \"took\": 1986\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/global-filings/search-in-filing": {
+      "post": {
+        "summary": "Search In Filing",
+        "description": "<p>Get a list of excerpts and highlight positions within a document using your query.</p>",
+        "operationId": "search-in-filing",
+        "navHeader": "Search In Filing",
+        "urlId": "search-in-filing",
+        "title": "Search In Filing",
+        "examples": [
+          {
+            "url": "/global-filings/search-in-filing?token=<token>",
+            "text": "/global-filings/search-in-filing"
+          }
+        ],
+        "widget": null,
+        "freeTier": null,
+        "premium": "Premium Access Required",
+        "newEndpoint": null,
+        "highUsage": null,
+        "tags": [
+          "Default"
+        ],
+        "section": "Global Filings Search",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "search",
+            "description": "Search body",
+            "schema": {
+              "$ref": "#/definitions/InFilingSearchBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/InFilingResponse"
+            }
+          }
+        },
+        "sampleCode": {
+          "curl": "curl --request POST 'https://finnhub.io/api/v1/global-filings/search-in-filing?token=<token>' \\\n--data-raw '{\n    \"query\": \"covid\",\n    \"filingId\": \"AAPL_1113753\"\n}'",
+          "python": "import requests\nimport json\n\nurl = \"https://finnhub.io/api/v1/global-filings/search-in-filing?token=<token>\"\n\npayload = json.dumps({\n  \"query\": \"covid\",\n  \"filingId\": \"AAPL_1113753\"\n})\n\nresponse = requests.request(\"POST\", url,  data=payload)\n\nprint(response.json())",
+          "javascript": "var raw = JSON.stringify({\n  \"query\": \"covid\",\n  \"filingId\": \"AAPL_1113753\"\n});\n\nvar requestOptions = {\n  method: 'POST',\n  body: raw,\n  redirect: 'follow'\n};\n\nfetch(\"https://finnhub.io/api/v1/global-filings/search-in-filing?token=<token>\", requestOptions)\n  .then(response => response.json())"
+        },
+        "sampleResponse": "{\n  \"acceptanceDate\": \"2022-10-27 00:00:00\",\n  \"amend\": false,\n  \"documentCount\": 1,\n  \"documents\": [\n      {\n          \"documentId\": \"AAPL_1113753\",\n          \"excerpts\": [\n              {\n                  \"content\": \"If you compare it to pre-<span class='search-highlight'>pandemic</span> kind of levels, that has not returned to pre <span class='search-highlight'>pandemic</span> levels by any means.\\n\",\n                  \"endOffset\": 494,\n                  \"snippetId\": \"tran-46\",\n                  \"startOffset\": 385\n              }\n              ...\n          ],\n          \"format\": \"html\",\n          \"hits\": 5,\n          \"title\": \"Transcript\",\n          \"url\": \"https://alpharesearch.io/filing/transcript?documentId=AAPL_1113753\"\n      }\n  ],\n  \"filedDate\": \"2022-10-27\",\n  \"filerId\": \"4295905573\",\n  \"filingId\": \"AAPL_1113753\",\n  \"form\": \"TR/E\",\n  \"name\": \"Apple Inc\",\n  \"pageCount\": 4,\n  \"reportPeriod\": \"\",\n  \"source\": \"TR\",\n  \"symbols\": [\n      \"AAPL\"\n  ],\n  \"title\": \"AAPL - Earnings call Q4 2022\",\n  \"url\": \"https://alpharesearch.io/platform/share?filingId=AAPL_1113753\"\n}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "DocumentResponse": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "description": "AlphaResearch internal document id.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title for this document.",
+          "type": "string"
+        },
+        "hits": {
+          "description": "Number of hit in this document",
+          "type": "string"
+        },
+        "url": {
+          "description": "Link to render this document",
+          "type": "string"
+        },
+        "format": {
+          "description": "Format of this document (can be html or pdf)",
+          "type": "string"
+        },
+        "excerpts": {
+          "description": "Highlighted excerpts for this document",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExcerptResponse"
+          }
+        }
+      }
+    },
+    "ExcerptResponse": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "description": "Highlighted content",
+          "type": "string"
+        },
+        "snippetId": {
+          "description": "Location of the content in the rendered document",
+          "type": "string"
+        },
+        "startOffset": {
+          "description": "Start offset of highlighted content",
+          "type": "string"
+        },
+        "endOffset": {
+          "description": "End offset of highlighted content",
+          "type": "string"
+        }
+      }
+    },
+    "FilingResponse": {
+      "type": "object",
+      "properties": {
+        "filingId": {
+          "description": "Filing Id in Alpharesearch platform",
+          "type": "string"
+        },
+        "title": {
+          "description": "Filing title",
+          "type": "string"
+        },
+        "filerId": {
+          "description": "Id of the entity submitted the filing",
+          "type": "string"
+        },
+        "symbol": {
+          "description": "List of symbol associate with this filing"
+        },
+        "name": {
+          "description": "Filer name",
+          "type": "string"
+        },
+        "acceptanceDate": {
+          "description": "Date the filing is submitted.",
+          "type": "string"
+        },
+        "filedDate": {
+          "description": "Date the filing is made available to the public",
+          "type": "string"
+        },
+        "reportDate": {
+          "description": "Date as which the filing is reported",
+          "type": "string"
+        },
+        "form": {
+          "description": "Filing Form",
+          "type": "string"
+        },
+        "amend": {
+          "description": "Amendment",
+          "type": "boolean"
+        },
+        "source": {
+          "description": "Filing Source",
+          "type": "string"
+        },
+        "pageCount": {
+          "description": "Estimate number of page when printing",
+          "type": "integer"
+        },
+        "documentCount": {
+          "description": "Number of document in this filing",
+          "type": "integer"
+        }
+      }
+    },
+    "InFilingResponse": {
+      "type": "object",
+      "properties": {
+        "filingId": {
+          "description": "Filing Id in Alpharesearch platform",
+          "type": "string"
+        },
+        "title": {
+          "description": "Filing title",
+          "type": "string"
+        },
+        "filerId": {
+          "description": "Id of the entity submitted the filing",
+          "type": "string"
+        },
+        "symbol": {
+          "description": "List of symbol associate with this filing"
+        },
+        "name": {
+          "description": "Filer name",
+          "type": "string"
+        },
+        "acceptanceDate": {
+          "description": "Date the filing is submitted.",
+          "type": "string"
+        },
+        "filedDate": {
+          "description": "Date the filing is make available to the public",
+          "type": "string"
+        },
+        "reportDate": {
+          "description": "Date as which the filing is reported",
+          "type": "string"
+        },
+        "form": {
+          "description": "Filing Form",
+          "type": "string"
+        },
+        "amend": {
+          "description": "Amendment",
+          "type": "boolean"
+        },
+        "source": {
+          "description": "Filing Source",
+          "type": "string"
+        },
+        "pageCount": {
+          "description": "Estimate number of page when printing",
+          "type": "integer"
+        },
+        "documentCount": {
+          "description": "Number of document in this filing",
+          "type": "integer"
+        },
+        "documents": {
+          "description": "Document for this filing.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DocumentResponse"
+          }
+        }
+      }
+    },
+    "InFilingSearchBody": {
+      "type": "object",
+      "required": [
+        "query",
+        "filingId"
+      ],
+      "properties": {
+        "query": {
+          "description": "Search query",
+          "type": "string"
+        },
+        "filingId": {
+          "description": "Filing Id to search",
+          "type": "string"
+        }
+      }
+    },
+    "SearchBody": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "description": "Search query",
+          "type": "string"
+        },
+        "isins": {
+          "description": "List of isin to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "cusips": {
+          "description": "List of cusip to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "ciks": {
+          "description": "List of SEC Center Index Key to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "sedarIds": {
+          "description": "List of SEDAR issuer number to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "chIds": {
+          "description": "List of Companies House number to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "symbols": {
+          "description": "List of symbols to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "sedols": {
+          "description": "List of sedols to search, comma separated (Max: 50).",
+          "type": "string"
+        },
+        "sources": {
+          "description": "List of sources to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "forms": {
+          "description": "List of forms to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "gics": {
+          "description": "List of gics to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "naics": {
+          "description": "List of sources to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "exhibits": {
+          "description": "List of exhibits to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "exchanges": {
+          "description": "List of exchanges to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "countries": {
+          "description": "List of sources to search, comma separated (Max: 50). Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "acts": {
+          "description": "List of SEC's exchanges act to search, comma separated. Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "caps": {
+          "description": "List of market capitalization to search, comma separated. Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "fromDate": {
+          "description": "Search from date in format: YYYY-MM-DD, default from the last 2 years",
+          "type": "string"
+        },
+        "toDate": {
+          "description": "Search to date in format: YYYY-MM-DD, default to today",
+          "type": "string"
+        },
+        "page": {
+          "description": "Use for pagination, default to page 1",
+          "type": "string"
+        },
+        "sort": {
+          "description": "Sort result by, default: sortMostRecent. Look at <code>/filter</code> endpoint to see all available values.",
+          "type": "string"
+        },
+        "highlighted": {
+          "description": "Enable highlight in returned filings. If enabled, only return 10 results each time",
+          "type": "boolean"
+        }
+      }
+    },
+    "SearchFilter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Filter id, use with respective field in search query body.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name.",
+          "type": "string"
+        }
+      }
+    },
+    "SearchResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "description": "Total filing matched your search criteria.",
+          "type": "integer"
+        },
+        "took": {
+          "description": "Time took to execute your search query on our server, value in ms.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Current search page",
+          "type": "integer"
+        },
+        "filings": {
+          "description": "Filing match your search criteria.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FilingResponse"
+          }
+        }
+      }
+    }
+  }
+}
