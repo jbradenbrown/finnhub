@@ -224,7 +224,7 @@ criterion = "0.5"
 - [x] Rate Limiting (token bucket, 30 req/s)
 - [x] Error Handling (comprehensive error types)
 - [x] Basic Module Structure
-- [ ] Stock Endpoints (26/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment, upgrade_downgrade, social_sentiment, supply_chain
+- [ ] Stock Endpoints (25/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment, upgrade_downgrade, social_sentiment, supply_chain, ipo_calendar, sec_filings
 - [x] Forex Endpoints (4/4) - symbols, candles, rates, exchanges
 - [x] Crypto Endpoints (4/4) - exchanges, symbols, candles, profile
 - [ ] Bond Endpoints (0/4)
@@ -262,8 +262,27 @@ criterion = "0.5"
 4. Add integration tests with mock server
 5. Implement remaining endpoint categories
 
-### 2025-05-28: API Specifications Split & Stock Candles
+### 2025-05-28: Authentication Fix & Endpoint Implementation
+- Fixed authentication issue: Changed default from header to URL parameter auth (Finnhub requirement)
+- Fixed URL parsing bug: Query parameters were being double-encoded, causing 403 errors
+- Added unit tests for stock quote endpoint with dotenv support
+- Implemented remaining forex endpoints (candles, rates, exchanges)
+- Implemented remaining crypto endpoints (candles, profile)
+- Implemented all news endpoints (market_news, company_news, news_sentiment)
+- Created comprehensive models for news data structures
+- Updated basic example to demonstrate new endpoints
+- Fixed clippy warnings
+- Current progress: 25 stock + 4 forex + 4 crypto + 3 news = 36/107 endpoints
+
+### 2025-05-28: API Specifications Split & Stock Candles (Earlier Session)
 - Split swagger.json into 15 category-specific JSON files in api-specs/ directory
 - Implemented stock candles (OHLCV) endpoint with CandleResolution enum
 - Updated basic example to demonstrate candle data retrieval
 - Organized 107 endpoints across categories: Stock (54), Forex (4), Crypto (4), etc.
+
+### 2025-05-28: IPO Calendar & SEC Filings Implementation
+- Implemented IPO calendar endpoint with date range filtering
+- Implemented SEC filings endpoint with multiple filter options (symbol, CIK, form type, etc.)
+- Added IPOEvent, IPOCalendar, and Filing models
+- Updated basic example to demonstrate new endpoints
+- Progress: 36/107 endpoints completed

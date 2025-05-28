@@ -142,7 +142,7 @@ async fn main() -> Result<()> {
     {
         Ok(historical_data) => {
             println!("Historical Market Cap ({})", historical_data.currency);
-            for (i, data_point) in historical_data.data.iter().rev().take(5).enumerate() {
+            for data_point in historical_data.data.iter().rev().take(5) {
                 println!(
                     "  {}: ${:.2}B",
                     data_point.at_date,
@@ -217,6 +217,51 @@ async fn main() -> Result<()> {
             }
         }
         Err(e) => println!("Forex rates not available: {}", e),
+    }
+
+    // Get IPO calendar
+    println!("\nFetching IPO calendar...");
+    let ipo_to = Utc::now().format("%Y-%m-%d").to_string();
+    let ipo_from = (Utc::now() - Duration::days(30))
+        .format("%Y-%m-%d")
+        .to_string();
+    
+    match client.stock().ipo_calendar(&ipo_from, &ipo_to).await {
+        Ok(calendar) => {
+            println!("Recent and upcoming IPOs:");
+            for ipo in calendar.ipo_calendar.iter().take(5) {
+                if let (Some(symbol), Some(name), Some(date)) = (&ipo.symbol, &ipo.name, &ipo.date) {
+                    println!("  📈 {} ({}) - {}", symbol, name, date);
+                    if let Some(price) = &ipo.price {
+                        println!("     Price range: {}", price);
+                    }
+                    if let Some(status) = &ipo.status {
+                        println!("     Status: {}", status);
+                    }
+                }
+            }
+            if calendar.ipo_calendar.is_empty() {
+                println!("  No IPOs found in the specified date range");
+            }
+        }
+        Err(e) => println!("IPO calendar not available: {}", e),
+    }
+
+    // Get SEC filings
+    println!("\nFetching AAPL SEC filings...");
+    match client.stock().sec_filings(Some("AAPL"), None, None, None, None, None).await {
+        Ok(filings) => {
+            println!("Recent SEC filings:");
+            for filing in filings.iter().take(5) {
+                if let (Some(form), Some(filed_date)) = (&filing.form, &filing.filed_date) {
+                    println!("  📄 Form {}: {}", form, filed_date);
+                    if let Some(url) = &filing.filing_url {
+                        println!("     URL: {}", url);
+                    }
+                }
+            }
+        }
+        Err(e) => println!("SEC filings not available: {}", e),
     }
 
     Ok(())

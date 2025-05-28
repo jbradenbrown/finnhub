@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use url::Url;
 
-use crate::error::{Error, Result};
+use crate::error::Result;
 
 const WEBSOCKET_URL: &str = "wss://ws.finnhub.io";
 
@@ -72,7 +72,7 @@ impl WebSocketClient {
     pub async fn connect(&self) -> Result<WebSocketStream> {
         let url = Url::parse(&format!("{}?token={}", WEBSOCKET_URL, self.api_key))?;
 
-        let (ws_stream, _) = connect_async(url).await?;
+        let (ws_stream, _) = connect_async(url.as_str()).await?;
 
         Ok(WebSocketStream { inner: ws_stream })
     }

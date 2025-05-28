@@ -4,11 +4,12 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::stock::{
-        BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, FinancialStatements,
-        HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData, InsiderSentimentData,
-        InsiderTransactions, MarketStatus, OwnershipData, PriceTarget, Quote, RecommendationTrend,
-        RevenueBreakdown, SocialSentiment, StatementFrequency, StatementType, StockCandles,
-        StockSplit, SupplyChainData, Symbol, UpgradeDowngrade,
+        BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, Filing,
+        FinancialStatements, HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData,
+        IPOCalendar, InsiderSentimentData, InsiderTransactions, MarketStatus, OwnershipData,
+        PriceTarget, Quote, RecommendationTrend, RevenueBreakdown, SocialSentiment,
+        StatementFrequency, StatementType, StockCandles, StockSplit, SupplyChainData, Symbol,
+        UpgradeDowngrade,
     },
 };
 
@@ -311,5 +312,68 @@ impl<'a> StockEndpoints<'a> {
         self.client
             .get(&format!("/stock/supply-chain?symbol={}", symbol))
             .await
+    }
+
+    /// Get IPO calendar.
+    ///
+    /// Get recent and upcoming IPOs for a date range.
+    ///
+    /// # Arguments
+    /// * `from` - From date in YYYY-MM-DD format
+    /// * `to` - To date in YYYY-MM-DD format
+    pub async fn ipo_calendar(&self, from: &str, to: &str) -> Result<IPOCalendar> {
+        self.client
+            .get(&format!("/calendar/ipo?from={}&to={}", from, to))
+            .await
+    }
+
+    /// Get SEC filings.
+    ///
+    /// List company's SEC filings. You can filter by symbol, CIK, access number, form type, and date range.
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol (optional)
+    /// * `cik` - CIK number (optional)
+    /// * `access_number` - Access number of a specific report (optional)
+    /// * `form` - Filter by form type (optional)
+    /// * `from` - From date in YYYY-MM-DD format (optional)
+    /// * `to` - To date in YYYY-MM-DD format (optional)
+    pub async fn sec_filings(
+        &self,
+        symbol: Option<&str>,
+        cik: Option<&str>,
+        access_number: Option<&str>,
+        form: Option<&str>,
+        from: Option<&str>,
+        to: Option<&str>,
+    ) -> Result<Vec<Filing>> {
+        let mut params = vec![];
+        
+        if let Some(s) = symbol {
+            params.push(format!("symbol={}", s));
+        }
+        if let Some(c) = cik {
+            params.push(format!("cik={}", c));
+        }
+        if let Some(a) = access_number {
+            params.push(format!("accessNumber={}", a));
+        }
+        if let Some(f) = form {
+            params.push(format!("form={}", f));
+        }
+        if let Some(from_date) = from {
+            params.push(format!("from={}", from_date));
+        }
+        if let Some(to_date) = to {
+            params.push(format!("to={}", to_date));
+        }
+        
+        let query = if params.is_empty() {
+            String::from("/stock/filings")
+        } else {
+            format!("/stock/filings?{}", params.join("&"))
+        };
+        
+        self.client.get(&query).await
     }
 }
