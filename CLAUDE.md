@@ -224,7 +224,7 @@ criterion = "0.5"
 - [x] Rate Limiting (token bucket, 30 req/s)
 - [x] Error Handling (comprehensive error types)
 - [x] Basic Module Structure
-- [ ] Stock Endpoints (2/53) - quote, company_profile
+- [ ] Stock Endpoints (3/53) - quote, company_profile, candles
 - [ ] Forex Endpoints (1/4) - symbols
 - [ ] Crypto Endpoints (2/4) - exchanges, symbols
 - [ ] Bond Endpoints (0/4)
@@ -261,3 +261,9 @@ criterion = "0.5"
 3. Implement retry logic with exponential backoff
 4. Add integration tests with mock server
 5. Implement remaining endpoint categories
+
+### 2025-05-28: API Specifications Split & Stock Candles
+- Split swagger.json into 15 category-specific JSON files in api-specs/ directory
+- Implemented stock candles (OHLCV) endpoint with CandleResolution enum
+- Updated basic example to demonstrate candle data retrieval
+- Organized 107 endpoints across categories: Stock (54), Forex (4), Crypto (4), etc.
