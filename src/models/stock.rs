@@ -420,3 +420,77 @@ pub struct HistoricalESG {
     /// Array of ESG data.
     pub data: Vec<ESGData>,
 }
+
+/// Market status data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MarketStatus {
+    /// Exchange code.
+    pub exchange: String,
+    /// Timezone.
+    pub timezone: String,
+    /// Market session (pre-market, regular, post-market, or null).
+    pub session: Option<String>,
+    /// Holiday event.
+    pub holiday: Option<String>,
+    /// Whether the market is open.
+    pub is_open: bool,
+    /// Current timestamp.
+    pub t: i64,
+}
+
+/// Ownership data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Ownership {
+    /// Owner name.
+    pub name: String,
+    /// Number of shares owned.
+    pub share: i64,
+    /// Share change.
+    pub change: Option<i64>,
+    /// Filing date.
+    #[serde(rename = "filingDate")]
+    pub filing_date: Option<String>,
+}
+
+/// Ownership response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OwnershipData {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of ownership data.
+    pub ownership: Vec<Ownership>,
+}
+
+/// Revenue breakdown data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RevenueBreakdown {
+    /// Company symbol.
+    pub symbol: String,
+    /// Revenue breakdown by category.
+    pub data: Vec<serde_json::Value>,
+}
+
+/// Insider sentiment data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InsiderSentiment {
+    /// Company symbol.
+    pub symbol: String,
+    /// Year.
+    pub year: i32,
+    /// Month.
+    pub month: i32,
+    /// Change.
+    pub change: i64,
+    /// MSPR (Monthly Share Purchase Ratio).
+    pub mspr: f64,
+}
+
+/// Insider sentiment response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InsiderSentimentData {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of insider sentiment data.
+    pub data: Vec<InsiderSentiment>,
+}

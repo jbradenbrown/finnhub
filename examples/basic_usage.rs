@@ -141,6 +141,33 @@ async fn main() -> Result<()> {
         Err(e) => println!("Historical market cap not available: {}", e),
     }
 
+    // Get company peers
+    println!("\nFetching AAPL peers...");
+    match client.stock().peers("AAPL", None).await {
+        Ok(peers) => {
+            println!("Company Peers:");
+            for peer in peers.iter().take(5) {
+                println!("  - {}", peer);
+            }
+        }
+        Err(e) => println!("Peers not available: {}", e),
+    }
+
+    // Get market status
+    println!("\nChecking US market status...");
+    match client.stock().market_status("US").await {
+        Ok(status) => {
+            println!("Market Status:");
+            println!("  Exchange: {}", status.exchange);
+            println!("  Is Open: {}", status.is_open);
+            if let Some(session) = status.session {
+                println!("  Session: {}", session);
+            }
+            println!("  Timezone: {}", status.timezone);
+        }
+        Err(e) => println!("Market status not available: {}", e),
+    }
+
     // Get crypto exchanges
     println!("\nFetching crypto exchanges...");
     let exchanges = client.crypto().exchanges().await?;

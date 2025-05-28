@@ -5,9 +5,9 @@ use crate::{
     error::Result,
     models::stock::{
         BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, FinancialStatements,
-        HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData, InsiderTransactions,
-        PriceTarget, Quote, RecommendationTrend, StatementFrequency, StatementType, StockCandles,
-        StockSplit, Symbol,
+        HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData, InsiderSentimentData,
+        InsiderTransactions, MarketStatus, OwnershipData, PriceTarget, Quote, RecommendationTrend,
+        RevenueBreakdown, StatementFrequency, StatementType, StockCandles, StockSplit, Symbol,
     },
 };
 
@@ -191,6 +191,65 @@ impl<'a> StockEndpoints<'a> {
         self.client
             .get(&format!(
                 "/stock/historical-esg?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get company peers.
+    ///
+    /// Returns a list of peers operating in the same country and sector/industry.
+    pub async fn peers(&self, symbol: &str, grouping: Option<&str>) -> Result<Vec<String>> {
+        let url = if let Some(grouping) = grouping {
+            format!("/stock/peers?symbol={}&grouping={}", symbol, grouping)
+        } else {
+            format!("/stock/peers?symbol={}", symbol)
+        };
+        self.client.get(&url).await
+    }
+
+    /// Get current market status.
+    ///
+    /// Returns whether the exchange is open or closed.
+    pub async fn market_status(&self, exchange: &str) -> Result<MarketStatus> {
+        self.client
+            .get(&format!("/stock/market-status?exchange={}", exchange))
+            .await
+    }
+
+    /// Get company ownership data.
+    ///
+    /// Returns a list of company shareholders/owners.
+    pub async fn ownership(&self, symbol: &str, limit: Option<i64>) -> Result<OwnershipData> {
+        let url = if let Some(limit) = limit {
+            format!("/stock/ownership?symbol={}&limit={}", symbol, limit)
+        } else {
+            format!("/stock/ownership?symbol={}", symbol)
+        };
+        self.client.get(&url).await
+    }
+
+    /// Get revenue breakdown data.
+    ///
+    /// Returns revenue breakdown by business segment, product, or geography.
+    pub async fn revenue_breakdown(&self, symbol: &str) -> Result<RevenueBreakdown> {
+        self.client
+            .get(&format!("/stock/revenue-breakdown?symbol={}", symbol))
+            .await
+    }
+
+    /// Get insider sentiment data.
+    ///
+    /// Returns aggregated insider trading sentiment by month.
+    pub async fn insider_sentiment(
+        &self,
+        symbol: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<InsiderSentimentData> {
+        self.client
+            .get(&format!(
+                "/stock/insider-sentiment?symbol={}&from={}&to={}",
                 symbol, from, to
             ))
             .await
