@@ -494,3 +494,88 @@ pub struct InsiderSentimentData {
     /// Array of insider sentiment data.
     pub data: Vec<InsiderSentiment>,
 }
+
+/// Upgrade/downgrade data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpgradeDowngrade {
+    /// Company symbol.
+    pub symbol: String,
+    /// Upgrade/downgrade time.
+    pub grade_time: i64,
+    /// From grade.
+    pub from_grade: Option<String>,
+    /// To grade.
+    pub to_grade: Option<String>,
+    /// Company/analyst who did the upgrade/downgrade.
+    pub company: String,
+    /// Action (up, down, main, init, reit).
+    pub action: String,
+}
+
+/// Social sentiment data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SocialSentiment {
+    /// Company symbol.
+    pub symbol: String,
+    /// Data.
+    pub data: Vec<SocialSentimentData>,
+}
+
+/// Social sentiment data point.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SocialSentimentData {
+    /// Date.
+    pub at_time: String,
+    /// Mention count.
+    pub mention: i64,
+    /// Positive mention count.
+    pub positive_mention: i64,
+    /// Negative mention count.
+    pub negative_mention: i64,
+    /// Positive score.
+    pub positive_score: f64,
+    /// Negative score.
+    pub negative_score: f64,
+    /// Overall score.
+    pub score: f64,
+}
+
+/// Supply chain relationship.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SupplyChainRelationship {
+    /// Symbol.
+    pub symbol: String,
+    /// Company name.
+    pub name: String,
+    /// Country.
+    pub country: Option<String>,
+    /// 1-tier supplier.
+    #[serde(rename = "oneMonthCorrelation")]
+    pub one_month_correlation: Option<f64>,
+    /// 1-year correlation.
+    #[serde(rename = "oneYearCorrelation")]
+    pub one_year_correlation: Option<f64>,
+    /// 6-month correlation.
+    #[serde(rename = "sixMonthCorrelation")]
+    pub six_month_correlation: Option<f64>,
+    /// 3-month correlation.
+    #[serde(rename = "threeMonthCorrelation")]
+    pub three_month_correlation: Option<f64>,
+    /// 2-week correlation.
+    #[serde(rename = "twoWeekCorrelation")]
+    pub two_week_correlation: Option<f64>,
+    /// 2-year correlation.
+    #[serde(rename = "twoYearCorrelation")]
+    pub two_year_correlation: Option<f64>,
+}
+
+/// Supply chain data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SupplyChainData {
+    /// Company symbol.
+    pub symbol: String,
+    /// List of suppliers.
+    pub data: Vec<SupplyChainRelationship>,
+}

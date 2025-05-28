@@ -7,7 +7,8 @@ use crate::{
         BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, FinancialStatements,
         HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData, InsiderSentimentData,
         InsiderTransactions, MarketStatus, OwnershipData, PriceTarget, Quote, RecommendationTrend,
-        RevenueBreakdown, StatementFrequency, StatementType, StockCandles, StockSplit, Symbol,
+        RevenueBreakdown, SocialSentiment, StatementFrequency, StatementType, StockCandles,
+        StockSplit, SupplyChainData, Symbol, UpgradeDowngrade,
     },
 };
 
@@ -252,6 +253,63 @@ impl<'a> StockEndpoints<'a> {
                 "/stock/insider-sentiment?symbol={}&from={}&to={}",
                 symbol, from, to
             ))
+            .await
+    }
+
+    /// Get stock upgrades and downgrades.
+    ///
+    /// Returns analyst upgrades and downgrades for a company.
+    pub async fn upgrade_downgrade(
+        &self,
+        symbol: Option<&str>,
+        from: Option<&str>,
+        to: Option<&str>,
+    ) -> Result<Vec<UpgradeDowngrade>> {
+        let mut params = Vec::new();
+        if let Some(symbol) = symbol {
+            params.push(format!("symbol={}", symbol));
+        }
+        if let Some(from) = from {
+            params.push(format!("from={}", from));
+        }
+        if let Some(to) = to {
+            params.push(format!("to={}", to));
+        }
+
+        let query = if params.is_empty() {
+            String::new()
+        } else {
+            format!("?{}", params.join("&"))
+        };
+
+        self.client
+            .get(&format!("/stock/upgrade-downgrade{}", query))
+            .await
+    }
+
+    /// Get social sentiment data.
+    ///
+    /// Returns social media sentiment data for a company.
+    pub async fn social_sentiment(
+        &self,
+        symbol: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<SocialSentiment> {
+        self.client
+            .get(&format!(
+                "/stock/social-sentiment?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get supply chain relationships.
+    ///
+    /// Returns companies in the supply chain (suppliers and customers).
+    pub async fn supply_chain(&self, symbol: &str) -> Result<SupplyChainData> {
+        self.client
+            .get(&format!("/stock/supply-chain?symbol={}", symbol))
             .await
     }
 }
