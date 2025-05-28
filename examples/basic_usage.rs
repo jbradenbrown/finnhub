@@ -2,7 +2,10 @@
 
 use chrono::{Duration, Utc};
 use finnhub::{
-    models::stock::{CandleResolution, StatementFrequency, StatementType},
+    models::{
+        news::NewsCategory,
+        stock::{CandleResolution, StatementFrequency, StatementType},
+    },
     FinnhubClient, Result,
 };
 
@@ -183,6 +186,37 @@ async fn main() -> Result<()> {
     println!("Available crypto exchanges:");
     for exchange in exchanges.iter().take(5) {
         println!("  - {} ({})", exchange.name, exchange.code);
+    }
+
+    // Get market news
+    println!("\nFetching general market news...");
+    match client.news().market_news(NewsCategory::General, None).await {
+        Ok(news) => {
+            println!("Latest market news:");
+            for article in news.iter().take(3) {
+                println!("  📰 {}", article.headline);
+                println!(
+                    "     Source: {} | {}",
+                    article.source,
+                    chrono::DateTime::from_timestamp(article.datetime, 0)
+                        .map(|dt| dt.format("%Y-%m-%d %H:%M").to_string())
+                        .unwrap_or_else(|| "Unknown".to_string())
+                );
+            }
+        }
+        Err(e) => println!("News not available: {}", e),
+    }
+
+    // Test forex rates (if available)
+    println!("\nFetching USD forex rates...");
+    match client.forex().rates("USD").await {
+        Ok(rates) => {
+            println!("USD Exchange Rates:");
+            for (currency, rate) in rates.quote.iter().take(5) {
+                println!("  USD/{}: {:.4}", currency, rate);
+            }
+        }
+        Err(e) => println!("Forex rates not available: {}", e),
     }
 
     Ok(())

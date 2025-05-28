@@ -1,6 +1,10 @@
 //! Forex market endpoints.
 
-use crate::{client::FinnhubClient, error::Result, models::forex::*};
+use crate::{
+    client::FinnhubClient,
+    error::Result,
+    models::{forex::*, stock::CandleResolution},
+};
 
 /// Forex-related API endpoints.
 pub struct ForexEndpoints<'a> {
@@ -18,5 +22,37 @@ impl<'a> ForexEndpoints<'a> {
         self.client
             .get(&format!("/forex/symbol?exchange={}", exchange))
             .await
+    }
+
+    /// Get forex candlestick data.
+    ///
+    /// Get OHLCV data for forex symbols.
+    pub async fn candles(
+        &self,
+        symbol: &str,
+        resolution: CandleResolution,
+        from: i64,
+        to: i64,
+    ) -> Result<ForexCandles> {
+        self.client
+            .get(&format!(
+                "/forex/candle?symbol={}&resolution={}&from={}&to={}",
+                symbol, resolution, from, to
+            ))
+            .await
+    }
+
+    /// Get forex exchange rates.
+    ///
+    /// Get real-time exchange rates for forex pairs.
+    pub async fn rates(&self, base: &str) -> Result<ForexRates> {
+        self.client
+            .get(&format!("/forex/rates?base={}", base))
+            .await
+    }
+
+    /// Get supported forex exchanges.
+    pub async fn exchanges(&self) -> Result<Vec<String>> {
+        self.client.get("/forex/exchange").await
     }
 }

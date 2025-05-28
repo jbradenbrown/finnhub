@@ -7,7 +7,7 @@ use url::Url;
 
 use crate::{
     auth::{Auth, AuthMethod},
-    endpoints::{CryptoEndpoints, ForexEndpoints, StockEndpoints},
+    endpoints::{CryptoEndpoints, ForexEndpoints, NewsEndpoints, StockEndpoints},
     error::{Error, Result},
     rate_limiter::RateLimiter,
 };
@@ -96,6 +96,11 @@ impl FinnhubClient {
         CryptoEndpoints::new(self)
     }
 
+    /// Get news endpoints.
+    pub fn news(&self) -> NewsEndpoints<'_> {
+        NewsEndpoints::new(self)
+    }
+
     /// Make a GET request to the API.
     pub(crate) async fn get<T>(&self, endpoint: &str) -> Result<T>
     where
@@ -104,16 +109,16 @@ impl FinnhubClient {
         self.rate_limiter.acquire().await?;
 
         let mut url = self.base_url.clone();
-        
+
         // Split endpoint into path and query parts
         let (path, query) = if let Some(query_start) = endpoint.find('?') {
             (&endpoint[..query_start], Some(&endpoint[query_start + 1..]))
         } else {
             (endpoint, None)
         };
-        
+
         url.set_path(&format!("/api/v1{}", path));
-        
+
         // Add any existing query parameters from the endpoint
         if let Some(query_str) = query {
             let mut pairs = url.query_pairs_mut();

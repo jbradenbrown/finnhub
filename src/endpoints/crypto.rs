@@ -1,6 +1,10 @@
 //! Cryptocurrency endpoints.
 
-use crate::{client::FinnhubClient, error::Result, models::crypto::*};
+use crate::{
+    client::FinnhubClient,
+    error::Result,
+    models::{crypto::*, stock::CandleResolution},
+};
 
 /// Crypto-related API endpoints.
 pub struct CryptoEndpoints<'a> {
@@ -22,6 +26,33 @@ impl<'a> CryptoEndpoints<'a> {
     pub async fn symbols(&self, exchange: &str) -> Result<Vec<CryptoSymbol>> {
         self.client
             .get(&format!("/crypto/symbol?exchange={}", exchange))
+            .await
+    }
+
+    /// Get crypto candlestick data.
+    ///
+    /// Get OHLCV data for crypto symbols.
+    pub async fn candles(
+        &self,
+        symbol: &str,
+        resolution: CandleResolution,
+        from: i64,
+        to: i64,
+    ) -> Result<CryptoCandles> {
+        self.client
+            .get(&format!(
+                "/crypto/candle?symbol={}&resolution={}&from={}&to={}",
+                symbol, resolution, from, to
+            ))
+            .await
+    }
+
+    /// Get crypto profile data.
+    ///
+    /// Get general information about a cryptocurrency.
+    pub async fn profile(&self, symbol: &str) -> Result<CryptoProfile> {
+        self.client
+            .get(&format!("/crypto/profile?symbol={}", symbol))
             .await
     }
 }
