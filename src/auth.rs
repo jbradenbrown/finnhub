@@ -3,7 +3,7 @@
 use reqwest::header::{HeaderMap, HeaderValue};
 
 /// Authentication method for API requests.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum AuthMethod {
     /// Use API key as URL parameter.
     UrlParameter,
@@ -13,7 +13,7 @@ pub enum AuthMethod {
 
 impl Default for AuthMethod {
     fn default() -> Self {
-        Self::Header // Prefer header method for security
+        Self::UrlParameter // Finnhub requires URL parameter authentication
     }
 }
 

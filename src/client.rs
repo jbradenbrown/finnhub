@@ -58,11 +58,15 @@ impl FinnhubClient {
     pub fn with_config(api_key: impl Into<String>, config: ClientConfig) -> Self {
         let auth = Auth::with_method(api_key, config.auth_method);
 
-        let http_client = HttpClient::builder()
-            .timeout(std::time::Duration::from_secs(config.timeout_secs))
-            .default_headers(auth.headers())
-            .build()
-            .expect("Failed to build HTTP client");
+        let mut builder =
+            HttpClient::builder().timeout(std::time::Duration::from_secs(config.timeout_secs));
+
+        // Only add headers if using header authentication
+        if matches!(config.auth_method, AuthMethod::Header) {
+            builder = builder.default_headers(auth.headers());
+        }
+
+        let http_client = builder.build().expect("Failed to build HTTP client");
 
         let rate_limit = config.rate_limit.unwrap_or(30);
         let rate_limiter = RateLimiter::new(rate_limit, rate_limit);

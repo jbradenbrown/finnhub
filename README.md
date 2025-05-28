@@ -31,6 +31,7 @@ use finnhub::{FinnhubClient, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Create client (uses URL parameter authentication by default)
     let client = FinnhubClient::new("your-api-key");
     
     // Get a stock quote
@@ -39,6 +40,24 @@ async fn main() -> Result<()> {
     
     Ok(())
 }
+```
+
+## Authentication
+
+Finnhub supports API key authentication. By default, this library uses URL parameter authentication (`?token=YOUR_API_KEY`), which is the standard method for Finnhub API.
+
+```rust
+use finnhub::{FinnhubClient, ClientConfig, auth::AuthMethod};
+
+// Default: URL parameter authentication
+let client = FinnhubClient::new("your-api-key");
+
+// Alternative: Header authentication (if needed)
+let config = ClientConfig {
+    auth_method: AuthMethod::Header,
+    ..ClientConfig::default()
+};
+let client = FinnhubClient::with_config("your-api-key", config);
 ```
 
 ## Examples
