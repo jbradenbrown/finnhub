@@ -224,7 +224,7 @@ criterion = "0.5"
 - [x] Rate Limiting (token bucket, 30 req/s)
 - [x] Error Handling (comprehensive error types)
 - [x] Basic Module Structure
-- [ ] Stock Endpoints (23/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment
+- [ ] Stock Endpoints (26/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment, upgrade_downgrade, social_sentiment, supply_chain
 - [ ] Forex Endpoints (1/4) - symbols
 - [ ] Crypto Endpoints (2/4) - exchanges, symbols
 - [ ] Bond Endpoints (0/4)
