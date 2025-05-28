@@ -286,3 +286,72 @@ pub struct InsiderTransactions {
     /// Array of insider transactions.
     pub data: Vec<InsiderTransaction>,
 }
+
+/// Basic financials data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BasicFinancials {
+    /// Company symbol.
+    pub symbol: String,
+    /// Metric type.
+    pub metric_type: String,
+    /// Map of key metrics.
+    pub metric: serde_json::Value,
+    /// Map of time-series data.
+    pub series: Option<serde_json::Value>,
+}
+
+/// Earnings data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Earnings {
+    /// Actual earnings.
+    pub actual: Option<f64>,
+    /// Estimated earnings.
+    pub estimate: Option<f64>,
+    /// Earnings period.
+    pub period: String,
+    /// Earnings surprise.
+    pub surprise: Option<f64>,
+    /// Surprise percentage.
+    #[serde(rename = "surprisePercent")]
+    pub surprise_percent: Option<f64>,
+    /// Company symbol.
+    pub symbol: String,
+}
+
+/// Dividend data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Dividend {
+    /// Company symbol.
+    pub symbol: String,
+    /// Ex-dividend date.
+    pub ex_dividend_date: String,
+    /// Payment date.
+    pub payment_date: String,
+    /// Record date.
+    pub record_date: String,
+    /// Declaration date.
+    pub declaration_date: String,
+    /// Dividend amount.
+    pub amount: f64,
+    /// Adjusted dividend amount.
+    pub adjusted_amount: f64,
+    /// Currency.
+    pub currency: String,
+}
+
+/// Stock split data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StockSplit {
+    /// Company symbol.
+    pub symbol: String,
+    /// Split date.
+    pub date: String,
+    /// From factor.
+    #[serde(rename = "fromFactor")]
+    pub from_factor: f64,
+    /// To factor.
+    #[serde(rename = "toFactor")]
+    pub to_factor: f64,
+}

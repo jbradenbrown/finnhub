@@ -1,7 +1,11 @@
 //! Performance benchmarks for the Finnhub client.
 
+use chrono::{Duration, Utc};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use finnhub::FinnhubClient;
+use finnhub::{
+    models::stock::{CandleResolution, StatementFrequency, StatementType},
+    FinnhubClient,
+};
 
 fn benchmark_client_creation(c: &mut Criterion) {
     c.bench_function("client creation", |b| {
@@ -11,5 +15,67 @@ fn benchmark_client_creation(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, benchmark_client_creation);
+fn benchmark_stock_endpoints(c: &mut Criterion) {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    let client = FinnhubClient::new("test_api_key");
+
+    c.bench_function("quote_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let _ = black_box(client.stock().quote("AAPL")).await;
+            })
+        })
+    });
+
+    c.bench_function("company_profile_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let _ = black_box(client.stock().company_profile("AAPL")).await;
+            })
+        })
+    });
+
+    c.bench_function("candles_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let to = Utc::now().timestamp();
+                let from = (Utc::now() - Duration::days(7)).timestamp();
+                let _ = black_box(client.stock().candles(
+                    "AAPL",
+                    CandleResolution::Daily,
+                    from,
+                    to,
+                ))
+                .await;
+            })
+        })
+    });
+
+    c.bench_function("metrics_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let _ = black_box(client.stock().metrics("AAPL")).await;
+            })
+        })
+    });
+
+    c.bench_function("financials_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let _ = black_box(client.stock().financials(
+                    "AAPL",
+                    StatementType::IncomeStatement,
+                    StatementFrequency::Annual,
+                ))
+                .await;
+            })
+        })
+    });
+}
+
+criterion_group!(
+    benches,
+    benchmark_client_creation,
+    benchmark_stock_endpoints
+);
 criterion_main!(benches);

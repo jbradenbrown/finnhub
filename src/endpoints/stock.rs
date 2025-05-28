@@ -4,8 +4,9 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::stock::{
-        CandleResolution, CompanyProfile, FinancialStatements, InsiderTransactions, PriceTarget,
-        Quote, RecommendationTrend, StatementFrequency, StatementType, StockCandles,
+        BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, FinancialStatements,
+        InsiderTransactions, PriceTarget, Quote, RecommendationTrend, StatementFrequency,
+        StatementType, StockCandles, StockSplit, Symbol,
     },
 };
 
@@ -88,6 +89,58 @@ impl<'a> StockEndpoints<'a> {
     pub async fn insider_transactions(&self, symbol: &str) -> Result<InsiderTransactions> {
         self.client
             .get(&format!("/stock/insider-transactions?symbol={}", symbol))
+            .await
+    }
+
+    /// Get basic financials metrics.
+    ///
+    /// Returns key metrics such as P/E ratio, market cap, 52-week high/low, etc.
+    pub async fn metrics(&self, symbol: &str) -> Result<BasicFinancials> {
+        self.client
+            .get(&format!("/stock/metric?symbol={}&metric=all", symbol))
+            .await
+    }
+
+    /// Get company earnings.
+    pub async fn earnings(&self, symbol: &str, limit: Option<i64>) -> Result<Vec<Earnings>> {
+        let url = if let Some(limit) = limit {
+            format!("/stock/earnings?symbol={}&limit={}", symbol, limit)
+        } else {
+            format!("/stock/earnings?symbol={}", symbol)
+        };
+        self.client.get(&url).await
+    }
+
+    /// Get dividends data.
+    ///
+    /// Returns dividend history with dates and amounts.
+    pub async fn dividends(&self, symbol: &str, from: &str, to: &str) -> Result<Vec<Dividend>> {
+        self.client
+            .get(&format!(
+                "/stock/dividend?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get stock splits history.
+    ///
+    /// Returns stock split history with dates and split ratios.
+    pub async fn splits(&self, symbol: &str, from: &str, to: &str) -> Result<Vec<StockSplit>> {
+        self.client
+            .get(&format!(
+                "/stock/split?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get list of supported stocks.
+    ///
+    /// List all supported stocks for a given exchange.
+    pub async fn symbols(&self, exchange: &str) -> Result<Vec<Symbol>> {
+        self.client
+            .get(&format!("/stock/symbol?exchange={}", exchange))
             .await
     }
 }
