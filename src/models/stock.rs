@@ -154,3 +154,135 @@ impl std::fmt::Display for CandleResolution {
         }
     }
 }
+
+/// Financial statement type.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementType {
+    /// Balance sheet
+    #[serde(rename = "bs")]
+    BalanceSheet,
+    /// Income statement
+    #[serde(rename = "ic")]
+    IncomeStatement,
+    /// Cash flow
+    #[serde(rename = "cf")]
+    CashFlow,
+}
+
+impl std::fmt::Display for StatementType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            StatementType::BalanceSheet => write!(f, "bs"),
+            StatementType::IncomeStatement => write!(f, "ic"),
+            StatementType::CashFlow => write!(f, "cf"),
+        }
+    }
+}
+
+/// Financial statement frequency.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementFrequency {
+    /// Annual
+    #[serde(rename = "annual")]
+    Annual,
+    /// Quarterly
+    #[serde(rename = "quarterly")]
+    Quarterly,
+    /// Trailing twelve months (only for IC and CF)
+    #[serde(rename = "ttm")]
+    TTM,
+    /// Year to date (only for CF)
+    #[serde(rename = "ytd")]
+    YTD,
+}
+
+impl std::fmt::Display for StatementFrequency {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            StatementFrequency::Annual => write!(f, "annual"),
+            StatementFrequency::Quarterly => write!(f, "quarterly"),
+            StatementFrequency::TTM => write!(f, "ttm"),
+            StatementFrequency::YTD => write!(f, "ytd"),
+        }
+    }
+}
+
+/// Financial statements response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FinancialStatements {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of financial data for each period.
+    pub financials: Vec<serde_json::Value>,
+}
+
+/// Price target data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PriceTarget {
+    /// Company symbol.
+    pub symbol: String,
+    /// Highest analysts' target.
+    pub target_high: f64,
+    /// Lowest analysts' target.
+    pub target_low: f64,
+    /// Mean of all analysts' targets.
+    pub target_mean: f64,
+    /// Median of all analysts' targets.
+    pub target_median: f64,
+    /// Number of analysts.
+    pub number_analysts: i64,
+    /// Last updated time.
+    pub last_updated: String,
+}
+
+/// Recommendation trend data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecommendationTrend {
+    /// Company symbol.
+    pub symbol: String,
+    /// Number of buy recommendations.
+    pub buy: i64,
+    /// Number of hold recommendations.
+    pub hold: i64,
+    /// Updated period.
+    pub period: String,
+    /// Number of sell recommendations.
+    pub sell: i64,
+    /// Number of strong buy recommendations.
+    pub strong_buy: i64,
+    /// Number of strong sell recommendations.
+    pub strong_sell: i64,
+}
+
+/// Insider transactions data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InsiderTransaction {
+    /// Company symbol.
+    pub symbol: String,
+    /// Insider name.
+    pub name: String,
+    /// Number of shares traded.
+    pub share: i64,
+    /// Share change.
+    pub change: i64,
+    /// Transaction date.
+    pub transaction_date: String,
+    /// Transaction price.
+    pub transaction_price: f64,
+    /// Transaction code.
+    pub transaction_code: String,
+    /// Filing date.
+    pub filing_date: String,
+}
+
+/// Insider transactions response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InsiderTransactions {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of insider transactions.
+    pub data: Vec<InsiderTransaction>,
+}

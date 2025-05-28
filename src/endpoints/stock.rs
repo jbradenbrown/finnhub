@@ -1,6 +1,13 @@
 //! Stock market endpoints.
 
-use crate::{client::FinnhubClient, error::Result, models::stock::*};
+use crate::{
+    client::FinnhubClient,
+    error::Result,
+    models::stock::{
+        CandleResolution, CompanyProfile, FinancialStatements, InsiderTransactions, PriceTarget,
+        Quote, RecommendationTrend, StatementFrequency, StatementType, StockCandles,
+    },
+};
 
 /// Stock-related API endpoints.
 pub struct StockEndpoints<'a> {
@@ -41,6 +48,46 @@ impl<'a> StockEndpoints<'a> {
                 "/stock/candle?symbol={}&resolution={}&from={}&to={}",
                 symbol, resolution, from, to
             ))
+            .await
+    }
+
+    /// Get standardized financial statements.
+    ///
+    /// Get balance sheet, income statement, or cash flow for global companies.
+    pub async fn financials(
+        &self,
+        symbol: &str,
+        statement: StatementType,
+        frequency: StatementFrequency,
+    ) -> Result<FinancialStatements> {
+        self.client
+            .get(&format!(
+                "/stock/financials?symbol={}&statement={}&freq={}",
+                symbol, statement, frequency
+            ))
+            .await
+    }
+
+    /// Get latest price target consensus.
+    pub async fn price_target(&self, symbol: &str) -> Result<PriceTarget> {
+        self.client
+            .get(&format!("/stock/price-target?symbol={}", symbol))
+            .await
+    }
+
+    /// Get latest analyst recommendations.
+    pub async fn recommendations(&self, symbol: &str) -> Result<Vec<RecommendationTrend>> {
+        self.client
+            .get(&format!("/stock/recommendation?symbol={}", symbol))
+            .await
+    }
+
+    /// Get insider transactions.
+    ///
+    /// Returns insider transactions for the last 3 months.
+    pub async fn insider_transactions(&self, symbol: &str) -> Result<InsiderTransactions> {
+        self.client
+            .get(&format!("/stock/insider-transactions?symbol={}", symbol))
             .await
     }
 }

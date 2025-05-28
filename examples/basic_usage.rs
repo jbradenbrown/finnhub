@@ -1,7 +1,10 @@
 //! Basic usage example for the Finnhub client.
 
 use chrono::{Duration, Utc};
-use finnhub::{models::stock::CandleResolution, FinnhubClient, Result};
+use finnhub::{
+    models::stock::{CandleResolution, StatementFrequency, StatementType},
+    FinnhubClient, Result,
+};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -61,6 +64,56 @@ async fn main() -> Result<()> {
                 candles.close[i]
             );
         }
+    }
+
+    // Get price target
+    println!("\nFetching AAPL price target...");
+    match client.stock().price_target("AAPL").await {
+        Ok(target) => {
+            println!("Price Target:");
+            println!("  Mean: ${:.2}", target.target_mean);
+            println!("  High: ${:.2}", target.target_high);
+            println!("  Low: ${:.2}", target.target_low);
+            println!("  Analysts: {}", target.number_analysts);
+        }
+        Err(e) => println!("Price target not available: {}", e),
+    }
+
+    // Get recommendations
+    println!("\nFetching AAPL recommendations...");
+    match client.stock().recommendations("AAPL").await {
+        Ok(recommendations) => {
+            if let Some(latest) = recommendations.first() {
+                println!("Latest Recommendations:");
+                println!("  Strong Buy: {}", latest.strong_buy);
+                println!("  Buy: {}", latest.buy);
+                println!("  Hold: {}", latest.hold);
+                println!("  Sell: {}", latest.sell);
+                println!("  Strong Sell: {}", latest.strong_sell);
+                println!("  Period: {}", latest.period);
+            }
+        }
+        Err(e) => println!("Recommendations not available: {}", e),
+    }
+
+    // Get financials (income statement)
+    println!("\nFetching AAPL annual income statement...");
+    match client
+        .stock()
+        .financials(
+            "AAPL",
+            StatementType::IncomeStatement,
+            StatementFrequency::Annual,
+        )
+        .await
+    {
+        Ok(financials) => {
+            println!(
+                "Financial data available for {} periods",
+                financials.financials.len()
+            );
+        }
+        Err(e) => println!("Financials not available: {}", e),
     }
 
     // Get crypto exchanges
