@@ -71,6 +71,23 @@ fn benchmark_stock_endpoints(c: &mut Criterion) {
             })
         })
     });
+
+    c.bench_function("historical_market_cap_request", |b| {
+        b.iter(|| {
+            rt.block_on(async {
+                let to_date = Utc::now().format("%Y-%m-%d").to_string();
+                let from_date = (Utc::now() - Duration::days(30))
+                    .format("%Y-%m-%d")
+                    .to_string();
+                let _ = black_box(
+                    client
+                        .stock()
+                        .historical_market_cap("AAPL", &from_date, &to_date),
+                )
+                .await;
+            })
+        })
+    });
 }
 
 criterion_group!(

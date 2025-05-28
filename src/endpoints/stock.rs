@@ -5,8 +5,9 @@ use crate::{
     error::Result,
     models::stock::{
         BasicFinancials, CandleResolution, CompanyProfile, Dividend, Earnings, FinancialStatements,
-        InsiderTransactions, PriceTarget, Quote, RecommendationTrend, StatementFrequency,
-        StatementType, StockCandles, StockSplit, Symbol,
+        HistoricalESG, HistoricalEmployeeCount, HistoricalMarketCapData, InsiderTransactions,
+        PriceTarget, Quote, RecommendationTrend, StatementFrequency, StatementType, StockCandles,
+        StockSplit, Symbol,
     },
 };
 
@@ -141,6 +142,57 @@ impl<'a> StockEndpoints<'a> {
     pub async fn symbols(&self, exchange: &str) -> Result<Vec<Symbol>> {
         self.client
             .get(&format!("/stock/symbol?exchange={}", exchange))
+            .await
+    }
+
+    /// Get historical market capitalization data.
+    ///
+    /// Returns historical market cap values for a given date range.
+    pub async fn historical_market_cap(
+        &self,
+        symbol: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<HistoricalMarketCapData> {
+        self.client
+            .get(&format!(
+                "/stock/historical-market-cap?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get historical employee count data.
+    ///
+    /// Returns historical employee count for a given date range.
+    pub async fn historical_employee_count(
+        &self,
+        symbol: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<HistoricalEmployeeCount> {
+        self.client
+            .get(&format!(
+                "/stock/historical-employee-count?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
+            .await
+    }
+
+    /// Get historical ESG (Environmental, Social, Governance) scores.
+    ///
+    /// Returns historical ESG scores for a given date range.
+    pub async fn historical_esg(
+        &self,
+        symbol: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<HistoricalESG> {
+        self.client
+            .get(&format!(
+                "/stock/historical-esg?symbol={}&from={}&to={}",
+                symbol, from, to
+            ))
             .await
     }
 }

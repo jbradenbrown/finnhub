@@ -355,3 +355,68 @@ pub struct StockSplit {
     #[serde(rename = "toFactor")]
     pub to_factor: f64,
 }
+
+/// Market cap data point.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MarketCapData {
+    /// Date of the reading.
+    pub at_date: String,
+    /// Market capitalization value.
+    pub market_capitalization: f64,
+}
+
+/// Historical market cap data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HistoricalMarketCapData {
+    /// Company symbol.
+    pub symbol: String,
+    /// Currency.
+    pub currency: String,
+    /// Array of market cap data.
+    pub data: Vec<MarketCapData>,
+}
+
+/// Employee count data point.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EmployeeCountData {
+    /// Date of the reading.
+    pub at_date: String,
+    /// Employee count.
+    pub employee_count: i64,
+}
+
+/// Historical employee count data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HistoricalEmployeeCount {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of employee count data.
+    pub data: Vec<EmployeeCountData>,
+}
+
+/// ESG score data point.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ESGData {
+    /// Date of the reading.
+    pub at_date: String,
+    /// Environmental score.
+    pub environment_score: Option<f64>,
+    /// Social score.
+    pub social_score: Option<f64>,
+    /// Governance score.
+    pub governance_score: Option<f64>,
+    /// Total ESG score.
+    pub total_score: Option<f64>,
+}
+
+/// Historical ESG data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HistoricalESG {
+    /// Company symbol.
+    pub symbol: String,
+    /// Array of ESG data.
+    pub data: Vec<ESGData>,
+}

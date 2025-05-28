@@ -116,6 +116,31 @@ async fn main() -> Result<()> {
         Err(e) => println!("Financials not available: {}", e),
     }
 
+    // Get historical market cap
+    println!("\nFetching AAPL historical market cap...");
+    let to_date = Utc::now().format("%Y-%m-%d").to_string();
+    let from_date = (Utc::now() - Duration::days(90))
+        .format("%Y-%m-%d")
+        .to_string();
+
+    match client
+        .stock()
+        .historical_market_cap("AAPL", &from_date, &to_date)
+        .await
+    {
+        Ok(historical_data) => {
+            println!("Historical Market Cap ({})", historical_data.currency);
+            for (i, data_point) in historical_data.data.iter().rev().take(5).enumerate() {
+                println!(
+                    "  {}: ${:.2}B",
+                    data_point.at_date,
+                    data_point.market_capitalization / 1_000.0
+                );
+            }
+        }
+        Err(e) => println!("Historical market cap not available: {}", e),
+    }
+
     // Get crypto exchanges
     println!("\nFetching crypto exchanges...");
     let exchanges = client.crypto().exchanges().await?;
