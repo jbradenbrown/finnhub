@@ -225,13 +225,13 @@ criterion = "0.5"
 - [x] Error Handling (comprehensive error types)
 - [x] Basic Module Structure
 - [ ] Stock Endpoints (26/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment, upgrade_downgrade, social_sentiment, supply_chain
-- [ ] Forex Endpoints (1/4) - symbols
-- [ ] Crypto Endpoints (2/4) - exchanges, symbols
+- [x] Forex Endpoints (4/4) - symbols, candles, rates, exchanges
+- [x] Crypto Endpoints (4/4) - exchanges, symbols, candles, profile
 - [ ] Bond Endpoints (0/4)
 - [ ] ETF Endpoints (0/4)
 - [ ] Mutual Fund Endpoints (0/6)
 - [ ] Economic Data Endpoints (0/2)
-- [ ] News Endpoints (0/3)
+- [x] News Endpoints (3/3) - market_news, company_news, news_sentiment
 - [ ] Calendar Endpoints (0/3)
 - [ ] Other Endpoints
 - [x] WebSocket Support Structure (feature-gated)
