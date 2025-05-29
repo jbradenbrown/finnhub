@@ -40,6 +40,10 @@ pub enum Error {
     #[error("Invalid parameter: {0}")]
     InvalidParameter(String),
 
+    /// Invalid request.
+    #[error("Invalid request: {0}")]
+    InvalidRequest(String),
+
     /// WebSocket error.
     #[cfg(feature = "websocket")]
     #[error("WebSocket error: {0}")]

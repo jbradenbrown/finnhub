@@ -7,7 +7,11 @@ use url::Url;
 
 use crate::{
     auth::{Auth, AuthMethod},
-    endpoints::{CryptoEndpoints, ForexEndpoints, NewsEndpoints, StockEndpoints},
+    endpoints::{
+        BondEndpoints, CalendarEndpoints, CryptoEndpoints, EconomicEndpoints, ETFEndpoints,
+        ForexEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints, NewsEndpoints,
+        ScannerEndpoints, StockEndpoints,
+    },
     error::{Error, Result},
     rate_limiter::RateLimiter,
 };
@@ -99,6 +103,46 @@ impl FinnhubClient {
     /// Get news endpoints.
     pub fn news(&self) -> NewsEndpoints<'_> {
         NewsEndpoints::new(self)
+    }
+
+    /// Get calendar endpoints.
+    pub fn calendar(&self) -> CalendarEndpoints<'_> {
+        CalendarEndpoints::new(self)
+    }
+
+    /// Get ETF endpoints.
+    pub fn etf(&self) -> ETFEndpoints<'_> {
+        ETFEndpoints::new(self)
+    }
+
+    /// Get bond endpoints.
+    pub fn bond(&self) -> BondEndpoints<'_> {
+        BondEndpoints::new(self)
+    }
+
+    /// Get mutual fund endpoints.
+    pub fn mutual_fund(&self) -> MutualFundEndpoints<'_> {
+        MutualFundEndpoints::new(self)
+    }
+
+    /// Get economic data endpoints.
+    pub fn economic(&self) -> EconomicEndpoints<'_> {
+        EconomicEndpoints::new(self)
+    }
+
+    /// Get index endpoints.
+    pub fn index(&self) -> IndexEndpoints<'_> {
+        IndexEndpoints::new(self)
+    }
+
+    /// Get miscellaneous endpoints.
+    pub fn misc(&self) -> MiscEndpoints<'_> {
+        MiscEndpoints::new(self)
+    }
+
+    /// Get scanner/technical analysis endpoints.
+    pub fn scanner(&self) -> ScannerEndpoints<'_> {
+        ScannerEndpoints::new(self)
     }
 
     /// Make a GET request to the API.
