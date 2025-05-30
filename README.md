@@ -2,10 +2,8 @@
 
 A comprehensive Rust client for the [Finnhub.io](https://finnhub.io) financial data API.
 
-<!-- Badges will be active after crate publication
 [![Crates.io](https://img.shields.io/crates/v/finnhub.svg)](https://crates.io/crates/finnhub)
 [![Documentation](https://docs.rs/finnhub/badge.svg)](https://docs.rs/finnhub)
--->
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 
 ## Features

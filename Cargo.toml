@@ -11,6 +11,17 @@ readme = "README.md"
 keywords = ["finnhub", "finance", "api", "stocks", "trading"]
 categories = ["api-bindings", "finance"]
 license = "MIT OR Apache-2.0"
+exclude = [
+    ".github/",
+    ".gitignore",
+    ".claude/",
+    "CLAUDE.md",
+    "TEST_COVERAGE.md",
+    "api-specs/",
+    "tests/",
+    "benches/",
+    "run_api_tests.sh"
+]
 
 [features]
 default = []
@@ -89,3 +100,7 @@ path = "examples/rate_limiting_explanation.rs"
 name = "websocket_basic"
 path = "examples/websocket_basic.rs"
 required-features = ["websocket"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
