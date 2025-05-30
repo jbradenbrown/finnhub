@@ -32,7 +32,6 @@ async-trait = "0.1"
 
 [dev-dependencies]
 tokio-test = "0.4"
-wiremock = "0.6"
 criterion = { version = "0.5", features = ["html_reports"] }
 pretty_assertions = "1.4"
 proptest = "1.5"
@@ -53,3 +52,23 @@ path = "src/lib.rs"
 [[example]]
 name = "basic_usage"
 path = "examples/basic_usage.rs"
+
+[[example]]
+name = "stock_analysis"
+path = "examples/stock_analysis.rs"
+
+[[example]]
+name = "forex_trading"
+path = "examples/forex_trading.rs"
+
+[[example]]
+name = "technical_analysis"
+path = "examples/technical_analysis.rs"
+
+[[example]]
+name = "alternative_data"
+path = "examples/alternative_data.rs"
+
+[[example]]
+name = "error_handling"
+path = "examples/error_handling.rs"

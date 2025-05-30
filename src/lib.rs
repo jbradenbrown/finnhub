@@ -42,8 +42,9 @@ pub mod rate_limiter;
 #[cfg(feature = "websocket")]
 pub mod websocket;
 
-pub use client::{ClientConfig, FinnhubClient};
+pub use client::{ClientConfig, FinnhubClient, RateLimitStrategy};
 pub use error::{Error, Result};
+pub use rate_limiter::RateLimiter;
 
 #[doc(hidden)]
 pub mod prelude {

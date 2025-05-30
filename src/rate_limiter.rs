@@ -39,6 +39,13 @@ impl RateLimiter {
     pub fn finnhub_default() -> Self {
         Self::new(30, 30)
     }
+    
+    /// Create a rate limiter for Finnhub with 15-second averaging window.
+    /// This allows 450 requests per 15 seconds (30 req/s * 15s).
+    pub fn finnhub_15s_window() -> Self {
+        // 450 tokens capacity, refill at 30 tokens/second
+        Self::new(450, 30)
+    }
 
     /// Acquire a token, waiting if necessary.
     pub async fn acquire(&self) -> Result<(), crate::Error> {

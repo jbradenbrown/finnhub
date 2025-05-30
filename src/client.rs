@@ -19,6 +19,28 @@ use crate::{
 const DEFAULT_BASE_URL: &str = "https://finnhub.io/api/v1";
 const DEFAULT_TIMEOUT_SECS: u64 = 30;
 
+/// Rate limiting strategy for the client.
+#[derive(Debug, Clone, Copy)]
+pub enum RateLimitStrategy {
+    /// Standard per-second rate limiting (30 req/s).
+    PerSecond,
+    /// 15-second window rate limiting (450 req/15s).
+    FifteenSecondWindow,
+    /// Custom rate limiting with specified capacity and refill rate.
+    Custom {
+        /// Maximum number of tokens in the bucket.
+        capacity: u32,
+        /// Number of tokens refilled per second.
+        refill_rate: u32,
+    },
+}
+
+impl Default for RateLimitStrategy {
+    fn default() -> Self {
+        Self::PerSecond
+    }
+}
+
 /// Configuration for the Finnhub client.
 #[derive(Debug, Clone)]
 pub struct ClientConfig {
@@ -29,7 +51,10 @@ pub struct ClientConfig {
     /// Authentication method.
     pub auth_method: AuthMethod,
     /// Custom rate limit (requests per second).
+    /// Deprecated: Use rate_limit_strategy instead.
     pub rate_limit: Option<u32>,
+    /// Rate limiting strategy.
+    pub rate_limit_strategy: RateLimitStrategy,
 }
 
 impl Default for ClientConfig {
@@ -39,6 +64,7 @@ impl Default for ClientConfig {
             timeout_secs: DEFAULT_TIMEOUT_SECS,
             auth_method: AuthMethod::default(),
             rate_limit: None,
+            rate_limit_strategy: RateLimitStrategy::default(),
         }
     }
 }
@@ -72,8 +98,20 @@ impl FinnhubClient {
 
         let http_client = builder.build().expect("Failed to build HTTP client");
 
-        let rate_limit = config.rate_limit.unwrap_or(30);
-        let rate_limiter = RateLimiter::new(rate_limit, rate_limit);
+        // Create rate limiter based on strategy
+        let rate_limiter = if let Some(rate_limit) = config.rate_limit {
+            // Legacy support: if rate_limit is set, use it
+            RateLimiter::new(rate_limit, rate_limit)
+        } else {
+            // Use the rate limit strategy
+            match config.rate_limit_strategy {
+                RateLimitStrategy::PerSecond => RateLimiter::finnhub_default(),
+                RateLimitStrategy::FifteenSecondWindow => RateLimiter::finnhub_15s_window(),
+                RateLimitStrategy::Custom { capacity, refill_rate } => {
+                    RateLimiter::new(capacity, refill_rate)
+                }
+            }
+        };
 
         let base_url = Url::parse(&config.base_url).expect("Invalid base URL");
 
