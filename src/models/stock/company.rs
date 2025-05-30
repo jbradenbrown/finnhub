@@ -62,9 +62,9 @@ pub struct Symbol {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SupplyChainRelationship {
     /// Symbol.
-    pub symbol: String,
+    pub symbol: Option<String>,
     /// Company name.
-    pub name: String,
+    pub name: Option<String>,
     /// Country.
     pub country: Option<String>,
     /// 1-tier supplier.

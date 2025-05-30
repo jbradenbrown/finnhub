@@ -9,7 +9,7 @@ pub struct ESGScore {
     pub symbol: String,
     /// Company name.
     #[serde(rename = "companyName")]
-    pub company_name: String,
+    pub company_name: Option<String>,
     /// ESG Risk Rating.
     #[serde(rename = "ESGRiskRating")]
     pub esg_risk_rating: Option<f64>,
@@ -208,7 +208,7 @@ pub struct SimilarityData {
     #[serde(rename = "accessNumber")]
     pub access_number: String,
     /// Item.
-    pub item: String,
+    pub item: Option<String>,
     /// Similarity score.
     pub similarity: f64,
     /// Size.

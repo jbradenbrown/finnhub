@@ -104,7 +104,7 @@ pub struct Dividend {
     pub declaration_date: String,
     /// Ex-dividend date.
     #[serde(rename = "exDividendDate")]
-    pub ex_dividend_date: String,
+    pub ex_dividend_date: Option<String>,
     /// Frequency.
     pub frequency: String,
     /// Payment date.

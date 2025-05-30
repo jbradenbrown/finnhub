@@ -138,30 +138,34 @@ pub struct EBITEstimates {
     pub freq: Option<String>,
 }
 
-/// Earnings quality score indicators.
+/// Earnings quality score response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EarningsQualityScore {
     /// Symbol.
     pub symbol: String,
     /// Frequency.
     pub freq: String,
+    /// Array of earnings quality scores.
+    pub data: Vec<EarningsQualityScoreData>,
+}
+
+/// Earnings quality score indicators.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EarningsQualityScoreData {
     /// Period.
     pub period: String,
-    /// Non-recurring items to revenue ratio.
-    #[serde(rename = "nonRecurringItemsToRevenue")]
-    pub non_recurring_items_to_revenue: Option<f64>,
-    /// Non-recurring items to revenue TTM.
-    #[serde(rename = "nonRecurringItemsToRevenueTTM")]
-    pub non_recurring_items_to_revenue_ttm: Option<f64>,
-    /// Non-recurring items total.
-    #[serde(rename = "nonRecurringItemsTotal")]
-    pub non_recurring_items_total: Option<f64>,
-    /// Non-recurring items total TTM.
-    #[serde(rename = "nonRecurringItemsTotalTTM")]
-    pub non_recurring_items_total_ttm: Option<f64>,
+    /// Capital allocation score.
+    #[serde(rename = "capitalAllocation")]
+    pub capital_allocation: Option<f64>,
+    /// Growth score.
+    pub growth: Option<f64>,
     /// Letter score.
     #[serde(rename = "letterScore")]
     pub letter_score: Option<String>,
-    /// Score.
+    /// Leverage score.
+    pub leverage: Option<f64>,
+    /// Profitability score.
+    pub profitability: Option<f64>,
+    /// Overall score.
     pub score: Option<f64>,
 }
