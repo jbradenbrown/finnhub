@@ -1,4 +1,4 @@
-# finnhub-rs
+# finnhub
 
 A comprehensive Rust client for the [Finnhub.io](https://finnhub.io) financial data API.
 
@@ -185,7 +185,7 @@ let sectors = client.misc().sector_metrics("NA").await?;
 ## Project Structure
 
 ```
-finnhub-rs/
+finnhub/
 ├── src/
 │   ├── client.rs           # Main client implementation
 │   ├── auth.rs             # Authentication handling
@@ -438,8 +438,8 @@ Contributions are welcome! Please feel free to submit a Pull Request. See [CLAUD
 
 ```bash
 # Clone the repository
-git clone https://github.com/jbradenbrown/finnhub-rs
-cd finnhub-rs
+git clone https://github.com/jbradenbrown/finnhub
+cd finnhub
 
 # Run tests (requires API key)
 FINNHUB_API_KEY=your_key cargo test

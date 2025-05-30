@@ -67,5 +67,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - No automatic retry logic (by design - left to application layer)
 - No response caching (by design - left to application layer)
 
-[Unreleased]: https://github.com/jbradenbrown/finnhub-rs/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/jbradenbrown/finnhub-rs/releases/tag/v0.1.0
+[Unreleased]: https://github.com/jbradenbrown/finnhub/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/jbradenbrown/finnhub/releases/tag/v0.1.0
