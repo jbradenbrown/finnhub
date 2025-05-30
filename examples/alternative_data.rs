@@ -32,7 +32,7 @@ async fn esg_analysis(client: &FinnhubClient, symbol: &str) -> Result<()> {
 
     match client.stock().esg(symbol).await {
         Ok(esg) => {
-            println!("🏢 Company: {}", esg.company_name);
+            println!("🏢 Company: {}", esg.company_name.as_deref().unwrap_or(symbol));
             
             if let Some(overall_rating) = esg.esg_risk_rating {
                 println!("📊 Overall ESG Risk Rating: {:.1}", overall_rating);

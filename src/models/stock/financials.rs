@@ -23,7 +23,7 @@ pub struct BasicFinancials {
     #[serde(rename = "metricType")]
     pub metric_type: String,
     /// Series data.
-    pub series: Option<HashMap<String, Vec<HashMap<String, String>>>>,
+    pub series: Option<serde_json::Value>,
 }
 
 /// Financial report data.
@@ -106,7 +106,7 @@ pub struct Dividend {
     #[serde(rename = "exDividendDate")]
     pub ex_dividend_date: Option<String>,
     /// Frequency.
-    pub frequency: String,
+    pub freq: Option<String>,
     /// Payment date.
     #[serde(rename = "payDate")]
     pub pay_date: String,

@@ -454,7 +454,7 @@ async fn main() -> Result<()> {
     println!("\nFetching AAPL ESG scores...");
     match client.stock().esg("AAPL").await {
         Ok(esg) => {
-            println!("ESG Scores for {}:", esg.company_name);
+            println!("ESG Scores for {}:", esg.company_name.as_deref().unwrap_or("AAPL"));
             if let Some(rating) = esg.esg_risk_rating {
                 println!("  Overall ESG Risk Rating: {:.1}", rating);
             }

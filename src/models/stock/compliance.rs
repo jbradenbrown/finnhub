@@ -204,19 +204,33 @@ pub struct SimilarityIndex {
 /// Similarity data point.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SimilarityData {
+    /// CIK.
+    pub cik: String,
     /// Access number of the document.
     #[serde(rename = "accessNumber")]
     pub access_number: String,
-    /// Item.
-    pub item: Option<String>,
-    /// Similarity score.
-    pub similarity: f64,
-    /// Size.
-    pub size: i64,
+    /// Item 1 similarity score.
+    pub item1: f64,
+    /// Item 2 similarity score.
+    pub item2: f64,
+    /// Item 1a similarity score.
+    pub item1a: f64,
+    /// Item 7 similarity score.
+    pub item7: f64,
+    /// Item 7a similarity score.
+    pub item7a: f64,
     /// Form type.
-    #[serde(rename = "formType")]
-    pub form_type: String,
+    pub form: String,
+    /// Report URL.
+    #[serde(rename = "reportUrl")]
+    pub report_url: String,
+    /// Filing URL.
+    #[serde(rename = "filingUrl")]
+    pub filing_url: String,
     /// Filed date.
     #[serde(rename = "filedDate")]
     pub filed_date: String,
+    /// Accepted date.
+    #[serde(rename = "acceptedDate")]
+    pub accepted_date: String,
 }
