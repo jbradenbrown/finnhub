@@ -10,19 +10,19 @@ async fn main() -> Result<()> {
 
     // Example 1: Invalid API key
     demonstrate_auth_errors().await;
-    
+
     // Example 2: Rate limiting
     demonstrate_rate_limiting().await;
-    
+
     // Example 3: Network errors
     demonstrate_network_errors().await;
-    
+
     // Example 4: Data validation errors
     demonstrate_data_errors().await;
-    
+
     // Example 5: Graceful degradation
     demonstrate_graceful_degradation().await?;
-    
+
     // Example 6: Retry strategies
     demonstrate_retry_strategies().await;
 
@@ -72,18 +72,26 @@ async fn demonstrate_rate_limiting() {
         for i in 1..=3 {
             match rate_limited_client.stock().quote("AAPL").await {
                 Ok(quote) => {
-                    println!("✅ Request {}: Success - Price: ${:.2}", i, quote.current_price);
+                    println!(
+                        "✅ Request {}: Success - Price: ${:.2}",
+                        i, quote.current_price
+                    );
                 }
                 Err(Error::RateLimitExceeded { retry_after }) => {
-                    println!("⏸️ Request {}: Rate limited - Retry after {} seconds", i, retry_after);
-                    
+                    println!(
+                        "⏸️ Request {}: Rate limited - Retry after {} seconds",
+                        i, retry_after
+                    );
+
                     // Demonstrate proper retry handling
                     println!("   Waiting {} seconds before retry...", retry_after);
                     tokio::time::sleep(Duration::from_secs(retry_after)).await;
-                    
+
                     // Retry the request
                     match rate_limited_client.stock().quote("AAPL").await {
-                        Ok(quote) => println!("✅ Retry successful - Price: ${:.2}", quote.current_price),
+                        Ok(quote) => {
+                            println!("✅ Retry successful - Price: ${:.2}", quote.current_price)
+                        }
                         Err(e) => println!("❌ Retry failed: {}", e),
                     }
                     break;
@@ -119,7 +127,7 @@ async fn demonstrate_network_errors() {
         Ok(_) => println!("Unexpected success with invalid URL"),
         Err(Error::Http(http_err)) => {
             println!("✅ Caught network error: {}", http_err);
-            
+
             // Categorize the error
             if http_err.is_timeout() {
                 println!("   Type: Timeout - Network request took too long");
@@ -170,7 +178,7 @@ async fn demonstrate_data_errors() {
         }
     } else {
         println!("⚠️ FINNHUB_API_KEY not set - simulating data validation");
-        
+
         // Simulate data validation without API call
         let simulated_price = -10.0; // Invalid negative price
         if simulated_price <= 0.0 {
@@ -194,7 +202,7 @@ async fn demonstrate_graceful_degradation() -> Result<()> {
 
         // Primary data source
         let quote_result = client.stock().quote("AAPL").await;
-        
+
         // Fallback chain
         let final_data = match quote_result {
             Ok(quote) => {
@@ -203,16 +211,19 @@ async fn demonstrate_graceful_degradation() -> Result<()> {
             }
             Err(e) => {
                 println!("⚠️ Primary data source failed: {}", e);
-                
+
                 // Try alternative endpoint
                 match client.stock().company_profile("AAPL").await {
                     Ok(profile) => {
                         println!("✅ Fallback to company profile data");
-                        format!("Company: {}", profile.name.unwrap_or_else(|| "Apple Inc".to_string()))
+                        format!(
+                            "Company: {}",
+                            profile.name.unwrap_or_else(|| "Apple Inc".to_string())
+                        )
                     }
                     Err(e) => {
                         println!("⚠️ Secondary data source failed: {}", e);
-                        
+
                         // Final fallback to cached/static data
                         println!("✅ Using cached/static data");
                         "AAPL - Apple Inc (cached data)".to_string()
@@ -263,8 +274,10 @@ async fn demonstrate_retry_strategies() {
                 Err(Error::Http(_)) if retry_count < max_retries => {
                     retry_count += 1;
                     let delay = base_delay * 2_u32.pow(retry_count - 1); // Exponential backoff
-                    println!("⚠️ Request failed - retry {}/{} after {:?}", 
-                        retry_count, max_retries, delay);
+                    println!(
+                        "⚠️ Request failed - retry {}/{} after {:?}",
+                        retry_count, max_retries, delay
+                    );
                     tokio::time::sleep(delay).await;
                 }
                 Err(e) => {
@@ -275,7 +288,7 @@ async fn demonstrate_retry_strategies() {
         }
     } else {
         println!("⚠️ FINNHUB_API_KEY not set - simulating retry logic");
-        
+
         for attempt in 1..=3 {
             let delay = Duration::from_millis(100 * 2_u64.pow(attempt - 1));
             println!("🔄 Attempt {} - would wait {:?} on failure", attempt, delay);
@@ -293,9 +306,7 @@ async fn demonstrate_retry_strategies() {
 #[allow(dead_code)]
 fn handle_finnhub_error(error: Error) -> String {
     match error {
-        Error::Unauthorized => {
-            "Invalid API key - please check your credentials".to_string()
-        }
+        Error::Unauthorized => "Invalid API key - please check your credentials".to_string(),
         Error::RateLimitExceeded { retry_after } => {
             format!("Rate limit exceeded - retry after {} seconds", retry_after)
         }
@@ -326,8 +337,6 @@ fn handle_finnhub_error(error: Error) -> String {
         Error::Internal(msg) => {
             format!("Internal error: {}", msg)
         }
-        Error::Timeout => {
-            "Request timed out".to_string()
-        }
+        Error::Timeout => "Request timed out".to_string(),
     }
 }

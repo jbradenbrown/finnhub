@@ -60,9 +60,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -75,9 +74,13 @@ mod tests {
         let from = "2023-01-01";
         let to = "2023-12-31";
         let result = client.stock().dividends("AAPL", from, to).await;
-        
+
         // Just verify the API call completes successfully
-        assert!(result.is_ok(), "Failed to get dividends: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get dividends: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -87,7 +90,7 @@ mod tests {
         let from = "2020-01-01";
         let to = "2024-12-31";
         let result = client.stock().splits("AAPL", from, to).await;
-        
+
         // Just verify the API call completes successfully
         assert!(result.is_ok(), "Failed to get splits: {:?}", result.err());
     }
@@ -97,9 +100,13 @@ mod tests {
     async fn test_dividends_v2() {
         let client = test_client().await;
         let result = client.stock().dividends_v2("MSFT").await;
-        
+
         // Just verify the API call completes successfully
-        assert!(result.is_ok(), "Failed to get dividends v2: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get dividends v2: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -110,8 +117,12 @@ mod tests {
         let to = "2023-12-31";
         // Tesla historically has not paid dividends
         let result = client.stock().dividends("TSLA", from, to).await;
-        
+
         // Just verify the API call completes successfully (empty array is still success)
-        assert!(result.is_ok(), "Failed to get dividends for TSLA: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get dividends for TSLA: {:?}",
+            result.err()
+        );
     }
 }

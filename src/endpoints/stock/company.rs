@@ -52,9 +52,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -65,8 +64,12 @@ mod tests {
     async fn test_company_profile() {
         let client = test_client().await;
         let result = client.stock().company_profile("AAPL").await;
-        assert!(result.is_ok(), "Failed to get company profile: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get company profile: {:?}",
+            result.err()
+        );
+
         let profile = result.unwrap();
         assert!(profile.name.is_some());
         assert_eq!(profile.ticker.as_deref(), Some("AAPL"));
@@ -78,7 +81,7 @@ mod tests {
         let client = test_client().await;
         let result = client.stock().peers("AAPL", None).await;
         assert!(result.is_ok(), "Failed to get peers: {:?}", result.err());
-        
+
         let peers = result.unwrap();
         assert!(!peers.is_empty());
         assert!(peers.len() <= 10); // Usually returns up to 10 peers
@@ -90,7 +93,7 @@ mod tests {
         let client = test_client().await;
         let result = client.stock().symbols("US").await;
         assert!(result.is_ok(), "Failed to get symbols: {:?}", result.err());
-        
+
         let symbols = result.unwrap();
         assert!(!symbols.is_empty());
         // Check that symbols have the expected fields

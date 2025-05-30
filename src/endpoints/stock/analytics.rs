@@ -3,9 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::stock::{
-        PriceTarget, RecommendationTrend, RevenueBreakdown, UpgradeDowngrade,
-    },
+    models::stock::{PriceTarget, RecommendationTrend, RevenueBreakdown, UpgradeDowngrade},
 };
 
 /// Analytics and recommendations endpoints.
@@ -80,9 +78,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -93,8 +90,12 @@ mod tests {
     async fn test_price_target() {
         let client = test_client().await;
         let result = client.stock().price_target("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get price target: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get price target: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -102,8 +103,12 @@ mod tests {
     async fn test_recommendations() {
         let client = test_client().await;
         let result = client.stock().recommendations("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get recommendations: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get recommendations: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -111,32 +116,50 @@ mod tests {
     async fn test_revenue_breakdown() {
         let client = test_client().await;
         let result = client.stock().revenue_breakdown("AAPL").await;
-        
+
         // Revenue breakdown might not be available for all companies
-        assert!(result.is_ok(), "Failed to get revenue breakdown: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get revenue breakdown: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_upgrade_downgrade() {
         let client = test_client().await;
-        
+
         // Test with symbol
-        let result = client.stock().upgrade_downgrade(Some("AAPL"), None, None).await;
-        
-        assert!(result.is_ok(), "Failed to get upgrade/downgrade: {:?}", result.err());
+        let result = client
+            .stock()
+            .upgrade_downgrade(Some("AAPL"), None, None)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get upgrade/downgrade: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_upgrade_downgrade_with_dates() {
         let client = test_client().await;
-        
+
         // Test with date range
         let from = "2024-01-01";
         let to = "2024-12-31";
-        let result = client.stock().upgrade_downgrade(Some("AAPL"), Some(from), Some(to)).await;
-        
-        assert!(result.is_ok(), "Failed to get upgrade/downgrade with dates: {:?}", result.err());
+        let result = client
+            .stock()
+            .upgrade_downgrade(Some("AAPL"), Some(from), Some(to))
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get upgrade/downgrade with dates: {:?}",
+            result.err()
+        );
     }
 }

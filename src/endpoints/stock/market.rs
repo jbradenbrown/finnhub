@@ -57,9 +57,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -70,8 +69,12 @@ mod tests {
     async fn test_market_status() {
         let client = test_client().await;
         let result = client.stock().market_status("US").await;
-        
-        assert!(result.is_ok(), "Failed to get market status: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get market status: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -79,17 +82,28 @@ mod tests {
     async fn test_market_holiday() {
         let client = test_client().await;
         let result = client.stock().market_holiday("US").await;
-        
-        assert!(result.is_ok(), "Failed to get market holidays: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get market holidays: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_investment_theme() {
         let client = test_client().await;
-        let result = client.stock().investment_theme("financialExchangesData").await;
-        
-        assert!(result.is_ok(), "Failed to get investment theme: {:?}", result.err());
+        let result = client
+            .stock()
+            .investment_theme("financialExchangesData")
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get investment theme: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -97,7 +111,11 @@ mod tests {
     async fn test_investment_theme_future_food() {
         let client = test_client().await;
         let result = client.stock().investment_theme("futureFood").await;
-        
-        assert!(result.is_ok(), "Failed to get future food theme: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get future food theme: {:?}",
+            result.err()
+        );
     }
 }

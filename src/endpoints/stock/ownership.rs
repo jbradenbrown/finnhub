@@ -52,9 +52,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -65,8 +64,12 @@ mod tests {
     async fn test_institutional_ownership() {
         let client = test_client().await;
         let result = client.stock().ownership("AAPL", None).await;
-        
-        assert!(result.is_ok(), "Failed to get institutional ownership: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get institutional ownership: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -75,8 +78,12 @@ mod tests {
         let client = test_client().await;
         let limit = 10;
         let result = client.stock().ownership("MSFT", Some(limit)).await;
-        
-        assert!(result.is_ok(), "Failed to get institutional ownership with limit: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get institutional ownership with limit: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -84,8 +91,12 @@ mod tests {
     async fn test_fund_ownership() {
         let client = test_client().await;
         let result = client.stock().fund_ownership("AAPL", None).await;
-        
-        assert!(result.is_ok(), "Failed to get fund ownership: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get fund ownership: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -94,7 +105,11 @@ mod tests {
         let client = test_client().await;
         let limit = 5;
         let result = client.stock().fund_ownership("GOOGL", Some(limit)).await;
-        
-        assert!(result.is_ok(), "Failed to get fund ownership with limit: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get fund ownership with limit: {:?}",
+            result.err()
+        );
     }
 }

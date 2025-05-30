@@ -64,9 +64,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -77,11 +76,15 @@ mod tests {
     async fn test_forex_symbols() {
         let client = test_client().await;
         let result = client.forex().symbols("OANDA").await;
-        assert!(result.is_ok(), "Failed to get forex symbols: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get forex symbols: {:?}",
+            result.err()
+        );
+
         let symbols = result.unwrap();
         assert!(!symbols.is_empty());
-        
+
         // Check that symbols have the expected format
         for symbol in &symbols {
             assert!(!symbol.description.is_empty());
@@ -94,8 +97,12 @@ mod tests {
     async fn test_forex_exchanges() {
         let client = test_client().await;
         let result = client.forex().exchanges().await;
-        assert!(result.is_ok(), "Failed to get forex exchanges: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get forex exchanges: {:?}",
+            result.err()
+        );
+
         let exchanges = result.unwrap();
         assert!(!exchanges.is_empty());
         assert!(exchanges.contains(&"OANDA".to_string()));
@@ -106,17 +113,21 @@ mod tests {
     async fn test_forex_rates() {
         let client = test_client().await;
         let result = client.forex().rates("USD").await;
-        assert!(result.is_ok(), "Failed to get forex rates: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get forex rates: {:?}",
+            result.err()
+        );
+
         let rates = result.unwrap();
         assert_eq!(rates.base, "USD");
         assert!(!rates.quote.is_empty());
-        
+
         // Check some common currencies
         assert!(rates.quote.contains_key("EUR"));
         assert!(rates.quote.contains_key("GBP"));
         assert!(rates.quote.contains_key("JPY"));
-        
+
         // All rates should be positive
         for (_, rate) in &rates.quote {
             assert!(*rate > 0.0);
@@ -129,12 +140,17 @@ mod tests {
         let client = test_client().await;
         let from = chrono::Utc::now().timestamp() - 86400 * 7; // 7 days ago
         let to = chrono::Utc::now().timestamp();
-        
-        let result = client.forex()
+
+        let result = client
+            .forex()
             .candles("OANDA:EUR_USD", CandleResolution::Daily, from, to)
             .await;
-        assert!(result.is_ok(), "Failed to get forex candles: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get forex candles: {:?}",
+            result.err()
+        );
+
         let candles = result.unwrap();
         assert_eq!(candles.status, "ok");
         assert!(!candles.close.is_empty());

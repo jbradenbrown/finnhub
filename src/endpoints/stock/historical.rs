@@ -56,12 +56,7 @@ impl<'a> HistoricalEndpoints<'a> {
     /// Get historical ESG (Environmental, Social, Governance) scores.
     ///
     /// Returns historical ESG scores for a given date range.
-    pub async fn esg(
-        &self,
-        symbol: &str,
-        from: &str,
-        to: &str,
-    ) -> Result<HistoricalESG> {
+    pub async fn esg(&self, symbol: &str, from: &str, to: &str) -> Result<HistoricalESG> {
         self.client
             .get(&format!(
                 "/stock/historical-esg?symbol={}&from={}&to={}",
@@ -101,9 +96,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -116,8 +110,12 @@ mod tests {
         let from = "2023-01-01";
         let to = "2023-12-31";
         let result = client.stock().historical_market_cap("AAPL", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get historical market cap: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get historical market cap: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -126,9 +124,16 @@ mod tests {
         let client = test_client().await;
         let from = "2020-01-01";
         let to = "2023-12-31";
-        let result = client.stock().historical_employee_count("MSFT", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get historical employee count: {:?}", result.err());
+        let result = client
+            .stock()
+            .historical_employee_count("MSFT", from, to)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get historical employee count: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -138,8 +143,12 @@ mod tests {
         let from = "2020-01-01";
         let to = "2023-12-31";
         let result = client.stock().historical_esg("AAPL", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get historical ESG: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get historical ESG: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -149,9 +158,16 @@ mod tests {
         let date = "2024-01-02"; // A specific trading day
         let limit = 100;
         let skip = 0;
-        let result = client.stock().historical_nbbo("AAPL", date, limit, skip).await;
-        
-        assert!(result.is_ok(), "Failed to get historical NBBO: {:?}", result.err());
+        let result = client
+            .stock()
+            .historical_nbbo("AAPL", date, limit, skip)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get historical NBBO: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -161,8 +177,15 @@ mod tests {
         let date = "2024-01-02"; // A specific trading day
         let limit = 50;
         let skip = 100;
-        let result = client.stock().historical_nbbo("AAPL", date, limit, skip).await;
-        
-        assert!(result.is_ok(), "Failed to get historical NBBO with pagination: {:?}", result.err());
+        let result = client
+            .stock()
+            .historical_nbbo("AAPL", date, limit, skip)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get historical NBBO with pagination: {:?}",
+            result.err()
+        );
     }
 }

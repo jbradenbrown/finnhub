@@ -62,12 +62,16 @@ fn benchmark_stock_endpoints(c: &mut Criterion) {
     c.bench_function("financials_request", |b| {
         b.iter(|| {
             rt.block_on(async {
-                let _ = black_box(client.stock().financials(
-                    "AAPL",
-                    StatementType::IncomeStatement,
-                    StatementFrequency::Annual,
-                )
-                .await);
+                let _ = black_box(
+                    client
+                        .stock()
+                        .financials(
+                            "AAPL",
+                            StatementType::IncomeStatement,
+                            StatementFrequency::Annual,
+                        )
+                        .await,
+                );
             })
         })
     });

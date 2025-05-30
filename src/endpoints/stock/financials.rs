@@ -4,8 +4,8 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::stock::{
-        BasicFinancials, Earnings, FinancialStatements, FinancialsAsReported,
-        StatementFrequency, StatementType,
+        BasicFinancials, Earnings, FinancialStatements, FinancialsAsReported, StatementFrequency,
+        StatementType,
     },
 };
 
@@ -73,7 +73,7 @@ impl<'a> FinancialsEndpoints<'a> {
         freq: Option<&str>,
     ) -> Result<FinancialsAsReported> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
@@ -86,13 +86,13 @@ impl<'a> FinancialsEndpoints<'a> {
         if let Some(f) = freq {
             params.push(format!("freq={}", f));
         }
-        
+
         let query = if params.is_empty() {
             String::from("/stock/financials-reported")
         } else {
             format!("/stock/financials-reported?{}", params.join("&"))
         };
-        
+
         self.client.get(&query).await
     }
 }
@@ -100,15 +100,14 @@ impl<'a> FinancialsEndpoints<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{
+        models::stock::{StatementFrequency, StatementType},
         ClientConfig, FinnhubClient, RateLimitStrategy,
-        models::stock::{StatementType, StatementFrequency}
     };
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -118,39 +117,56 @@ mod tests {
     #[ignore = "requires API key"]
     async fn test_financial_statements_balance_sheet() {
         let client = test_client().await;
-        let result = client.stock().financials(
-            "AAPL",
-            StatementType::BalanceSheet,
-            StatementFrequency::Annual
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get balance sheet: {:?}", result.err());
+        let result = client
+            .stock()
+            .financials(
+                "AAPL",
+                StatementType::BalanceSheet,
+                StatementFrequency::Annual,
+            )
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get balance sheet: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_financial_statements_income() {
         let client = test_client().await;
-        let result = client.stock().financials(
-            "MSFT",
-            StatementType::IncomeStatement,
-            StatementFrequency::Quarterly
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get income statement: {:?}", result.err());
+        let result = client
+            .stock()
+            .financials(
+                "MSFT",
+                StatementType::IncomeStatement,
+                StatementFrequency::Quarterly,
+            )
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get income statement: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_financial_statements_cash_flow() {
         let client = test_client().await;
-        let result = client.stock().financials(
-            "GOOGL",
-            StatementType::CashFlow,
-            StatementFrequency::Annual
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get cash flow statement: {:?}", result.err());
+        let result = client
+            .stock()
+            .financials("GOOGL", StatementType::CashFlow, StatementFrequency::Annual)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get cash flow statement: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -158,8 +174,12 @@ mod tests {
     async fn test_basic_financials_metrics() {
         let client = test_client().await;
         let result = client.stock().metrics("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get basic financials metrics: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get basic financials metrics: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -167,7 +187,7 @@ mod tests {
     async fn test_earnings() {
         let client = test_client().await;
         let result = client.stock().earnings("AAPL", Some(4)).await;
-        
+
         assert!(result.is_ok(), "Failed to get earnings: {:?}", result.err());
     }
 
@@ -175,14 +195,16 @@ mod tests {
     #[ignore = "requires API key"]
     async fn test_financials_as_reported() {
         let client = test_client().await;
-        let result = client.stock().financials_reported(
-            Some("AAPL"),
-            None,
-            None,
-            Some("annual")
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get financials as reported: {:?}", result.err());
+        let result = client
+            .stock()
+            .financials_reported(Some("AAPL"), None, None, Some("annual"))
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get financials as reported: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -190,7 +212,11 @@ mod tests {
     async fn test_earnings_no_limit() {
         let client = test_client().await;
         let result = client.stock().earnings("MSFT", None).await;
-        
-        assert!(result.is_ok(), "Failed to get earnings without limit: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get earnings without limit: {:?}",
+            result.err()
+        );
     }
 }

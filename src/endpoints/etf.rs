@@ -26,20 +26,20 @@ impl<'a> ETFEndpoints<'a> {
     /// * `isin` - ETF ISIN (optional if using symbol)
     pub async fn profile(&self, symbol: Option<&str>, isin: Option<&str>) -> Result<ETFProfile> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
         if let Some(i) = isin {
             params.push(format!("isin={}", i));
         }
-        
+
         if params.is_empty() {
             return Err(crate::error::Error::InvalidRequest(
                 "Either symbol or ISIN must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/etf/profile?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -61,7 +61,7 @@ impl<'a> ETFEndpoints<'a> {
         date: Option<&str>,
     ) -> Result<ETFHoldings> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
@@ -74,13 +74,13 @@ impl<'a> ETFEndpoints<'a> {
         if let Some(d) = date {
             params.push(format!("date={}", d));
         }
-        
+
         if params.is_empty() {
             return Err(crate::error::Error::InvalidRequest(
                 "Either symbol or ISIN must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/etf/holdings?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -98,20 +98,20 @@ impl<'a> ETFEndpoints<'a> {
         isin: Option<&str>,
     ) -> Result<ETFCountryExposure> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
         if let Some(i) = isin {
             params.push(format!("isin={}", i));
         }
-        
+
         if params.is_empty() {
             return Err(crate::error::Error::InvalidRequest(
                 "Either symbol or ISIN must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/etf/country?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -129,20 +129,20 @@ impl<'a> ETFEndpoints<'a> {
         isin: Option<&str>,
     ) -> Result<ETFSectorExposure> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
         if let Some(i) = isin {
             params.push(format!("isin={}", i));
         }
-        
+
         if params.is_empty() {
             return Err(crate::error::Error::InvalidRequest(
                 "Either symbol or ISIN must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/etf/sector?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -151,13 +151,11 @@ impl<'a> ETFEndpoints<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
-    
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -168,8 +166,12 @@ mod tests {
     async fn test_profile() {
         let client = test_client().await;
         let result = client.etf().profile(Some("SPY"), None).await;
-        assert!(result.is_ok(), "Failed to get ETF profile: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get ETF profile: {:?}",
+            result.err()
+        );
+
         let profile = result.unwrap();
         assert!(profile.profile.name.is_some());
     }
@@ -179,8 +181,12 @@ mod tests {
     async fn test_holdings() {
         let client = test_client().await;
         let result = client.etf().holdings(Some("SPY"), None, None, None).await;
-        assert!(result.is_ok(), "Failed to get ETF holdings: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get ETF holdings: {:?}",
+            result.err()
+        );
+
         let holdings = result.unwrap();
         assert!(!holdings.holdings.is_empty());
     }
@@ -190,8 +196,12 @@ mod tests {
     async fn test_country_exposure() {
         let client = test_client().await;
         let result = client.etf().country_exposure(Some("SPY"), None).await;
-        assert!(result.is_ok(), "Failed to get country exposure: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get country exposure: {:?}",
+            result.err()
+        );
+
         let exposure = result.unwrap();
         assert!(!exposure.country_exposure.is_empty());
     }
@@ -201,8 +211,12 @@ mod tests {
     async fn test_sector_exposure() {
         let client = test_client().await;
         let result = client.etf().sector_exposure(Some("SPY"), None).await;
-        assert!(result.is_ok(), "Failed to get sector exposure: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get sector exposure: {:?}",
+            result.err()
+        );
+
         let exposure = result.unwrap();
         assert!(!exposure.sector_exposure.is_empty());
     }

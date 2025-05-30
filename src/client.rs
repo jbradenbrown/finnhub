@@ -8,7 +8,7 @@ use url::Url;
 use crate::{
     auth::{Auth, AuthMethod},
     endpoints::{
-        BondEndpoints, CalendarEndpoints, CryptoEndpoints, EconomicEndpoints, ETFEndpoints,
+        BondEndpoints, CalendarEndpoints, CryptoEndpoints, ETFEndpoints, EconomicEndpoints,
         ForexEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints, NewsEndpoints,
         ScannerEndpoints, StockEndpoints,
     },
@@ -107,9 +107,10 @@ impl FinnhubClient {
             match config.rate_limit_strategy {
                 RateLimitStrategy::PerSecond => RateLimiter::finnhub_default(),
                 RateLimitStrategy::FifteenSecondWindow => RateLimiter::finnhub_15s_window(),
-                RateLimitStrategy::Custom { capacity, refill_rate } => {
-                    RateLimiter::new(capacity, refill_rate)
-                }
+                RateLimitStrategy::Custom {
+                    capacity,
+                    refill_rate,
+                } => RateLimiter::new(capacity, refill_rate),
             }
         };
 

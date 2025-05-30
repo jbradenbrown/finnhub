@@ -20,12 +20,7 @@ impl<'a> SentimentEndpoints<'a> {
     /// Get social sentiment data.
     ///
     /// Returns social media sentiment data for a company.
-    pub async fn social(
-        &self,
-        symbol: &str,
-        from: &str,
-        to: &str,
-    ) -> Result<SocialSentiment> {
+    pub async fn social(&self, symbol: &str, from: &str, to: &str) -> Result<SocialSentiment> {
         self.client
             .get(&format!(
                 "/stock/social-sentiment?symbol={}&from={}&to={}",
@@ -42,7 +37,10 @@ impl<'a> SentimentEndpoints<'a> {
     /// * `access_number` - Access number of the filing
     pub async fn filing(&self, access_number: &str) -> Result<FilingSentiment> {
         self.client
-            .get(&format!("/stock/filings-sentiment?accessNumber={}", access_number))
+            .get(&format!(
+                "/stock/filings-sentiment?accessNumber={}",
+                access_number
+            ))
             .await
     }
 }
@@ -53,9 +51,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -68,8 +65,12 @@ mod tests {
         let from = "2024-01-01";
         let to = "2024-01-31";
         let result = client.stock().social_sentiment("AAPL", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get social sentiment: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get social sentiment: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -80,8 +81,12 @@ mod tests {
         // We'll use a known access number for testing
         let access_number = "0000320193-24-000123"; // Example Apple filing
         let result = client.stock().filing_sentiment(access_number).await;
-        
-        assert!(result.is_ok(), "Failed to get filing sentiment: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get filing sentiment: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -91,7 +96,11 @@ mod tests {
         let from = "2024-06-01";
         let to = "2024-06-07"; // One week
         let result = client.stock().social_sentiment("TSLA", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get social sentiment with date range: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get social sentiment with date range: {:?}",
+            result.err()
+        );
     }
 }

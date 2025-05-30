@@ -65,13 +65,11 @@ impl<'a> ScannerEndpoints<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
-    
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -82,7 +80,11 @@ mod tests {
     async fn test_pattern_recognition() {
         let client = test_client().await;
         let result = client.scanner().pattern_recognition("AAPL", "D").await;
-        assert!(result.is_ok(), "Failed to get pattern recognition: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get pattern recognition: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -90,7 +92,11 @@ mod tests {
     async fn test_support_resistance() {
         let client = test_client().await;
         let result = client.scanner().support_resistance("AAPL", "D").await;
-        assert!(result.is_ok(), "Failed to get support resistance: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get support resistance: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -98,6 +104,10 @@ mod tests {
     async fn test_aggregate_indicators() {
         let client = test_client().await;
         let result = client.scanner().aggregate_indicators("AAPL", "D").await;
-        assert!(result.is_ok(), "Failed to get aggregate indicators: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get aggregate indicators: {:?}",
+            result.err()
+        );
     }
 }

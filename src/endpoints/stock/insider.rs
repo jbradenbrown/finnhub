@@ -50,9 +50,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -63,8 +62,12 @@ mod tests {
     async fn test_insider_transactions() {
         let client = test_client().await;
         let result = client.stock().insider_transactions("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get insider transactions: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get insider transactions: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -74,8 +77,12 @@ mod tests {
         let from = "2023-01-01";
         let to = "2023-12-31";
         let result = client.stock().insider_sentiment("MSFT", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get insider sentiment: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get insider sentiment: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -85,7 +92,11 @@ mod tests {
         let from = "2024-01-01";
         let to = "2024-06-30";
         let result = client.stock().insider_sentiment("GOOGL", from, to).await;
-        
-        assert!(result.is_ok(), "Failed to get insider sentiment with date range: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get insider sentiment with date range: {:?}",
+            result.err()
+        );
     }
 }

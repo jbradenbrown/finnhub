@@ -32,7 +32,7 @@ impl<'a> BondEndpoints<'a> {
         cusip: Option<&str>,
     ) -> Result<BondProfile> {
         let mut params = vec![];
-        
+
         if let Some(f) = figi {
             params.push(format!("figi={}", f));
         }
@@ -42,13 +42,13 @@ impl<'a> BondEndpoints<'a> {
         if let Some(c) = cusip {
             params.push(format!("cusip={}", c));
         }
-        
+
         if params.is_empty() {
             return Err(crate::error::Error::InvalidRequest(
                 "Either FIGI, ISIN, or CUSIP must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/bond/profile?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -60,9 +60,7 @@ impl<'a> BondEndpoints<'a> {
     /// # Arguments
     /// * `isin` - ISIN identifier
     pub async fn price(&self, isin: &str) -> Result<BondPrice> {
-        self.client
-            .get(&format!("/bond/price?isin={}", isin))
-            .await
+        self.client.get(&format!("/bond/price?isin={}", isin)).await
     }
 
     /// Get bond tick data.
@@ -110,9 +108,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -122,8 +119,15 @@ mod tests {
     #[ignore = "requires API key"]
     async fn test_profile() {
         let client = test_client().await;
-        let result = client.bond().profile(Some("BBG00B3T3HD3"), None, None).await;
-        assert!(result.is_ok(), "Failed to get bond profile: {:?}", result.err());
+        let result = client
+            .bond()
+            .profile(Some("BBG00B3T3HD3"), None, None)
+            .await;
+        assert!(
+            result.is_ok(),
+            "Failed to get bond profile: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -131,15 +135,26 @@ mod tests {
     async fn test_price() {
         let client = test_client().await;
         let result = client.bond().price("US037833100").await;
-        assert!(result.is_ok(), "Failed to get bond price: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get bond price: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_tick() {
         let client = test_client().await;
-        let result = client.bond().tick("2024-01-15", "US037833100", 100, 0, "TRACE").await;
-        assert!(result.is_ok(), "Failed to get bond tick: {:?}", result.err());
+        let result = client
+            .bond()
+            .tick("2024-01-15", "US037833100", 100, 0, "TRACE")
+            .await;
+        assert!(
+            result.is_ok(),
+            "Failed to get bond tick: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -147,6 +162,10 @@ mod tests {
     async fn test_yield_curve() {
         let client = test_client().await;
         let result = client.bond().yield_curve("US").await;
-        assert!(result.is_ok(), "Failed to get yield curve: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get yield curve: {:?}",
+            result.err()
+        );
     }
 }

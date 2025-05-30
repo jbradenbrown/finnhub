@@ -3,9 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::stock::{
-        BidAsk, CandleResolution, PriceMetrics, Quote, StockCandles, TickData,
-    },
+    models::stock::{BidAsk, CandleResolution, PriceMetrics, Quote, StockCandles, TickData},
 };
 
 /// Price-related endpoints for stocks.
@@ -96,9 +94,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -110,7 +107,7 @@ mod tests {
         let client = test_client().await;
         let result = client.stock().quote("AAPL").await;
         assert!(result.is_ok(), "Failed to get quote: {:?}", result.err());
-        
+
         let quote = result.unwrap();
         assert!(quote.current_price > 0.0);
         assert!(quote.high >= quote.low);
@@ -122,10 +119,13 @@ mod tests {
         let client = test_client().await;
         let from = chrono::Utc::now().timestamp() - 86400 * 7; // 7 days ago
         let to = chrono::Utc::now().timestamp();
-        
-        let result = client.stock().candles("AAPL", CandleResolution::Daily, from, to).await;
+
+        let result = client
+            .stock()
+            .candles("AAPL", CandleResolution::Daily, from, to)
+            .await;
         assert!(result.is_ok(), "Failed to get candles: {:?}", result.err());
-        
+
         let candles = result.unwrap();
         assert_eq!(candles.status, "ok");
         assert!(!candles.close.is_empty());

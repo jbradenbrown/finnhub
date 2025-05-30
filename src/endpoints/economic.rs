@@ -24,9 +24,7 @@ impl<'a> EconomicEndpoints<'a> {
     /// # Arguments
     /// * `code` - Economic indicator code (e.g., "MA-USA-656880")
     pub async fn data(&self, code: &str) -> Result<EconomicData> {
-        self.client
-            .get(&format!("/economic?code={}", code))
-            .await
+        self.client.get(&format!("/economic?code={}", code)).await
     }
 
     /// Get list of economic indicator codes.
@@ -43,9 +41,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -56,8 +53,12 @@ mod tests {
     async fn test_codes() {
         let client = test_client().await;
         let result = client.economic().codes().await;
-        assert!(result.is_ok(), "Failed to get economic codes: {:?}", result.err());
-        
+        assert!(
+            result.is_ok(),
+            "Failed to get economic codes: {:?}",
+            result.err()
+        );
+
         let codes = result.unwrap();
         assert!(!codes.is_empty());
     }
@@ -67,6 +68,10 @@ mod tests {
     async fn test_data() {
         let client = test_client().await;
         let result = client.economic().data("MA-USA-656880").await;
-        assert!(result.is_ok(), "Failed to get economic data: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to get economic data: {:?}",
+            result.err()
+        );
     }
 }

@@ -4,8 +4,8 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::stock::{
-        EarningsCallLive, EarningsCallTranscript, EarningsCallTranscriptsList,
-        Filing, InternationalFiling, InvestorPresentations, SimilarityIndex,
+        EarningsCallLive, EarningsCallTranscript, EarningsCallTranscriptsList, Filing,
+        InternationalFiling, InvestorPresentations, SimilarityIndex,
     },
 };
 
@@ -41,7 +41,7 @@ impl<'a> FilingsEndpoints<'a> {
         to: Option<&str>,
     ) -> Result<Vec<Filing>> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
@@ -60,13 +60,13 @@ impl<'a> FilingsEndpoints<'a> {
         if let Some(to_date) = to {
             params.push(format!("to={}", to_date));
         }
-        
+
         let query = if params.is_empty() {
             String::from("/stock/filings")
         } else {
             format!("/stock/filings?{}", params.join("&"))
         };
-        
+
         self.client.get(&query).await
     }
 
@@ -87,7 +87,7 @@ impl<'a> FilingsEndpoints<'a> {
         to: Option<&str>,
     ) -> Result<Vec<InternationalFiling>> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
@@ -100,13 +100,13 @@ impl<'a> FilingsEndpoints<'a> {
         if let Some(t) = to {
             params.push(format!("to={}", t));
         }
-        
+
         let query = if params.is_empty() {
             String::from("/stock/international-filings")
         } else {
             format!("/stock/international-filings?{}", params.join("&"))
         };
-        
+
         self.client.get(&query).await
     }
 
@@ -143,7 +143,10 @@ impl<'a> FilingsEndpoints<'a> {
     /// * `to` - To date in YYYY-MM-DD format
     pub async fn earnings_call_live(&self, from: &str, to: &str) -> Result<EarningsCallLive> {
         self.client
-            .get(&format!("/stock/earnings-call-live?from={}&to={}", from, to))
+            .get(&format!(
+                "/stock/earnings-call-live?from={}&to={}",
+                from, to
+            ))
             .await
     }
 
@@ -174,7 +177,7 @@ impl<'a> FilingsEndpoints<'a> {
         freq: Option<&str>,
     ) -> Result<SimilarityIndex> {
         let mut params = vec![];
-        
+
         if let Some(s) = symbol {
             params.push(format!("symbol={}", s));
         }
@@ -184,13 +187,13 @@ impl<'a> FilingsEndpoints<'a> {
         if let Some(f) = freq {
             params.push(format!("freq={}", f));
         }
-        
+
         if params.is_empty() {
             return Err(crate::Error::InvalidRequest(
-                "At least one of symbol or cik must be provided".to_string()
+                "At least one of symbol or cik must be provided".to_string(),
             ));
         }
-        
+
         let query = format!("/stock/similarity-index?{}", params.join("&"));
         self.client.get(&query).await
     }
@@ -202,9 +205,8 @@ mod tests {
 
     async fn test_client() -> FinnhubClient {
         dotenv::dotenv().ok();
-        let api_key = std::env::var("FINNHUB_API_KEY")
-            .unwrap_or_else(|_| "test_key".to_string());
-        
+        let api_key = std::env::var("FINNHUB_API_KEY").unwrap_or_else(|_| "test_key".to_string());
+
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
@@ -214,25 +216,32 @@ mod tests {
     #[ignore = "requires API key"]
     async fn test_sec_filings() {
         let client = test_client().await;
-        let result = client.stock().sec_filings(Some("AAPL"), None, None, None, None, None).await;
-        
-        assert!(result.is_ok(), "Failed to get SEC filings: {:?}", result.err());
+        let result = client
+            .stock()
+            .sec_filings(Some("AAPL"), None, None, None, None, None)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get SEC filings: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_sec_filings_with_form_filter() {
         let client = test_client().await;
-        let result = client.stock().sec_filings(
-            Some("MSFT"),
-            None,
-            None,
-            Some("10-K"),
-            None,
-            None
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get SEC filings with form filter: {:?}", result.err());
+        let result = client
+            .stock()
+            .sec_filings(Some("MSFT"), None, None, Some("10-K"), None, None)
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get SEC filings with form filter: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -241,16 +250,16 @@ mod tests {
         let client = test_client().await;
         let from = "2023-01-01";
         let to = "2023-12-31";
-        let result = client.stock().sec_filings(
-            Some("GOOGL"),
-            None,
-            None,
-            None,
-            Some(from),
-            Some(to)
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get SEC filings with date range: {:?}", result.err());
+        let result = client
+            .stock()
+            .sec_filings(Some("GOOGL"), None, None, None, Some(from), Some(to))
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get SEC filings with date range: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -258,14 +267,21 @@ mod tests {
     async fn test_international_filings() {
         let client = test_client().await;
         // Test with a company that has international filings
-        let result = client.stock().international_filings(
-            Some("NVO"),  // Novo Nordisk (Danish company)
-            None,
-            None,
-            None
-        ).await;
-        
-        assert!(result.is_ok(), "Failed to get international filings: {:?}", result.err());
+        let result = client
+            .stock()
+            .international_filings(
+                Some("NVO"), // Novo Nordisk (Danish company)
+                None,
+                None,
+                None,
+            )
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get international filings: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -273,8 +289,12 @@ mod tests {
     async fn test_transcripts_list() {
         let client = test_client().await;
         let result = client.stock().transcripts_list("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get transcripts list: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get transcripts list: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -286,10 +306,14 @@ mod tests {
         let to = (chrono::Local::now() + chrono::Duration::days(30))
             .format("%Y-%m-%d")
             .to_string();
-        
+
         let result = client.stock().earnings_call_live(&from, &to).await;
-        
-        assert!(result.is_ok(), "Failed to get earnings call live: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get earnings call live: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -297,17 +321,28 @@ mod tests {
     async fn test_presentations() {
         let client = test_client().await;
         let result = client.stock().presentations("AAPL").await;
-        
-        assert!(result.is_ok(), "Failed to get presentations: {:?}", result.err());
+
+        assert!(
+            result.is_ok(),
+            "Failed to get presentations: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_similarity_index() {
         let client = test_client().await;
-        let result = client.stock().similarity_index(Some("AAPL"), None, Some("annual")).await;
-        
-        assert!(result.is_ok(), "Failed to get similarity index: {:?}", result.err());
+        let result = client
+            .stock()
+            .similarity_index(Some("AAPL"), None, Some("annual"))
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get similarity index: {:?}",
+            result.err()
+        );
     }
 
     #[tokio::test]
@@ -316,7 +351,10 @@ mod tests {
         let client = test_client().await;
         // Should fail when neither symbol nor cik is provided
         let result = client.stock().similarity_index(None, None, None).await;
-        
-        assert!(result.is_err(), "Should fail when neither symbol nor cik is provided");
+
+        assert!(
+            result.is_err(),
+            "Should fail when neither symbol nor cik is provided"
+        );
     }
 }

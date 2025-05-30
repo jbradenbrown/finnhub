@@ -44,10 +44,24 @@ async fn main() -> Result<()> {
     println!("\nFetching AAPL company profile...");
     let profile = client.stock().company_profile("AAPL").await?;
     println!("Company Profile:");
-    println!("  Name: {}", profile.name.unwrap_or_else(|| "N/A".to_string()));
-    println!("  Country: {}", profile.country.unwrap_or_else(|| "N/A".to_string()));
-    println!("  Exchange: {}", profile.exchange.unwrap_or_else(|| "N/A".to_string()));
-    println!("  Industry: {}", profile.finnhub_industry.unwrap_or_else(|| "N/A".to_string()));
+    println!(
+        "  Name: {}",
+        profile.name.unwrap_or_else(|| "N/A".to_string())
+    );
+    println!(
+        "  Country: {}",
+        profile.country.unwrap_or_else(|| "N/A".to_string())
+    );
+    println!(
+        "  Exchange: {}",
+        profile.exchange.unwrap_or_else(|| "N/A".to_string())
+    );
+    println!(
+        "  Industry: {}",
+        profile
+            .finnhub_industry
+            .unwrap_or_else(|| "N/A".to_string())
+    );
     if let Some(market_cap) = profile.market_capitalization {
         println!("  Market Cap: ${:.2}B", market_cap / 1_000_000_000.0);
     } else {
@@ -226,12 +240,13 @@ async fn main() -> Result<()> {
     let ipo_from = (Utc::now() - Duration::days(30))
         .format("%Y-%m-%d")
         .to_string();
-    
+
     match client.calendar().ipo(&ipo_from, &ipo_to).await {
         Ok(calendar) => {
             println!("Recent and upcoming IPOs:");
             for ipo in calendar.ipo_calendar.iter().take(5) {
-                if let (Some(symbol), Some(name), Some(date)) = (&ipo.symbol, &ipo.name, &ipo.date) {
+                if let (Some(symbol), Some(name), Some(date)) = (&ipo.symbol, &ipo.name, &ipo.date)
+                {
                     println!("  📈 {} ({}) - {}", symbol, name, date);
                     if let Some(price) = &ipo.price {
                         println!("     Price range: {}", price);
@@ -250,7 +265,11 @@ async fn main() -> Result<()> {
 
     // Get SEC filings
     println!("\nFetching AAPL SEC filings...");
-    match client.stock().sec_filings(Some("AAPL"), None, None, None, None, None).await {
+    match client
+        .stock()
+        .sec_filings(Some("AAPL"), None, None, None, None, None)
+        .await
+    {
         Ok(filings) => {
             println!("Recent SEC filings:");
             for filing in filings.iter().take(5) {
@@ -285,10 +304,15 @@ async fn main() -> Result<()> {
 
     // Get tick data (limited example)
     println!("\nFetching AAPL tick data...");
-    let tick_date = (Utc::now() - Duration::days(1)).format("%Y-%m-%d").to_string();
+    let tick_date = (Utc::now() - Duration::days(1))
+        .format("%Y-%m-%d")
+        .to_string();
     match client.stock().tick_data("AAPL", &tick_date, 100, 0).await {
         Ok(ticks) => {
-            println!("Tick data for {} (showing first 5 of {}):", tick_date, ticks.count);
+            println!(
+                "Tick data for {} (showing first 5 of {}):",
+                tick_date, ticks.count
+            );
             for i in 0..5.min(ticks.price.len()) {
                 println!(
                     "  Time: {} | Price: ${:.2} | Volume: {:.0}",
@@ -306,13 +330,22 @@ async fn main() -> Result<()> {
 
     // Get financials as reported
     println!("\nFetching AAPL financials as reported...");
-    match client.stock().financials_reported(Some("AAPL"), None, None, Some("quarterly")).await {
+    match client
+        .stock()
+        .financials_reported(Some("AAPL"), None, None, Some("quarterly"))
+        .await
+    {
         Ok(financials) => {
             println!("Financials as reported (quarterly):");
             for report in financials.data.iter().take(2) {
-                if let (Some(year), Some(quarter), Some(form)) = (report.year, report.quarter, &report.form) {
-                    println!("  📊 {} - Q{} {} (filed: {})", 
-                        year, quarter, form, 
+                if let (Some(year), Some(quarter), Some(form)) =
+                    (report.year, report.quarter, &report.form)
+                {
+                    println!(
+                        "  📊 {} - Q{} {} (filed: {})",
+                        year,
+                        quarter,
+                        form,
                         report.filed_date.as_deref().unwrap_or("Unknown")
                     );
                 }
@@ -328,14 +361,19 @@ async fn main() -> Result<()> {
     let earnings_from = (Utc::now() - Duration::days(7))
         .format("%Y-%m-%d")
         .to_string();
-    
-    match client.calendar().earnings(Some(&earnings_from), Some(&earnings_to), None).await {
+
+    match client
+        .calendar()
+        .earnings(Some(&earnings_from), Some(&earnings_to), None)
+        .await
+    {
         Ok(calendar) => {
             println!("Recent earnings releases:");
             for earning in calendar.earnings_calendar.iter().take(5) {
                 if let Some(symbol) = &earning.symbol {
-                    println!("  📊 {} - {} ({})", 
-                        symbol, 
+                    println!(
+                        "  📊 {} - {} ({})",
+                        symbol,
                         earning.date.as_deref().unwrap_or("Unknown"),
                         earning.hour.as_deref().unwrap_or("Unknown")
                     );
@@ -355,7 +393,8 @@ async fn main() -> Result<()> {
             println!("Upcoming economic events:");
             for event in calendar.economic_calendar.iter().take(5) {
                 if let Some(event_name) = &event.event {
-                    println!("  📈 {} - {} ({})", 
+                    println!(
+                        "  📈 {} - {} ({})",
                         event_name,
                         event.country.as_deref().unwrap_or("Unknown"),
                         event.time.as_deref().unwrap_or("Unknown")
@@ -374,16 +413,17 @@ async fn main() -> Result<()> {
     match client.etf().profile(Some("SPY"), None).await {
         Ok(profile) => {
             println!("ETF Profile:");
-            if let Some(name) = &profile.name {
+            let profile_data = &profile.profile;
+            if let Some(name) = &profile_data.name {
                 println!("  Name: {}", name);
             }
-            if let Some(aum) = profile.aum {
+            if let Some(aum) = profile_data.aum {
                 println!("  AUM: ${:.2}B", aum / 1_000_000_000.0);
             }
-            if let Some(expense) = profile.expense_ratio {
+            if let Some(expense) = profile_data.expense_ratio {
                 println!("  Expense Ratio: {:.2}%", expense);
             }
-            if let Some(company) = &profile.etf_company {
+            if let Some(company) = &profile_data.etf_company {
                 println!("  Issuer: {}", company);
             }
         }
@@ -396,7 +436,9 @@ async fn main() -> Result<()> {
         Ok(holdings) => {
             println!("Top ETF Holdings:");
             for holding in holdings.holdings.iter().take(5) {
-                if let (Some(symbol), Some(name), Some(percent)) = (&holding.symbol, &holding.name, holding.percent) {
+                if let (Some(symbol), Some(name), Some(percent)) =
+                    (&holding.symbol, &holding.name, holding.percent)
+                {
                     println!("  {} ({}) - {:.2}%", symbol, name, percent);
                 }
             }
@@ -421,7 +463,11 @@ async fn main() -> Result<()> {
 
     // Get investment theme
     println!("\nFetching investment theme (financial exchanges)...");
-    match client.stock().investment_theme("financialExchangesData").await {
+    match client
+        .stock()
+        .investment_theme("financialExchangesData")
+        .await
+    {
         Ok(theme) => {
             println!("Investment Theme: {}", theme.theme);
             println!("Stocks in theme:");
@@ -438,11 +484,9 @@ async fn main() -> Result<()> {
         Ok(list) => {
             println!("Available Transcripts for {}:", list.symbol);
             for transcript in list.transcripts.iter().take(3) {
-                println!("  📞 {} - Q{} {} ({})", 
-                    transcript.title, 
-                    transcript.quarter, 
-                    transcript.year,
-                    transcript.time
+                println!(
+                    "  📞 {} - Q{} {} ({})",
+                    transcript.title, transcript.quarter, transcript.year, transcript.time
                 );
                 println!("     ID: {}", transcript.id);
             }
@@ -454,7 +498,10 @@ async fn main() -> Result<()> {
     println!("\nFetching AAPL ESG scores...");
     match client.stock().esg("AAPL").await {
         Ok(esg) => {
-            println!("ESG Scores for {}:", esg.company_name.as_deref().unwrap_or("AAPL"));
+            println!(
+                "ESG Scores for {}:",
+                esg.company_name.as_deref().unwrap_or("AAPL")
+            );
             if let Some(rating) = esg.esg_risk_rating {
                 println!("  Overall ESG Risk Rating: {:.1}", rating);
             }
@@ -481,9 +528,20 @@ async fn main() -> Result<()> {
             println!("S&P 500 Index ({}):", constituents.symbol);
             println!("Total constituents: {}", constituents.constituents.len());
             println!("Top 5 by weight:");
-            for (i, constituent) in constituents.constituents_breakdown.iter().take(5).enumerate() {
+            for (i, constituent) in constituents
+                .constituents_breakdown
+                .iter()
+                .take(5)
+                .enumerate()
+            {
                 if let Some(weight) = constituent.weight {
-                    println!("  {}. {} ({}) - {:.2}%", i + 1, constituent.name, constituent.symbol, weight);
+                    println!(
+                        "  {}. {} ({}) - {:.2}%",
+                        i + 1,
+                        constituent.name,
+                        constituent.symbol,
+                        weight
+                    );
                 }
             }
         }
@@ -496,7 +554,10 @@ async fn main() -> Result<()> {
         Ok(results) => {
             println!("Found {} results for 'apple':", results.count);
             for result in results.result.iter().take(5) {
-                println!("  {} ({}) - {}", result.symbol, result.display_symbol, result.description);
+                println!(
+                    "  {} ({}) - {}",
+                    result.symbol, result.display_symbol, result.description
+                );
             }
         }
         Err(e) => println!("Symbol search not available: {}", e),
@@ -508,11 +569,9 @@ async fn main() -> Result<()> {
         Ok(countries) => {
             println!("Available countries:");
             for country in countries.iter().take(3) {
-                println!("  {} ({}) - Currency: {} ({})", 
-                    country.country, 
-                    country.code2, 
-                    country.currency, 
-                    country.currency_code
+                println!(
+                    "  {} ({}) - Currency: {} ({})",
+                    country.country, country.code2, country.currency, country.currency_code
                 );
                 if let Some(rating) = &country.rating {
                     println!("    Credit Rating: {}", rating);
@@ -530,9 +589,18 @@ async fn main() -> Result<()> {
             println!("Technical Analysis for AAPL:");
             println!("  Signal: {}", indicators.technical_analysis.signal);
             println!("  Buy signals: {}", indicators.technical_analysis.count.buy);
-            println!("  Neutral signals: {}", indicators.technical_analysis.count.neutral);
-            println!("  Sell signals: {}", indicators.technical_analysis.count.sell);
-            println!("  Trending: {} (ADX: {:.2})", indicators.trend.trending, indicators.trend.adx);
+            println!(
+                "  Neutral signals: {}",
+                indicators.technical_analysis.count.neutral
+            );
+            println!(
+                "  Sell signals: {}",
+                indicators.technical_analysis.count.sell
+            );
+            println!(
+                "  Trending: {} (ADX: {:.2})",
+                indicators.trend.trending, indicators.trend.adx
+            );
         }
         Err(e) => println!("Technical indicators not available: {}", e),
     }

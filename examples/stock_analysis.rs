@@ -1,10 +1,7 @@
 //! Stock analysis example demonstrating fundamental and technical analysis features.
 
 use chrono::{Duration, Utc};
-use finnhub::{
-    models::stock::CandleResolution,
-    FinnhubClient, Result,
-};
+use finnhub::{models::stock::CandleResolution, FinnhubClient, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -19,16 +16,16 @@ async fn main() -> Result<()> {
 
     // Basic quote and profile
     analyze_basic_info(&client, symbol).await?;
-    
+
     // Technical analysis
     analyze_technical_data(&client, symbol).await?;
-    
+
     // Fundamental analysis
     analyze_fundamentals(&client, symbol).await?;
-    
+
     // Market sentiment
     analyze_sentiment(&client, symbol).await?;
-    
+
     // Insider activity
     analyze_insider_activity(&client, symbol).await?;
 
@@ -42,22 +39,36 @@ async fn analyze_basic_info(client: &FinnhubClient, symbol: &str) -> Result<()> 
     // Get current quote
     let quote = client.stock().quote(symbol).await?;
     println!("Current Price: ${:.2}", quote.current_price);
-    println!("Change: ${:.2} ({:.2}%)", quote.change, quote.percent_change);
+    println!(
+        "Change: ${:.2} ({:.2}%)",
+        quote.change, quote.percent_change
+    );
     println!("Day Range: ${:.2} - ${:.2}", quote.low, quote.high);
     println!("Previous Close: ${:.2}", quote.previous_close);
 
     // Get company profile
     match client.stock().company_profile(symbol).await {
         Ok(profile) => {
-            println!("Company: {}", profile.name.unwrap_or_else(|| "N/A".to_string()));
+            println!(
+                "Company: {}",
+                profile.name.unwrap_or_else(|| "N/A".to_string())
+            );
             if let Some(market_cap) = profile.market_capitalization {
                 println!("Market Cap: ${:.2}B", market_cap / 1_000_000_000.0);
             }
             if let Some(shares) = profile.share_outstanding {
                 println!("Shares Outstanding: {:.2}M", shares / 1_000_000.0);
             }
-            println!("Industry: {}", profile.finnhub_industry.unwrap_or_else(|| "N/A".to_string()));
-            println!("Exchange: {}", profile.exchange.unwrap_or_else(|| "N/A".to_string()));
+            println!(
+                "Industry: {}",
+                profile
+                    .finnhub_industry
+                    .unwrap_or_else(|| "N/A".to_string())
+            );
+            println!(
+                "Exchange: {}",
+                profile.exchange.unwrap_or_else(|| "N/A".to_string())
+            );
         }
         Err(e) => println!("Company profile not available: {}", e),
     }
@@ -72,8 +83,12 @@ async fn analyze_technical_data(client: &FinnhubClient, symbol: &str) -> Result<
     // Get candle data for last 30 days
     let to = Utc::now().timestamp();
     let from = (Utc::now() - Duration::days(30)).timestamp();
-    
-    match client.stock().candles(symbol, CandleResolution::Daily, from, to).await {
+
+    match client
+        .stock()
+        .candles(symbol, CandleResolution::Daily, from, to)
+        .await
+    {
         Ok(candles) => {
             if candles.status == "ok" && !candles.close.is_empty() {
                 let prices = &candles.close;
@@ -88,7 +103,7 @@ async fn analyze_technical_data(client: &FinnhubClient, symbol: &str) -> Result<
                 println!("Current Price: ${:.2}", current);
                 println!("5-day MA: ${:.2}", ma_5);
                 println!("20-day MA: ${:.2}", ma_20);
-                
+
                 let trend = if current > ma_5 && ma_5 > ma_20 {
                     "📈 Bullish"
                 } else if current < ma_5 && ma_5 < ma_20 {
@@ -100,9 +115,11 @@ async fn analyze_technical_data(client: &FinnhubClient, symbol: &str) -> Result<
 
                 // Calculate volatility (standard deviation)
                 let mean = prices.iter().sum::<f64>() / prices.len() as f64;
-                let variance = prices.iter()
+                let variance = prices
+                    .iter()
                     .map(|price| (price - mean).powi(2))
-                    .sum::<f64>() / prices.len() as f64;
+                    .sum::<f64>()
+                    / prices.len() as f64;
                 let volatility = variance.sqrt();
                 println!("30-day Volatility: {:.2}%", (volatility / mean) * 100.0);
             }
@@ -143,8 +160,9 @@ async fn analyze_fundamentals(client: &FinnhubClient, symbol: &str) -> Result<()
         Ok(estimates) => {
             println!("📈 Earnings Estimates:");
             for estimate in estimates.data.iter().take(2) {
-                println!("  {} - EPS Est: ${:.2}", 
-                    estimate.period, 
+                println!(
+                    "  {} - EPS Est: ${:.2}",
+                    estimate.period,
                     estimate.eps_avg.unwrap_or(0.0)
                 );
             }
@@ -180,8 +198,9 @@ async fn analyze_sentiment(client: &FinnhubClient, symbol: &str) -> Result<()> {
                 println!("  Hold: {}", latest.hold);
                 println!("  Sell: {}", latest.sell);
                 println!("  Strong Sell: {}", latest.strong_sell);
-                
-                let total = latest.strong_buy + latest.buy + latest.hold + latest.sell + latest.strong_sell;
+
+                let total =
+                    latest.strong_buy + latest.buy + latest.hold + latest.sell + latest.strong_sell;
                 let bullish_pct = ((latest.strong_buy + latest.buy) as f64 / total as f64) * 100.0;
                 println!("  Bullish Sentiment: {:.1}%", bullish_pct);
             }
@@ -190,7 +209,11 @@ async fn analyze_sentiment(client: &FinnhubClient, symbol: &str) -> Result<()> {
     }
 
     // Get social sentiment
-    match client.stock().social_sentiment(symbol, "2024-01-01", "2024-12-31").await {
+    match client
+        .stock()
+        .social_sentiment(symbol, "2024-01-01", "2024-12-31")
+        .await
+    {
         Ok(sentiment) => {
             if let Some(reddit) = sentiment.reddit.as_ref().and_then(|r| r.first()) {
                 println!("🗣️ Social Sentiment (Reddit):");
@@ -217,7 +240,8 @@ async fn analyze_insider_activity(client: &FinnhubClient, symbol: &str) -> Resul
             for transaction in transactions.data.iter().take(3) {
                 let change_val = transaction.change.unwrap_or(0);
                 let transaction_type = if change_val > 0 { "BUY" } else { "SELL" };
-                println!("  {} - {} {} shares by {}", 
+                println!(
+                    "  {} - {} {} shares by {}",
                     transaction.filing_date,
                     transaction_type,
                     change_val.abs(),
@@ -229,7 +253,11 @@ async fn analyze_insider_activity(client: &FinnhubClient, symbol: &str) -> Resul
     }
 
     // Get insider sentiment
-    match client.stock().insider_sentiment(symbol, "2024-01-01", "2024-12-31").await {
+    match client
+        .stock()
+        .insider_sentiment(symbol, "2024-01-01", "2024-12-31")
+        .await
+    {
         Ok(sentiment) => {
             if let Some(data) = sentiment.data.first() {
                 println!("📊 Insider Sentiment Summary:");
