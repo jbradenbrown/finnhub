@@ -55,3 +55,48 @@ impl<'a> NewsEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+    use super::*;
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_market_news() {
+        let client = test_client().await;
+        let result = client.news().market_news(NewsCategory::General, None).await;
+        assert!(result.is_ok(), "Failed to get market news: {:?}", result.err());
+        
+        let news = result.unwrap();
+        assert!(!news.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_company_news() {
+        let client = test_client().await;
+        let from = "2024-01-01";
+        let to = "2024-01-31";
+        let result = client.news().company_news("AAPL", from, to).await;
+        assert!(result.is_ok(), "Failed to get company news: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_news_sentiment() {
+        let client = test_client().await;
+        let result = client.news().news_sentiment("AAPL").await;
+        assert!(result.is_ok(), "Failed to get news sentiment: {:?}", result.err());
+    }
+}

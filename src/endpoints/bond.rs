@@ -103,3 +103,50 @@ impl<'a> BondEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_profile() {
+        let client = test_client().await;
+        let result = client.bond().profile(Some("BBG00B3T3HD3"), None, None).await;
+        assert!(result.is_ok(), "Failed to get bond profile: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_price() {
+        let client = test_client().await;
+        let result = client.bond().price("US037833100").await;
+        assert!(result.is_ok(), "Failed to get bond price: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_tick() {
+        let client = test_client().await;
+        let result = client.bond().tick("2024-01-15", "US037833100", 100, 0, "TRACE").await;
+        assert!(result.is_ok(), "Failed to get bond tick: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_yield_curve() {
+        let client = test_client().await;
+        let result = client.bond().yield_curve("US").await;
+        assert!(result.is_ok(), "Failed to get yield curve: {:?}", result.err());
+    }
+}

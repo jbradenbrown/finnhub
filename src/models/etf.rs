@@ -2,9 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
-/// ETF profile data.
+/// ETF profile data (inner profile object).
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ETFProfile {
+pub struct ETFProfileData {
     /// Name.
     pub name: Option<String>,
     /// Asset class.
@@ -67,6 +67,15 @@ pub struct ETFProfile {
     pub dividend_yield: Option<f64>,
 }
 
+/// ETF profile response wrapper.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ETFProfile {
+    /// ETF symbol.
+    pub symbol: String,
+    /// Profile data.
+    pub profile: ETFProfileData,
+}
+
 /// ETF holding data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ETFHolding {
@@ -123,7 +132,8 @@ pub struct ETFCountryExposure {
 /// ETF sector exposure data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SectorExposure {
-    /// Sector name.
+    /// Industry name (API uses 'industry' not 'sector').
+    #[serde(rename = "industry")]
     pub sector: String,
     /// Exposure percentage.
     pub exposure: f64,

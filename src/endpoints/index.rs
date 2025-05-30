@@ -49,3 +49,35 @@ impl<'a> IndexEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+    
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_constituents() {
+        let client = test_client().await;
+        let result = client.index().constituents("^GSPC").await;
+        assert!(result.is_ok(), "Failed to get index constituents: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_historical_constituents() {
+        let client = test_client().await;
+        let result = client.index().historical_constituents("^GSPC").await;
+        assert!(result.is_ok(), "Failed to get historical constituents: {:?}", result.err());
+    }
+}

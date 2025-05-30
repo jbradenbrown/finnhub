@@ -59,6 +59,7 @@ pub struct NewsSentiment {
     /// Company news score.
     pub company_news_score: f64,
     /// Sector average bullishness.
+    #[serde(rename = "sectorAverageBullishPercent")]
     pub sector_average_bullishness: f64,
     /// Sector average news score.
     pub sector_average_news_score: f64,

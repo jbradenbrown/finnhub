@@ -122,3 +122,95 @@ impl<'a> MiscEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+    
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_airline_price_index() {
+        let client = test_client().await;
+        let result = client.misc().airline_price_index("LUV", "2024-01-01", "2024-01-31").await;
+        assert!(result.is_ok(), "Failed to get airline price index: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_country() {
+        let client = test_client().await;
+        let result = client.misc().country().await;
+        assert!(result.is_ok(), "Failed to get country data: {:?}", result.err());
+        
+        let countries = result.unwrap();
+        assert!(!countries.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_covid19() {
+        let client = test_client().await;
+        let result = client.misc().covid19().await;
+        assert!(result.is_ok(), "Failed to get COVID-19 data: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_fda_calendar() {
+        let client = test_client().await;
+        let result = client.misc().fda_calendar().await;
+        assert!(result.is_ok(), "Failed to get FDA calendar: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_technical_indicator() {
+        let client = test_client().await;
+        let from = chrono::Utc::now().timestamp() - 86400 * 30;
+        let to = chrono::Utc::now().timestamp();
+        let mut params = serde_json::Map::new();
+        params.insert("timeperiod".to_string(), serde_json::json!(14));
+        let result = client.misc().technical_indicator("AAPL", "D", from, to, "sma", Some(serde_json::Value::Object(params))).await;
+        assert!(result.is_ok(), "Failed to get technical indicator: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_press_releases() {
+        let client = test_client().await;
+        let from = "2024-01-01";
+        let to = "2024-01-31";
+        let result = client.misc().press_releases("AAPL", Some(from), Some(to)).await;
+        assert!(result.is_ok(), "Failed to get press releases: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_symbol_search() {
+        let client = test_client().await;
+        let result = client.misc().symbol_search("apple", None).await;
+        assert!(result.is_ok(), "Failed to search symbols: {:?}", result.err());
+        
+        let results = result.unwrap();
+        assert!(!results.result.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_sector_metrics() {
+        let client = test_client().await;
+        let result = client.misc().sector_metrics("US").await;
+        assert!(result.is_ok(), "Failed to get sector metrics: {:?}", result.err());
+    }
+}

@@ -94,3 +94,48 @@ impl<'a> CalendarEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_earnings() {
+        let client = test_client().await;
+        let from = "2024-01-01";
+        let to = "2024-01-31";
+        let result = client.calendar().earnings(Some(from), Some(to), None).await;
+        assert!(result.is_ok(), "Failed to get earnings calendar: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_economic() {
+        let client = test_client().await;
+        let from = "2024-01-01";
+        let to = "2024-01-31";
+        let result = client.calendar().economic(Some(from), Some(to)).await;
+        assert!(result.is_ok(), "Failed to get economic calendar: {:?}", result.err());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_ipo() {
+        let client = test_client().await;
+        let from = "2024-01-01";
+        let to = "2024-01-31";
+        let result = client.calendar().ipo(from, to).await;
+        assert!(result.is_ok(), "Failed to get IPO calendar: {:?}", result.err());
+    }
+}

@@ -147,3 +147,63 @@ impl<'a> ETFEndpoints<'a> {
         self.client.get(&query).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+    
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_profile() {
+        let client = test_client().await;
+        let result = client.etf().profile(Some("SPY"), None).await;
+        assert!(result.is_ok(), "Failed to get ETF profile: {:?}", result.err());
+        
+        let profile = result.unwrap();
+        assert!(profile.profile.name.is_some());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_holdings() {
+        let client = test_client().await;
+        let result = client.etf().holdings(Some("SPY"), None, None, None).await;
+        assert!(result.is_ok(), "Failed to get ETF holdings: {:?}", result.err());
+        
+        let holdings = result.unwrap();
+        assert!(!holdings.holdings.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_country_exposure() {
+        let client = test_client().await;
+        let result = client.etf().country_exposure(Some("SPY"), None).await;
+        assert!(result.is_ok(), "Failed to get country exposure: {:?}", result.err());
+        
+        let exposure = result.unwrap();
+        assert!(!exposure.country_exposure.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_sector_exposure() {
+        let client = test_client().await;
+        let result = client.etf().sector_exposure(Some("SPY"), None).await;
+        assert!(result.is_ok(), "Failed to get sector exposure: {:?}", result.err());
+        
+        let exposure = result.unwrap();
+        assert!(!exposure.sector_exposure.is_empty());
+    }
+}
