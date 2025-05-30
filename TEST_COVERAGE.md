@@ -318,8 +318,13 @@ FINNHUB_API_KEY=your_key cargo test rate_limit -- --ignored --nocapture
 
 ## Notes
 
-- All tests respect Finnhub's 30 requests/second rate limit
-- Integration tests handle expected API errors (404, no data)
+- All tests make real API calls to Finnhub endpoints
+- Each unit test creates its own client instance with its own rate limiter
+  - Rate limiters are not shared between tests since each test instantiates a new client
+  - **Known Limitation**: Tests running in parallel could collectively exceed the API rate limit
+  - This is a design flaw but fixing it would require complex shared state management
+- Integration tests respect Finnhub's 30 requests/second rate limit within a single test
+- Tests handle expected API errors (404, no data)
 - Some endpoints may return empty data for test symbols
 - API key is required for all meaningful testing
 - Test execution time varies based on rate limiting strategy
