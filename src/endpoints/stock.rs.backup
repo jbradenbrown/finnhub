@@ -873,3 +873,207 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{ClientConfig, FinnhubClient, RateLimitStrategy};
+
+    async fn test_client() -> FinnhubClient {
+        dotenv::dotenv().ok();
+        let api_key = std::env::var("FINNHUB_API_KEY")
+            .unwrap_or_else(|_| "test_key".to_string());
+        
+        let mut config = ClientConfig::default();
+        config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+        FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_quote() {
+        let client = test_client().await;
+        let result = client.stock().quote("AAPL").await;
+        assert!(result.is_ok(), "Failed to get quote: {:?}", result.err());
+        
+        let quote = result.unwrap();
+        assert!(quote.current_price > 0.0);
+        assert!(!quote.symbol.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_company_profile() {
+        let client = test_client().await;
+        let result = client.stock().company_profile("AAPL").await;
+        assert!(result.is_ok(), "Failed to get company profile: {:?}", result.err());
+        
+        let profile = result.unwrap();
+        assert!(profile.name.is_some());
+        assert_eq!(profile.ticker.as_deref(), Some("AAPL"));
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_candles() {
+        let client = test_client().await;
+        let from = chrono::Utc::now().timestamp() - 86400 * 7; // 7 days ago
+        let to = chrono::Utc::now().timestamp();
+        
+        let result = client.stock().candles("AAPL", CandleResolution::D, from, to).await;
+        assert!(result.is_ok(), "Failed to get candles: {:?}", result.err());
+        
+        let candles = result.unwrap();
+        assert_eq!(candles.status, "ok");
+        assert!(!candles.close.is_empty());
+        assert_eq!(candles.close.len(), candles.open.len());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_price_target() {
+        let client = test_client().await;
+        let result = client.stock().price_target("AAPL").await;
+        assert!(result.is_ok(), "Failed to get price target: {:?}", result.err());
+        
+        let target = result.unwrap();
+        assert!(target.target_high >= target.target_low);
+        assert!(target.target_mean >= target.target_low);
+        assert!(target.target_mean <= target.target_high);
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_recommendations() {
+        let client = test_client().await;
+        let result = client.stock().recommendations("AAPL").await;
+        assert!(result.is_ok(), "Failed to get recommendations: {:?}", result.err());
+        
+        let recs = result.unwrap();
+        assert!(!recs.is_empty());
+        
+        // Check that recommendations have valid values
+        for rec in &recs {
+            assert!(rec.strong_buy >= 0);
+            assert!(rec.buy >= 0);
+            assert!(rec.hold >= 0);
+            assert!(rec.sell >= 0);
+            assert!(rec.strong_sell >= 0);
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_peers() {
+        let client = test_client().await;
+        let result = client.stock().peers("AAPL", None).await;
+        assert!(result.is_ok(), "Failed to get peers: {:?}", result.err());
+        
+        let peers = result.unwrap();
+        assert!(!peers.is_empty());
+        assert!(peers.len() <= 10); // Usually returns up to 10 peers
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_earnings() {
+        let client = test_client().await;
+        let result = client.stock().earnings("AAPL", Some(5)).await;
+        assert!(result.is_ok(), "Failed to get earnings: {:?}", result.err());
+        
+        let earnings = result.unwrap();
+        assert!(!earnings.is_empty());
+        assert!(earnings.len() <= 5);
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_metrics() {
+        let client = test_client().await;
+        let result = client.stock().metrics("AAPL").await;
+        assert!(result.is_ok(), "Failed to get metrics: {:?}", result.err());
+        
+        let metrics = result.unwrap();
+        assert!(metrics.metric.ten_day_average_trading_volume.is_some());
+        assert!(metrics.metric.fifty_two_week_high.is_some());
+        assert!(metrics.metric.fifty_two_week_low.is_some());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_market_status() {
+        let client = test_client().await;
+        let result = client.stock().market_status("US").await;
+        assert!(result.is_ok(), "Failed to get market status: {:?}", result.err());
+        
+        let status = result.unwrap();
+        assert!(status.is_open.is_some());
+        assert!(!status.exchange.is_empty());
+        assert!(!status.timezone.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_insider_transactions() {
+        let client = test_client().await;
+        let result = client.stock().insider_transactions("AAPL").await;
+        assert!(result.is_ok(), "Failed to get insider transactions: {:?}", result.err());
+        
+        let transactions = result.unwrap();
+        // May be empty for some stocks
+        if !transactions.data.is_empty() {
+            let tx = &transactions.data[0];
+            assert!(!tx.name.is_empty());
+            assert!(tx.share >= 0 || tx.share < 0); // Can be positive or negative
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_financials() {
+        let client = test_client().await;
+        let result = client.stock()
+            .financials("AAPL", StatementType::IncomeStatement, StatementFrequency::Annual)
+            .await;
+        assert!(result.is_ok(), "Failed to get financials: {:?}", result.err());
+        
+        let financials = result.unwrap();
+        assert!(!financials.financials.is_empty());
+        
+        let statement = &financials.financials[0];
+        assert!(statement.revenue.is_some());
+        assert!(statement.period.is_some());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_ownership() {
+        let client = test_client().await;
+        let result = client.stock().ownership("AAPL", None).await;
+        assert!(result.is_ok(), "Failed to get ownership: {:?}", result.err());
+        
+        let ownership = result.unwrap();
+        assert!(!ownership.ownership.is_empty());
+        
+        let owner = &ownership.ownership[0];
+        assert!(!owner.name.is_empty());
+        assert!(owner.share >= 0);
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_invalid_symbol() {
+        let client = test_client().await;
+        let result = client.stock().quote("INVALID_SYMBOL_XYZ").await;
+        assert!(result.is_err(), "Expected error for invalid symbol");
+        
+        let error = result.err().unwrap();
+        let error_str = error.to_string();
+        assert!(
+            error_str.contains("404") || 
+            error_str.contains("not found") || 
+            error_str.contains("Invalid"),
+            "Expected 404 or invalid symbol error, got: {}", error_str
+        );
+    }
+}

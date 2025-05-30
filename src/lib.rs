@@ -4,11 +4,12 @@
 //!
 //! ## Features
 //!
-//! - Full API coverage with strongly typed requests and responses
-//! - Async/await support via Tokio
-//! - Built-in rate limiting (30 requests/second)
-//! - WebSocket support for real-time data
-//! - Comprehensive error handling
+//! - 📊 Extensive API coverage (103/107 endpoints - 96.3%)
+//! - 🚀 Full async/await support via Tokio
+//! - ⚡ Built-in rate limiting with flexible strategies
+//! - 🔄 Basic WebSocket structure (feature-gated, not production-ready)
+//! - 🛡️ Comprehensive error handling with retry helpers
+//! - 🔒 Type-safe request and response models
 //!
 //! ## Quick Start
 //!
@@ -20,12 +21,25 @@
 //!     let client = FinnhubClient::new("your-api-key");
 //!     
 //!     // Get a stock quote
-//!     let quote = client.quote("AAPL").await?;
+//!     let quote = client.stock().quote("AAPL").await?;
 //!     println!("AAPL price: ${}", quote.current_price);
+//!     
+//!     // Get company profile
+//!     let profile = client.stock().company_profile("AAPL").await?;
+//!     println!("Company: {}", profile.name.unwrap_or_default());
 //!     
 //!     Ok(())
 //! }
 //! ```
+//!
+//! ## Design Philosophy
+//!
+//! This library follows a minimalist design philosophy:
+//! - **No automatic retries**: Applications implement context-aware retry logic
+//! - **No response caching**: Applications manage cache based on their needs
+//! - **Flexible rate limiting**: Choose between strict per-second or burst-friendly strategies
+//!
+//! The library provides the tools (`is_retryable()`, `retry_after()`) but lets you decide how to use them.
 
 #![warn(missing_docs)]
 #![warn(clippy::all)]

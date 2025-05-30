@@ -2,11 +2,11 @@
 name = "finnhub"
 version = "0.1.0"
 edition = "2021"
-authors = ["Sabrient AI <dev@sabrient.ai>"]
-description = "A comprehensive Rust client for the Finnhub.io financial data API"
+authors = ["Jeffrey Brown"]
+description = "A comprehensive Rust client for the Finnhub.io financial data API with 96% endpoint coverage, flexible rate limiting, and WebSocket support"
 documentation = "https://docs.rs/finnhub"
-homepage = "https://gitlab.com/sabrient-ai/finnhub-rs"
-repository = "https://gitlab.com/sabrient-ai/finnhub-rs"
+homepage = "https://github.com/jbradenbrown/finnhub-rs"
+repository = "https://github.com/jbradenbrown/finnhub-rs"
 readme = "README.md"
 keywords = ["finnhub", "finance", "api", "stocks", "trading"]
 categories = ["api-bindings", "finance"]
@@ -72,3 +72,20 @@ path = "examples/alternative_data.rs"
 [[example]]
 name = "error_handling"
 path = "examples/error_handling.rs"
+
+[[example]]
+name = "rate_limit_window_demo"
+path = "examples/rate_limit_window_demo.rs"
+
+[[example]]
+name = "rate_limiting_demo"
+path = "examples/rate_limiting_demo.rs"
+
+[[example]]
+name = "rate_limiting_explanation"
+path = "examples/rate_limiting_explanation.rs"
+
+[[example]]
+name = "websocket_basic"
+path = "examples/websocket_basic.rs"
+required-features = ["websocket"]

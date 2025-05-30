@@ -2,9 +2,11 @@
 
 A comprehensive Rust client for the [Finnhub.io](https://finnhub.io) financial data API.
 
+<!-- Badges will be active after crate publication
 [![Crates.io](https://img.shields.io/crates/v/finnhub.svg)](https://crates.io/crates/finnhub)
 [![Documentation](https://docs.rs/finnhub/badge.svg)](https://docs.rs/finnhub)
-[![License](https://img.shields.io/crates/l/finnhub.svg)](LICENSE-MIT)
+-->
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 
 ## Features
 
@@ -12,7 +14,7 @@ A comprehensive Rust client for the [Finnhub.io](https://finnhub.io) financial d
 - 📊 Extensive API coverage (103/107 endpoints - 96.3%)
 - 🔒 Type-safe request and response models
 - ⚡ Built-in rate limiting (30 requests/second)
-- 🔄 WebSocket support for real-time data (feature-gated)
+- 🔄 WebSocket support (minimal implementation, feature-gated)
 - 🛡️ Comprehensive error handling
 - 📝 Well-organized module structure
 - 🎯 Zero-copy deserialization where possible
@@ -105,9 +107,9 @@ let client = FinnhubClient::with_config("your-api-key", config);
 - 🚧 **AI Features**: AI chat (requires POST support)
 
 ### Advanced Features
-- 🚧 **WebSocket**: Real-time streaming (structure implemented)
-- ✅ **Rate Limiting**: Automatic 30 req/s limit
-- ✅ **Error Handling**: Typed errors with context
+- ⚠️ **WebSocket**: Basic structure only (not production-ready)
+- ✅ **Rate Limiting**: Automatic 30 req/s limit with flexible strategies
+- ✅ **Error Handling**: Typed errors with context and retry helpers
 
 ## Examples
 
@@ -222,9 +224,17 @@ match client.stock().quote("AAPL").await {
 
 ## Rate Limiting
 
-The client includes built-in rate limiting (30 requests/second) to comply with Finnhub's API limits:
+The client includes built-in rate limiting to comply with Finnhub's API limits:
 
 ```rust
+// Default: 30 requests/second with burst capacity
+let client = FinnhubClient::new("your-api-key");
+
+// For batch processing: 15-second window (450 request burst)
+let mut config = ClientConfig::default();
+config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
+let client = FinnhubClient::with_config("your-api-key", config);
+
 // Rate limiting is automatic
 for symbol in ["AAPL", "GOOGL", "MSFT"] {
     let quote = client.stock().quote(symbol).await?;
@@ -232,9 +242,219 @@ for symbol in ["AAPL", "GOOGL", "MSFT"] {
 }
 ```
 
+## Production Best Practices
+
+### Retry Logic
+
+This library intentionally does not implement automatic retry logic, allowing applications to implement context-aware retry strategies. The library provides helpers to make this easy:
+
+```rust
+use finnhub::Error;
+use std::time::Duration;
+use tokio::time::sleep;
+
+async fn with_retry<T, F, Fut>(mut f: F, max_attempts: u32) -> Result<T, Error>
+where
+    F: FnMut() -> Fut,
+    Fut: std::future::Future<Output = Result<T, Error>>,
+{
+    let mut attempt = 0;
+    loop {
+        attempt += 1;
+        match f().await {
+            Ok(result) => return Ok(result),
+            Err(e) if e.is_retryable() && attempt < max_attempts => {
+                let delay = e.retry_after()
+                    .unwrap_or_else(|| Duration::from_millis(100 * 2_u64.pow(attempt - 1)));
+                sleep(delay).await;
+                continue;
+            }
+            Err(e) => return Err(e),
+        }
+    }
+}
+
+// Usage
+let quote = with_retry(|| client.stock().quote("AAPL"), 3).await?;
+```
+
+### Caching
+
+Response caching is best implemented at the application layer where you understand data freshness requirements:
+
+```rust
+use std::collections::HashMap;
+use std::time::{Duration, Instant};
+
+struct CachedQuote {
+    quote: Quote,
+    fetched_at: Instant,
+}
+
+struct QuoteCache {
+    cache: HashMap<String, CachedQuote>,
+    ttl: Duration,
+}
+
+impl QuoteCache {
+    async fn get_quote(&mut self, client: &FinnhubClient, symbol: &str) -> Result<Quote> {
+        if let Some(cached) = self.cache.get(symbol) {
+            if cached.fetched_at.elapsed() < self.ttl {
+                return Ok(cached.quote.clone());
+            }
+        }
+        
+        let quote = client.stock().quote(symbol).await?;
+        self.cache.insert(symbol.to_string(), CachedQuote {
+            quote: quote.clone(),
+            fetched_at: Instant::now(),
+        });
+        Ok(quote)
+    }
+}
+```
+
+### Error Handling
+
+Always handle specific error types appropriately:
+
+```rust
+match client.stock().quote("AAPL").await {
+    Ok(quote) => process_quote(quote),
+    Err(Error::RateLimitExceeded { retry_after }) => {
+        // Back off and retry later
+        sleep(Duration::from_secs(retry_after)).await;
+    }
+    Err(Error::Unauthorized) => {
+        // Check API key configuration
+        panic!("Invalid API key");
+    }
+    Err(Error::NotFound) => {
+        // Symbol might be delisted or invalid
+        log::warn!("Symbol not found");
+    }
+    Err(e) => {
+        // Log and handle other errors
+        log::error!("API error: {}", e);
+    }
+}
+```
+
+### Concurrent Requests
+
+When making multiple requests, consider rate limits and use concurrency control:
+
+```rust
+use futures::stream::{self, StreamExt};
+
+let symbols = vec!["AAPL", "GOOGL", "MSFT", "AMZN", "FB"];
+
+// Process 3 symbols concurrently to stay well under rate limit
+let quotes: Vec<_> = stream::iter(symbols)
+    .map(|symbol| async move {
+        client.stock().quote(symbol).await
+    })
+    .buffer_unordered(3)
+    .collect()
+    .await;
+```
+
+## WebSocket Support (Minimal)
+
+Basic WebSocket structure is implemented but requires significant work:
+
+```rust
+// Requires 'websocket' feature
+use finnhub::websocket::{WebSocketClient, WebSocketMessage};
+
+let client = WebSocketClient::new("your-api-key");
+let mut stream = client.connect().await?;
+
+// Subscribe to symbols
+stream.subscribe("AAPL").await?;
+
+// Process messages
+match stream.next().await? {
+    Some(WebSocketMessage::Trade { data }) => {
+        for trade in data {
+            println!("Trade: {} @ ${}", trade.symbol, trade.price);
+        }
+    }
+    Some(WebSocketMessage::Ping) => {
+        println!("Received ping");
+    }
+    Some(WebSocketMessage::Error { msg }) => {
+        eprintln!("Error: {}", msg);
+    }
+    None => println!("Stream closed"),
+}
+```
+
+See `examples/websocket_basic.rs` for a complete example.
+
+**Note**: WebSocket support is minimal and not recommended for production use. It lacks:
+- Automatic reconnection
+- Heartbeat handling  
+- Convenient subscription methods
+- Proper error recovery
+
+## Environment Variables
+
+For examples and tests, you can use environment variables:
+
+```bash
+# .env file
+FINNHUB_API_KEY=your_api_key_here
+```
+
+```rust
+// In your code
+dotenv::dotenv().ok();
+let api_key = std::env::var("FINNHUB_API_KEY")
+    .expect("FINNHUB_API_KEY must be set");
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **401 Unauthorized**: Check your API key is valid and has appropriate permissions
+2. **429 Rate Limit**: You're exceeding 30 requests/second. The client should handle this automatically
+3. **Empty responses**: Some endpoints return empty data outside market hours or for invalid symbols
+
+### Debug Logging
+
+Enable debug logging to see request details:
+
+```bash
+RUST_LOG=finnhub=debug cargo run
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. See [CLAUDE.md](CLAUDE.md) for development guidelines and architecture details.
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/jbradenbrown/finnhub-rs
+cd finnhub-rs
+
+# Run tests (requires API key)
+FINNHUB_API_KEY=your_key cargo test
+
+# Run specific example
+FINNHUB_API_KEY=your_key cargo run --example basic_usage
+
+# Check formatting and lints
+cargo fmt -- --check
+cargo clippy -- -D warnings
+```
+
+## Development
+
+This library was developed with assistance from [Claude](https://claude.ai), Anthropic's AI assistant, using the [Claude Code](https://github.com/anthropics/claude-code) development environment. The AI helped with implementation, documentation, and best practices while maintaining human oversight and decision-making throughout the development process.
 
 ## License
 
@@ -244,7 +464,3 @@ Licensed under either of:
 - Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
 
 at your option.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.

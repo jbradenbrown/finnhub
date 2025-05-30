@@ -44,6 +44,7 @@ impl RateLimiter {
     /// This allows 450 requests per 15 seconds (30 req/s * 15s).
     pub fn finnhub_15s_window() -> Self {
         // 450 tokens capacity, refill at 30 tokens/second
+        // To maintain 30 req/s average, we need to consider the measurement period
         Self::new(450, 30)
     }
 

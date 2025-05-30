@@ -34,3 +34,7 @@ coverage/
 
 # Benchmark results
 criterion/
+
+# Claude
+.claude/
+CLAUDE.md
