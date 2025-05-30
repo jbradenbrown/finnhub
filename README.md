@@ -47,9 +47,9 @@ async fn main() -> Result<()> {
     let profile = client.stock().company_profile("AAPL").await?;
     println!("Company: {}", profile.name.unwrap_or_default());
     
-    // Get forex rates
-    let rates = client.forex().rates("USD").await?;
-    println!("USD/EUR: {}", rates.quote.get("EUR").unwrap_or(&0.0));
+    // Search for symbols
+    let results = client.misc().symbol_search("apple", Some("US")).await?;
+    println!("Found {} results for 'apple'", results.count);
     
     Ok(())
 }
@@ -76,21 +76,21 @@ let client = FinnhubClient::with_config("your-api-key", config);
 ## API Coverage
 
 ### Stock Market Data (52/54 endpoints - 96.3%)
-- ✅ **Quotes & Prices**: Real-time quotes, bid/ask, candles (OHLCV)
-- ✅ **Company Info**: Profile, peers, executives, market cap history
+- ✅ **Quotes & Prices**: Real-time quotes, candles (OHLCV), ⚠️ bid/ask *[Premium]*, ⚠️ tick data *[Premium]*
+- ✅ **Company Info**: Profile, peers, executives, ⚠️ market cap history *[Premium]*
 - ✅ **Fundamentals**: Financials, metrics, earnings, dividends
 - ✅ **Estimates**: Price targets, recommendations, earnings estimates
-- ✅ **Alternative Data**: ESG scores, patents, visa applications, lobbying
-- ✅ **Insider Data**: Transactions, sentiment, ownership
+- ⚠️ **Alternative Data**: ESG scores, patents, visa applications, lobbying *[Most require Premium]*
+- ✅ **Insider Data**: Transactions, ownership, ⚠️ sentiment *[Premium]*
 - ✅ **Market Info**: Symbols, market status, holidays
 
 ### Other Markets
-- ✅ **Forex** (4/4): Symbols, candles, rates, exchanges
-- ✅ **Crypto** (4/4): Exchanges, symbols, candles, profile
-- ✅ **Bonds** (4/4): Profile, price, tick data, yield curve
 - ✅ **ETFs** (4/4): Profile, holdings, country/sector exposure
-- ✅ **Mutual Funds** (6/6): Profile, holdings, performance, ESG data
-- ✅ **Indices** (2/2): Constituents, historical constituents
+- ⚠️ **Forex** (4/4): Symbols, candles, rates, exchanges *[Premium]*
+- ⚠️ **Crypto** (4/4): Exchanges, symbols, candles, profile *[Premium]*
+- ⚠️ **Bonds** (4/4): Profile, price, tick data, yield curve *[Premium]*
+- ⚠️ **Mutual Funds** (6/6): Profile, holdings, performance, ESG data *[Premium]*
+- ⚠️ **Indices** (2/2): Constituents, historical constituents *[Premium]*
 
 ### Data & Analytics
 - ✅ **Economic Data** (2/2): Economic indicators and codes
@@ -113,6 +113,8 @@ let client = FinnhubClient::with_config("your-api-key", config);
 
 ### Stock Market Data
 ```rust
+use finnhub::models::stock::{StatementType, StatementFrequency};
+
 // Get financials
 let financials = client.stock()
     .financials("AAPL", StatementType::IncomeStatement, StatementFrequency::Annual)
@@ -127,28 +129,45 @@ println!("Average target: ${:.2}", target.target_mean);
 ```
 
 ### Alternative Data
+
+Many alternative data endpoints require premium API access:
+
 ```rust
-// ESG scores
-let esg = client.stock().esg("AAPL").await?;
+// Social sentiment (available with basic access)
+let sentiment = client.stock()
+    .social_sentiment("AAPL", "2024-01-01", "2024-01-07")
+    .await?;
+println!("Symbol: {}", sentiment.symbol);
+println!("Total data points: {}", sentiment.data.len());
 
-// Patent applications
-let patents = client.stock().uspto_patents("NVDA", "2023-01-01", "2023-12-31").await?;
-
-// Congressional trading
-let trades = client.stock().congressional_trading("AAPL", None, None).await?;
+// Premium endpoints (require additional access):
+// - ESG scores: client.stock().esg("AAPL")
+// - Patent applications: client.stock().uspto_patents("NVDA", from, to)  
+// - Congressional trading: client.stock().congressional_trading("AAPL", None, None)
+// - Lobbying data: client.stock().lobbying("AAPL", from, to)
 ```
 
-### Market Indices
+### Calendar Events
 ```rust
-// S&P 500 constituents
-let sp500 = client.index().constituents("^GSPC").await?;
-println!("S&P 500 has {} companies", sp500.constituents.len());
+// Earnings calendar
+let earnings = client.calendar()
+    .earnings(Some("2024-01-01"), Some("2024-01-07"), None)
+    .await?;
+println!("Upcoming earnings: {} companies", earnings.earnings_calendar.len());
+
+// IPO calendar  
+let ipos = client.calendar()
+    .ipo("2024-01-01", "2024-01-31")
+    .await?;
+println!("Recent IPOs: {} companies", ipos.ipo_calendar.len());
 ```
 
 ### News & Sentiment
 ```rust
+use finnhub::models::news::NewsCategory;
+
 // Company news with sentiment
-let news = client.news().company_news("AAPL", "2024-01-01", "2024-01-31").await?;
+let news = client.news().company_news("AAPL", "2024-12-01", "2024-12-07").await?;
 
 // Market-wide news
 let market_news = client.news().market_news(NewsCategory::General, None).await?;
@@ -172,12 +191,15 @@ println!("Signal: {} (Buy: {}, Sell: {})",
 ```rust
 // Symbol search
 let results = client.misc().symbol_search("tesla", Some("US")).await?;
+println!("Found {} results", results.count);
 
 // Country information
 let countries = client.misc().country().await?;
+println!("Available in {} countries", countries.len());
 
-// Sector metrics
-let sectors = client.misc().sector_metrics("NA").await?;
+// FDA calendar
+let fda = client.misc().fda_calendar().await?;
+println!("Upcoming FDA events: {}", fda.len());
 ```
 
 ## Project Structure
@@ -247,14 +269,14 @@ for symbol in ["AAPL", "GOOGL", "MSFT"] {
 This library intentionally does not implement automatic retry logic, allowing applications to implement context-aware retry strategies. The library provides helpers to make this easy:
 
 ```rust
-use finnhub::Error;
+use finnhub::{Error, Result};
 use std::time::Duration;
 use tokio::time::sleep;
 
-async fn with_retry<T, F, Fut>(mut f: F, max_attempts: u32) -> Result<T, Error>
+async fn with_retry<T, F, Fut>(mut f: F, max_attempts: u32) -> Result<T>
 where
     F: FnMut() -> Fut,
-    Fut: std::future::Future<Output = Result<T, Error>>,
+    Fut: std::future::Future<Output = Result<T>>,
 {
     let mut attempt = 0;
     loop {
@@ -263,8 +285,9 @@ where
             Ok(result) => return Ok(result),
             Err(e) if e.is_retryable() && attempt < max_attempts => {
                 let delay = e.retry_after()
-                    .unwrap_or_else(|| Duration::from_millis(100 * 2_u64.pow(attempt - 1)));
-                sleep(delay).await;
+                    .unwrap_or(1)  // Default 1 second
+                    .max(1);       // At least 1 second
+                sleep(Duration::from_secs(delay)).await;
                 continue;
             }
             Err(e) => return Err(e),
@@ -281,6 +304,7 @@ let quote = with_retry(|| client.stock().quote("AAPL"), 3).await?;
 Response caching is best implemented at the application layer where you understand data freshness requirements:
 
 ```rust
+use finnhub::models::stock::Quote;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
@@ -327,13 +351,9 @@ match client.stock().quote("AAPL").await {
         // Check API key configuration
         panic!("Invalid API key");
     }
-    Err(Error::NotFound) => {
-        // Symbol might be delisted or invalid
-        log::warn!("Symbol not found");
-    }
     Err(e) => {
         // Log and handle other errors
-        log::error!("API error: {}", e);
+        eprintln!("API error: {}", e);
     }
 }
 ```
