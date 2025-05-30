@@ -26,8 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Made `symbol` and `name` optional in `SupplyChainRelationship` model
   - Made `item` field optional in `SimilarityData` model
   - Fixed `EarningsQualityScore` response structure to match API format with wrapper object
+  - Fixed `Dividend` model: changed `frequency` to `freq` field and made it optional
+  - Fixed `BasicFinancials` series field: changed to `serde_json::Value` for complex nested structure
+  - Fixed `SimilarityData` model: restructured to match actual API response with individual item scores
 - Renamed `EarningsQualityScoreResponse` to `EarningsQualityScore` to follow codebase naming conventions
 - Updated all imports and method signatures for consistency
+- Fixed example code to handle optional fields in ESG data display
 
 ## [0.1.0] - 2025-05-28
 
