@@ -264,7 +264,6 @@ Unit test coverage: ⚠️ **Mixed Results**
 ### Quality Standards
 - All unit tests use `#[ignore]` for API key requirements
 - Comprehensive error handling in integration tests
-- Rate limiting respect in all tests
 - Real API validation with test data
 - Proper async/await test structure
 
@@ -324,10 +323,12 @@ FINNHUB_API_KEY=your_key cargo test rate_limit -- --ignored --nocapture
 - Some endpoints may return empty data for test symbols
 - API key is required for all meaningful testing
 - Test execution time varies based on rate limiting strategy
-- **Currently Untestable Endpoints**: 16 tests fail due to lacking API access
+- **Currently Untestable Endpoints**: 44 tests fail due to lacking API access (16 stock + 28 non-stock)
   - All failing tests return HTTP 403 "You don't have access to this resource"
   - These are API access restrictions, not code issues
-  - 49/65 stock endpoint tests are currently testable and passing (75.4%)
+  - Stock tests: 49/65 passing (75.4%)
+  - Non-stock tests: 17/45 passing (37.8%)
+  - Overall: 66/110 tests passing (60%)
 
 ## API Access Limitations
 
