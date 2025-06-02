@@ -2,6 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt;
 
 /// Financial statements response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,6 +86,54 @@ pub struct Earnings {
     pub surprise_percent: Option<f64>,
     /// Symbol.
     pub symbol: String,
+}
+
+/// Financial statement type.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementType {
+    /// Balance sheet
+    #[serde(rename = "bs")]
+    BalanceSheet,
+    /// Income statement
+    #[serde(rename = "ic")]
+    IncomeStatement,
+    /// Cash flow statement
+    #[serde(rename = "cf")]
+    CashFlow,
+}
+
+impl fmt::Display for StatementType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StatementType::BalanceSheet => write!(f, "bs"),
+            StatementType::IncomeStatement => write!(f, "ic"),
+            StatementType::CashFlow => write!(f, "cf"),
+        }
+    }
+}
+
+/// Financial statement frequency.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementFrequency {
+    /// Annual
+    #[serde(rename = "annual")]
+    Annual,
+    /// Quarterly
+    #[serde(rename = "quarterly")]
+    Quarterly,
+    /// TTM (Trailing Twelve Months)
+    #[serde(rename = "ttm")]
+    TTM,
+}
+
+impl fmt::Display for StatementFrequency {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StatementFrequency::Annual => write!(f, "annual"),
+            StatementFrequency::Quarterly => write!(f, "quarterly"),
+            StatementFrequency::TTM => write!(f, "ttm"),
+        }
+    }
 }
 
 
