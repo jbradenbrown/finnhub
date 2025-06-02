@@ -19,35 +19,117 @@ This is a comprehensive Rust client library for the Finnhub.io financial data AP
 ### Core Components
 
 ```
-finnhub-rs/
+finnhub/
 ├── src/
 │   ├── lib.rs              # Library entry point, re-exports
 │   ├── client.rs           # Main FinnhubClient implementation
 │   ├── auth.rs             # Authentication handling
 │   ├── error.rs            # Error types and handling
 │   ├── rate_limiter.rs     # Rate limiting implementation
-│   ├── models/             # Shared data models
+│   ├── models/             # Data models organized by category
 │   │   ├── mod.rs
-│   │   └── common.rs       # Common types (timestamps, etc.)
+│   │   ├── common.rs       # Common types (timestamps, etc.)
+│   │   ├── stock/          # Stock models (16 files)
+│   │   │   ├── alternative.rs   # Transcripts, patents, visas
+│   │   │   ├── analytics.rs     # Recommendations, price targets
+│   │   │   ├── company.rs       # Company profiles, peers
+│   │   │   ├── compliance.rs    # ESG, supply chain
+│   │   │   ├── corporate_actions.rs # Dividends, splits
+│   │   │   ├── estimates.rs     # Earnings estimates
+│   │   │   ├── executive.rs     # Executive compensation
+│   │   │   ├── financials.rs    # Financial statements
+│   │   │   ├── fund.rs          # Fund ownership
+│   │   │   ├── historical.rs    # Historical data
+│   │   │   ├── insider.rs       # Insider transactions
+│   │   │   ├── market.rs        # Market data, holidays
+│   │   │   ├── price.rs         # Quotes, candles, ticks
+│   │   │   └── sentiment.rs     # Sentiment analysis
+│   │   ├── bond.rs         # Bond models
+│   │   ├── calendar.rs     # Calendar event models
+│   │   ├── crypto.rs       # Cryptocurrency models
+│   │   ├── economic.rs     # Economic data models
+│   │   ├── etf.rs          # ETF models
+│   │   ├── forex.rs        # Forex models
+│   │   ├── index.rs        # Index models
+│   │   ├── misc.rs         # Miscellaneous models
+│   │   ├── mutual_fund.rs  # Mutual fund models
+│   │   ├── news.rs         # News models
+│   │   └── scanner.rs      # Scanner/technical models
 │   ├── endpoints/          # API endpoint implementations
 │   │   ├── mod.rs
-│   │   ├── stock.rs        # Stock-related endpoints (53)
-│   │   ├── forex.rs        # Forex endpoints (4)
-│   │   ├── crypto.rs       # Crypto endpoints (4)
+│   │   ├── stock/          # Stock endpoints (14 modules)
+│   │   │   ├── analytics.rs     # Price targets, recommendations
+│   │   │   ├── company.rs       # Company profiles, peers
+│   │   │   ├── compliance.rs    # ESG, patents, visas
+│   │   │   ├── corporate_actions.rs # Dividends, splits
+│   │   │   ├── estimates.rs     # Earnings estimates
+│   │   │   ├── filings.rs       # SEC filings, transcripts
+│   │   │   ├── financials.rs    # Financial statements
+│   │   │   ├── historical.rs    # Historical data
+│   │   │   ├── insider.rs       # Insider transactions
+│   │   │   ├── market.rs        # Market status, holidays
+│   │   │   ├── ownership.rs     # Ownership data
+│   │   │   ├── price.rs         # Quotes, candles, ticks
+│   │   │   └── sentiment.rs     # Sentiment analysis
 │   │   ├── bond.rs         # Bond endpoints (4)
+│   │   ├── calendar.rs     # Calendar endpoints (3)
+│   │   ├── crypto.rs       # Crypto endpoints (4)
+│   │   ├── economic.rs     # Economic endpoints (2)
 │   │   ├── etf.rs          # ETF endpoints (4)
+│   │   ├── forex.rs        # Forex endpoints (4)
+│   │   ├── index.rs        # Index endpoints (2)
+│   │   ├── misc.rs         # Misc endpoints (8)
 │   │   ├── mutual_fund.rs  # Mutual fund endpoints (6)
-│   │   ├── economic.rs     # Economic data endpoints
-│   │   ├── company.rs      # Company info endpoints
-│   │   ├── news.rs         # News-related endpoints
-│   │   ├── calendar.rs     # Calendar endpoints
-│   │   └── misc.rs         # Other endpoints
+│   │   ├── news.rs         # News endpoints (3)
+│   │   └── scanner.rs      # Scanner endpoints (3)
 │   └── websocket/          # WebSocket implementation
 │       ├── mod.rs
 │       └── stream.rs
-├── examples/               # Usage examples
-├── tests/                  # Integration tests
-└── benches/               # Performance benchmarks
+├── api-specs/              # OpenAPI specifications (16 files)
+│   ├── base.json
+│   ├── bond.json
+│   ├── calendar.json
+│   ├── corporate-actions.json
+│   ├── crypto.json
+│   ├── economic.json
+│   ├── etf.json
+│   ├── filings.json
+│   ├── forex.json
+│   ├── index.json
+│   ├── institutional.json
+│   ├── misc.json
+│   ├── mutual-fund.json
+│   ├── news.json
+│   ├── scanner.json
+│   └── stock.json
+├── examples/               # Usage examples (11 files)
+│   ├── alternative_data.rs
+│   ├── basic_usage.rs
+│   ├── error_handling.rs
+│   ├── forex_trading.rs
+│   ├── rate_limit_window_demo.rs
+│   ├── rate_limiting_demo.rs
+│   ├── rate_limiting_explanation.rs
+│   ├── readme_verification.rs
+│   ├── stock_analysis.rs
+│   ├── technical_analysis.rs
+│   └── websocket_basic.rs
+├── tests/                  # Integration tests (9 files)
+│   ├── api_integration_test.rs
+│   ├── comprehensive_api_test.rs
+│   ├── essential_endpoints_test.rs
+│   ├── rate_limit_test.rs
+│   ├── rate_limit_verification_test.rs
+│   ├── rate_limit_window_test.rs
+│   ├── rate_limiting_simple_test.rs
+│   ├── rate_limiting_test.rs
+│   └── stock_quote_test.rs
+├── benches/               # Performance benchmarks
+│   └── finnhub_benchmarks.rs
+├── CLAUDE.md              # AI assistant instructions
+├── TEST_COVERAGE.md       # Test coverage documentation
+├── swagger.json           # Complete API specification
+└── run_api_tests.sh       # API test runner script
 ```
 
 ### Design Principles
@@ -73,95 +155,79 @@ pub struct FinnhubClient {
 
 ```rust
 #[derive(Debug, thiserror::Error)]
-pub enum FinnhubError {
+pub enum Error {
     #[error("HTTP error: {0}")]
     Http(#[from] reqwest::Error),
     
-    #[error("Rate limit exceeded")]
-    RateLimitExceeded,
+    #[error("Rate limit exceeded: please retry after {retry_after} seconds")]
+    RateLimitExceeded { retry_after: u64 },
     
-    #[error("Invalid API key")]
+    #[error("Unauthorized: invalid API key")]
     Unauthorized,
     
-    #[error("API error: {message}")]
-    ApiError { message: String, code: u16 },
+    #[error("API error (status {status}): {message}")]
+    ApiError { status: u16, message: String },
     
     #[error("Deserialization error: {0}")]
     Deserialization(#[from] serde_json::Error),
+    
+    #[error("Invalid parameter: {0}")]
+    InvalidParameter(String),
+    
+    #[error("Invalid request: {0}")]
+    InvalidRequest(String),
 }
 ```
 
 ### Rate Limiting Design
 
 - Token bucket algorithm with 30 tokens/second
-- Automatic retry with exponential backoff
-- Configurable burst capacity
-- Per-client rate limiting
+- Two strategies: Standard (default) and FifteenSecondWindow (for batch processing)
+- Standard: 30 requests/second with 2-second burst capacity (60 tokens)
+- FifteenSecondWindow: 450 requests/15 seconds for batch operations
+- Per-client rate limiting (no shared rate limiters between clients)
 
 ### Authentication Methods
 
 1. **URL Parameter**: `?token=API_KEY`
 2. **Header**: `X-Finnhub-Token: API_KEY`
 
-The library will use header-based auth by default for security.
-
-## API Categories Implementation Plan
-
-### Priority 1 - Core Stock APIs (53 endpoints)
-- Quote data
-- Candles/OHLC
-- Company profiles
-- Financials
-- Insider transactions
-- Recommendations
-- Price targets
-- Technical indicators
-
-### Priority 2 - Market Data
-- Forex (4 endpoints)
-- Crypto (4 endpoints)
-- Indices (2 endpoints)
-
-### Priority 3 - Alternative Data
-- News & sentiment
-- Economic indicators
-- SEC filings
-- ETF data
-- Bond data
-
-### Priority 4 - Advanced Features
-- WebSocket streaming
-- Batch requests
-- Response caching
+The library uses header authentication by default (`X-Finnhub-Token`) for better security. Both header and URL parameter authentication (`?token=API_KEY`) are supported by Finnhub for all GET requests.
 
 ## Dependencies
 
 ```toml
 [dependencies]
-tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.11", features = ["json"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-thiserror = "1"
+tokio = { version = "1.40", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
-url = "2"
+url = "2.5"
 futures = "0.3"
-tokio-tungstenite = "0.20"  # For WebSocket
+tokio-tungstenite = { version = "0.24", optional = true }  # For WebSocket
 tracing = "0.1"
-tower = { version = "0.4", features = ["limit", "retry"] }
+tower = { version = "0.5", features = ["limit", "retry", "timeout"] }
+async-trait = "0.1"
 
 [dev-dependencies]
 tokio-test = "0.4"
-wiremock = "0.5"
-criterion = "0.5"
+criterion = { version = "0.5", features = ["html_reports"] }
+pretty_assertions = "1.4"
+proptest = "1.5"
+dotenv = "0.15"
 ```
 
 ## Testing Strategy
 
-1. **Unit Tests**: Test individual components in isolation
-2. **Integration Tests**: Test against mock Finnhub API
-3. **End-to-End Tests**: Optional tests against real API (requires API key)
-4. **Property-based Tests**: Use proptest for edge cases
+1. **Unit Tests**: 101 tests across 24 modules testing individual endpoints
+2. **Integration Tests**: Comprehensive API tests validating real API responses
+3. **Rate Limit Tests**: Multiple test suites validating rate limiting behavior
+4. **Model Validation**: Tests ensure correct parsing of API responses
+5. **Property-based Tests**: Using proptest for edge cases
+
+Note: Each unit test creates its own client instance with its own rate limiter. Rate limiters are not shared between tests, which could potentially exceed API rate limits when tests run in parallel.
 
 ## Performance Considerations
 
@@ -239,9 +305,10 @@ criterion = "0.5"
 - [x] WebSocket Support Structure (feature-gated)
 - [x] Basic Example
 - [x] README
-- [x] Comprehensive Tests (64 unit tests + integration tests)
+- [x] Comprehensive Tests (101 unit tests + integration tests)
 - [x] Test Coverage Documentation (TEST_COVERAGE.md)
-- [ ] Full API Documentation
+- [x] Publishing Preparation (crates.io ready)
+- [ ] Full API Documentation (cargo doc)
 
 ## Progress Log
 
@@ -417,7 +484,7 @@ criterion = "0.5"
   - Rate limiting configuration
   - Comprehensive data validation
   - `#[ignore]` attribute for tests requiring API keys
-- Total: Added 64 unit tests across 11 stock endpoint modules
+- Total: Added 62 unit tests across 11 stock endpoint modules
 
 ### 2025-05-30: Test Coverage Documentation
 - Created comprehensive TEST_COVERAGE.md documenting all test coverage across the project
@@ -448,4 +515,20 @@ criterion = "0.5"
   - Symbol Search: Confirmed working correctly
 - Test results: 17/45 non-stock tests passing (37.8%) with 0 model parsing errors
 - Updated TEST_COVERAGE.md with detailed results and API access limitations
-- Total unit tests: 101 across 24 modules (62 stock + 39 non-stock)
+- Total unit tests: 101 across 22 modules (62 stock + 39 non-stock)
+
+### 2025-06-01: Publishing Preparation & README Updates
+- Added crates.io and docs.rs badges to README
+- Created .cargo/config.toml for docs.rs configuration
+- Updated package metadata in Cargo.toml for publishing
+- Ran successful `cargo publish --dry-run`
+- Updated all README examples to use only basic API access endpoints:
+  - Replaced forex rates with symbol search
+  - Replaced bond/mutual fund with calendar events
+  - Replaced index constituents with technical indicators
+  - Added warnings for premium endpoints
+- Created readme_verification.rs to test all README examples
+- Fixed company news date range from January to December 2024
+- Investigated finnhub swagger.json for high usage endpoints:
+  - Found 5 endpoints marked with "highUsage": "High Usage"
+  - /company-news, /stock/metric, /stock/earnings, /quote, /covid19/us

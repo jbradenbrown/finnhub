@@ -13,7 +13,7 @@ pub enum AuthMethod {
 
 impl Default for AuthMethod {
     fn default() -> Self {
-        Self::UrlParameter // Finnhub requires URL parameter authentication
+        Self::Header // Use header authentication by default (more secure)
     }
 }
 

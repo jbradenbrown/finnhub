@@ -15,13 +15,13 @@ async fn main() -> Result<()> {
     let api_key =
         std::env::var("FINNHUB_API_KEY").expect("FINNHUB_API_KEY environment variable not set");
 
-    // Create client with default URL parameter authentication (recommended by Finnhub)
+    // Create client with default header authentication (more secure)
     let client = FinnhubClient::new(api_key);
 
-    // Alternative: Create client with custom configuration
+    // Alternative: Create client with URL parameter authentication
     // use finnhub::{ClientConfig, auth::AuthMethod};
     // let config = ClientConfig {
-    //     auth_method: AuthMethod::Header, // Use header authentication instead
+    //     auth_method: AuthMethod::UrlParameter, // Use URL parameter authentication
     //     ..ClientConfig::default()
     // };
     // let client = FinnhubClient::with_config(api_key, config);
