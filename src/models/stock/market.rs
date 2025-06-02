@@ -2,35 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-/// Historical NBBO (National Best Bid and Offer) data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct HistoricalNBBO {
-    /// Symbol.
-    pub s: String,
-    /// Total number of ticks.
-    pub total: i64,
-    /// Number of ticks skipped.
-    pub skip: i64,
-    /// Number of ticks returned.
-    pub count: i64,
-    /// Array of timestamps.
-    pub t: Vec<i64>,
-    /// Array of ask prices.
-    pub a: Vec<f64>,
-    /// Array of ask volumes.
-    pub av: Vec<i64>,
-    /// Array of ask exchanges.
-    pub ax: Vec<String>,
-    /// Array of bid prices.
-    pub b: Vec<f64>,
-    /// Array of bid volumes.
-    pub bv: Vec<i64>,
-    /// Array of bid exchanges.
-    pub bx: Vec<String>,
-    /// Array of conditions.
-    pub c: Vec<Vec<String>>,
-}
-
 /// Market holiday data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarketHoliday {
@@ -56,27 +27,40 @@ pub struct Holiday {
     pub trading_hour: String,
 }
 
-/// International filing information.
+/// Market status.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InternationalFiling {
-    /// Symbol.
-    pub symbol: String,
-    /// Company name.
-    #[serde(rename = "companyName")]
-    pub company_name: String,
-    /// Filed date.
-    #[serde(rename = "filedDate")]
-    pub filed_date: String,
-    /// Filing category.
-    pub category: String,
-    /// Filing title.
-    pub title: String,
-    /// Filing description.
-    pub description: String,
-    /// Filing URL.
-    pub url: String,
-    /// Language.
-    pub language: String,
-    /// Country.
-    pub country: String,
+pub struct MarketStatus {
+    /// Exchange name.
+    pub exchange: String,
+    /// Market holiday.
+    pub holiday: Option<String>,
+    /// Whether the market is open.
+    #[serde(rename = "isOpen")]
+    pub is_open: bool,
+    /// Market session.
+    pub session: Option<String>,
+    /// Market state.
+    pub state: Option<String>,
+    /// Market timezone.
+    pub timezone: String,
+    /// Current timestamp.
+    #[serde(rename = "t")]
+    pub timestamp: i64,
 }
+
+/// Investment theme portfolio.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InvestmentTheme {
+    /// Theme name.
+    pub theme: String,
+    /// Array of stocks in the theme.
+    pub data: Vec<ThemeStock>,
+}
+
+/// Stock in an investment theme.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ThemeStock {
+    /// Stock symbol.
+    pub symbol: String,
+}
+

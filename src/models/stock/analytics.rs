@@ -1,6 +1,7 @@
 //! Analytics and recommendations models.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Price target data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -63,4 +64,15 @@ pub struct UpgradeDowngrade {
     pub company: String,
     /// Action.
     pub action: String,
+}
+
+/// Revenue breakdown.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RevenueBreakdown {
+    /// Symbol.
+    pub symbol: String,
+    /// CIK.
+    pub cik: Option<String>,
+    /// Revenue breakdown data.
+    pub data: Vec<HashMap<String, serde_json::Value>>,
 }

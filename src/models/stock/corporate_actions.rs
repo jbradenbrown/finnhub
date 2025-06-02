@@ -2,59 +2,64 @@
 
 use serde::{Deserialize, Serialize};
 
-/// IPO event data.
+/// Dividend data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct IPOEvent {
+pub struct Dividend {
     /// Symbol.
-    pub symbol: Option<String>,
-    /// IPO date.
-    pub date: Option<String>,
-    /// Exchange.
-    pub exchange: Option<String>,
-    /// Company's name.
-    pub name: Option<String>,
-    /// IPO status. Can take 1 of the following values: expected, priced, withdrawn, filed.
-    pub status: Option<String>,
-    /// Projected price or price range.
-    pub price: Option<String>,
-    /// Number of shares offered during the IPO.
-    #[serde(rename = "numberOfShares")]
-    pub number_of_shares: Option<f64>,
-    /// Total shares value.
-    #[serde(rename = "totalSharesValue")]
-    pub total_shares_value: Option<f64>,
+    pub symbol: String,
+    /// Dividend amount.
+    pub amount: f64,
+    /// Adjusted dividend amount.
+    #[serde(rename = "adjustedAmount")]
+    pub adjusted_amount: f64,
+    /// Currency.
+    pub currency: String,
+    /// Declaration date.
+    #[serde(rename = "declarationDate")]
+    pub declaration_date: String,
+    /// Ex-dividend date.
+    #[serde(rename = "exDividendDate")]
+    pub ex_dividend_date: Option<String>,
+    /// Frequency.
+    pub freq: Option<String>,
+    /// Payment date.
+    #[serde(rename = "payDate")]
+    pub pay_date: String,
+    /// Record date.
+    #[serde(rename = "recordDate")]
+    pub record_date: String,
 }
 
-/// IPO calendar data.
+/// Stock split data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct IPOCalendar {
-    /// Array of IPO events.
-    #[serde(rename = "ipoCalendar")]
-    pub ipo_calendar: Vec<IPOEvent>,
+pub struct StockSplit {
+    /// Symbol.
+    pub symbol: String,
+    /// Split date.
+    pub date: String,
+    /// Split from factor.
+    #[serde(rename = "fromFactor")]
+    pub from_factor: f64,
+    /// Split to factor.
+    #[serde(rename = "toFactor")]
+    pub to_factor: f64,
 }
 
-/// SEC filing data.
+/// Dividends v2 data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Filing {
-    /// Access number.
-    #[serde(rename = "accessNumber")]
-    pub access_number: Option<String>,
+pub struct DividendsV2 {
     /// Symbol.
-    pub symbol: Option<String>,
-    /// CIK.
-    pub cik: Option<String>,
-    /// Form type.
-    pub form: Option<String>,
-    /// Filed date.
-    #[serde(rename = "filedDate")]
-    pub filed_date: Option<String>,
-    /// Accepted date.
-    #[serde(rename = "acceptedDate")]
-    pub accepted_date: Option<String>,
-    /// Report's URL.
-    #[serde(rename = "reportUrl")]
-    pub report_url: Option<String>,
-    /// Filing's URL.
-    #[serde(rename = "filingUrl")]
-    pub filing_url: Option<String>,
+    pub symbol: String,
+    /// Array of dividend data.
+    pub data: Vec<DividendV2>,
+}
+
+/// Dividend v2 information.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DividendV2 {
+    /// Ex-dividend date.
+    #[serde(rename = "exDate")]
+    pub ex_date: String,
+    /// Dividend amount.
+    pub amount: f64,
 }
