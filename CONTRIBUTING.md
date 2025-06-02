@@ -1,6 +1,6 @@
-# Contributing to finnhub-rs
+# Contributing to finnhub
 
-Thank you for your interest in contributing to finnhub-rs! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to finnhub! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -41,11 +41,11 @@ Enhancement suggestions are welcome! Please provide:
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/finnhub-rs
-cd finnhub-rs
+git clone https://github.com/yourusername/finnhub
+cd finnhub
 
 # Add upstream remote
-git remote add upstream https://github.com/jbradenbrown/finnhub-rs
+git remote add upstream https://github.com/jbradenbrown/finnhub
 
 # Create a feature branch
 git checkout -b feature/your-feature-name
@@ -136,14 +136,14 @@ async fn test_stock_quote_handles_invalid_symbol() {
 ## Project Structure
 
 ```
-finnhub-rs/
+finnhub/
 ├── src/
 │   ├── client.rs           # Main client implementation
 │   ├── endpoints/          # API endpoint implementations
-│   │   ├── stock.rs        # Stock market endpoints
+│   │   ├── stock/          # Stock endpoints (14 modules)
 │   │   └── ...             # Other endpoint categories
 │   ├── models/             # Response/request models
-│   │   ├── stock/          # Stock-related models
+│   │   ├── stock/          # Stock models (14 files)
 │   │   └── ...             # Other model categories
 │   ├── error.rs            # Error types
 │   ├── auth.rs             # Authentication

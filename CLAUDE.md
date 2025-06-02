@@ -29,21 +29,21 @@ finnhub/
 │   ├── models/             # Data models organized by category
 │   │   ├── mod.rs
 │   │   ├── common.rs       # Common types (timestamps, etc.)
-│   │   ├── stock/          # Stock models (16 files)
-│   │   │   ├── alternative.rs   # Transcripts, patents, visas
-│   │   │   ├── analytics.rs     # Recommendations, price targets
-│   │   │   ├── company.rs       # Company profiles, peers
-│   │   │   ├── compliance.rs    # ESG, supply chain
+│   │   ├── stock/          # Stock models (14 files)
+│   │   │   ├── analytics.rs     # Recommendations, price targets, revenue breakdown
+│   │   │   ├── common.rs        # Shared types (CandleResolution)
+│   │   │   ├── company.rs       # Company profiles, peers, symbols
+│   │   │   ├── compliance.rs    # ESG, executives, lobbying, patents, visas
 │   │   │   ├── corporate_actions.rs # Dividends, splits
-│   │   │   ├── estimates.rs     # Earnings estimates
-│   │   │   ├── executive.rs     # Executive compensation
-│   │   │   ├── financials.rs    # Financial statements
-│   │   │   ├── fund.rs          # Fund ownership
-│   │   │   ├── historical.rs    # Historical data
-│   │   │   ├── insider.rs       # Insider transactions
-│   │   │   ├── market.rs        # Market data, holidays
-│   │   │   ├── price.rs         # Quotes, candles, ticks
-│   │   │   └── sentiment.rs     # Sentiment analysis
+│   │   │   ├── estimates.rs     # Earnings estimates, quality scores
+│   │   │   ├── filings.rs       # SEC filings, transcripts, presentations
+│   │   │   ├── financials.rs    # Financial statements, metrics, earnings
+│   │   │   ├── historical.rs    # Historical data (market cap, employees, ESG, NBBO)
+│   │   │   ├── insider.rs       # Insider transactions, sentiment
+│   │   │   ├── market.rs        # Market status, holidays, investment themes
+│   │   │   ├── ownership.rs     # Institutional and fund ownership
+│   │   │   ├── price.rs         # Quotes, candles, bid-ask, tick data
+│   │   │   └── sentiment.rs     # Social and filing sentiment analysis
 │   │   ├── bond.rs         # Bond models
 │   │   ├── calendar.rs     # Calendar event models
 │   │   ├── crypto.rs       # Cryptocurrency models
@@ -532,3 +532,16 @@ Note: Each unit test creates its own client instance with its own rate limiter. 
 - Investigated finnhub swagger.json for high usage endpoints:
   - Found 5 endpoints marked with "highUsage": "High Usage"
   - /company-news, /stock/metric, /stock/earnings, /quote, /covid19/us
+
+### 2025-06-01: Authentication & Model Organization Refactoring
+- Changed default authentication from URL parameter to header authentication:
+  - Header authentication (`X-Finnhub-Token`) is now default for better security
+  - URL parameter authentication still supported via `AuthMethod::UrlParameter`
+  - Updated all documentation and examples
+- Refactored model organization to align with endpoint structure:
+  - Created new modules: `filings.rs` and `ownership.rs` for better organization
+  - Moved models to match their endpoint usage (e.g., executive models to compliance)
+  - Moved `IPOCalendar` and `IPOEvent` from stock models to calendar models
+  - Moved `StatementType` and `StatementFrequency` from common to financials module
+  - Removed obsolete modules: `alternative.rs`, `executive.rs`, and `fund.rs`
+  - Updated stock models from 16 files to 14 better-organized files
