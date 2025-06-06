@@ -106,27 +106,6 @@ pub struct TickData {
     pub conditions: Option<Vec<Vec<String>>>,
 }
 
-/// Market status.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MarketStatus {
-    /// Exchange name.
-    pub exchange: String,
-    /// Market holiday.
-    pub holiday: Option<String>,
-    /// Whether the market is open.
-    #[serde(rename = "isOpen")]
-    pub is_open: bool,
-    /// Market session.
-    pub session: Option<String>,
-    /// Market state.
-    pub state: Option<String>,
-    /// Market timezone.
-    pub timezone: String,
-    /// Current timestamp.
-    #[serde(rename = "t")]
-    pub timestamp: i64,
-}
-
 /// Price performance metrics.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PriceMetrics {
@@ -180,21 +159,3 @@ pub struct PricePerformance {
     pub percent: f64,
 }
 
-/// Dividends v2 data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DividendsV2 {
-    /// Symbol.
-    pub symbol: String,
-    /// Array of dividend data.
-    pub data: Vec<DividendV2>,
-}
-
-/// Dividend v2 information.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DividendV2 {
-    /// Ex-dividend date.
-    #[serde(rename = "exDate")]
-    pub ex_date: String,
-    /// Dividend amount.
-    pub amount: f64,
-}

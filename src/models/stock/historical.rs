@@ -72,3 +72,32 @@ pub struct HistoricalESG {
     /// ESG data.
     pub data: Vec<ESGData>,
 }
+
+/// Historical NBBO (National Best Bid and Offer) data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HistoricalNBBO {
+    /// Symbol.
+    pub s: String,
+    /// Total number of ticks.
+    pub total: i64,
+    /// Number of ticks skipped.
+    pub skip: i64,
+    /// Number of ticks returned.
+    pub count: i64,
+    /// Array of timestamps.
+    pub t: Vec<i64>,
+    /// Array of ask prices.
+    pub a: Vec<f64>,
+    /// Array of ask volumes.
+    pub av: Vec<i64>,
+    /// Array of ask exchanges.
+    pub ax: Vec<String>,
+    /// Array of bid prices.
+    pub b: Vec<f64>,
+    /// Array of bid volumes.
+    pub bv: Vec<i64>,
+    /// Array of bid exchanges.
+    pub bx: Vec<String>,
+    /// Array of conditions.
+    pub c: Vec<Vec<String>>,
+}

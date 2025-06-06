@@ -23,4 +23,4 @@
    - All API responses are passed directly to your application
    - Implement your own data validation and sanitization
 
-Thank you for helping keep finnhub-rs secure!
+Thank you for helping keep finnhub secure!

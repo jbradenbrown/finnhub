@@ -57,17 +57,17 @@ async fn main() -> Result<()> {
 
 ## Authentication
 
-The library uses URL parameter authentication (`?token=YOUR_API_KEY`) by default, which is Finnhub's recommended method.
+The library uses header authentication (`X-Finnhub-Token`) by default for better security. Both header and URL parameter authentication are supported by Finnhub.
 
 ```rust
 use finnhub::{FinnhubClient, ClientConfig, auth::AuthMethod};
 
-// Default: URL parameter authentication (recommended)
+// Default: Header authentication (more secure)
 let client = FinnhubClient::new("your-api-key");
 
-// Alternative: Header authentication
+// Alternative: URL parameter authentication
 let config = ClientConfig {
-    auth_method: AuthMethod::Header,
+    auth_method: AuthMethod::UrlParameter,
     ..ClientConfig::default()
 };
 let client = FinnhubClient::with_config("your-api-key", config);

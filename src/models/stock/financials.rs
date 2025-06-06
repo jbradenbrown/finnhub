@@ -2,6 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt;
 
 /// Financial statements response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -87,56 +88,52 @@ pub struct Earnings {
     pub symbol: String,
 }
 
-/// Dividend data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Dividend {
-    /// Symbol.
-    pub symbol: String,
-    /// Dividend amount.
-    pub amount: f64,
-    /// Adjusted dividend amount.
-    #[serde(rename = "adjustedAmount")]
-    pub adjusted_amount: f64,
-    /// Currency.
-    pub currency: String,
-    /// Declaration date.
-    #[serde(rename = "declarationDate")]
-    pub declaration_date: String,
-    /// Ex-dividend date.
-    #[serde(rename = "exDividendDate")]
-    pub ex_dividend_date: Option<String>,
-    /// Frequency.
-    pub freq: Option<String>,
-    /// Payment date.
-    #[serde(rename = "payDate")]
-    pub pay_date: String,
-    /// Record date.
-    #[serde(rename = "recordDate")]
-    pub record_date: String,
+/// Financial statement type.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementType {
+    /// Balance sheet
+    #[serde(rename = "bs")]
+    BalanceSheet,
+    /// Income statement
+    #[serde(rename = "ic")]
+    IncomeStatement,
+    /// Cash flow statement
+    #[serde(rename = "cf")]
+    CashFlow,
 }
 
-/// Stock split data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StockSplit {
-    /// Symbol.
-    pub symbol: String,
-    /// Split date.
-    pub date: String,
-    /// Split from factor.
-    #[serde(rename = "fromFactor")]
-    pub from_factor: f64,
-    /// Split to factor.
-    #[serde(rename = "toFactor")]
-    pub to_factor: f64,
+impl fmt::Display for StatementType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StatementType::BalanceSheet => write!(f, "bs"),
+            StatementType::IncomeStatement => write!(f, "ic"),
+            StatementType::CashFlow => write!(f, "cf"),
+        }
+    }
 }
 
-/// Revenue breakdown.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RevenueBreakdown {
-    /// Symbol.
-    pub symbol: String,
-    /// CIK.
-    pub cik: Option<String>,
-    /// Revenue breakdown data.
-    pub data: Vec<HashMap<String, serde_json::Value>>,
+/// Financial statement frequency.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StatementFrequency {
+    /// Annual
+    #[serde(rename = "annual")]
+    Annual,
+    /// Quarterly
+    #[serde(rename = "quarterly")]
+    Quarterly,
+    /// TTM (Trailing Twelve Months)
+    #[serde(rename = "ttm")]
+    TTM,
 }
+
+impl fmt::Display for StatementFrequency {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StatementFrequency::Annual => write!(f, "annual"),
+            StatementFrequency::Quarterly => write!(f, "quarterly"),
+            StatementFrequency::TTM => write!(f, "ttm"),
+        }
+    }
+}
+
+

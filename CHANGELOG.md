@@ -16,8 +16,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Production best practices documentation
 
 ### Changed
+- Changed default authentication method from URL parameter to header authentication
+  - Header authentication (`X-Finnhub-Token`) is now the default for better security
+  - URL parameter authentication (`?token=API_KEY`) is still supported via `AuthMethod::UrlParameter`
+  - Both methods continue to work with all endpoints
+  - Updated all examples and documentation to reflect this change
 - Enhanced README with retry logic patterns, caching examples, and troubleshooting guide
 - Improved error handling examples showing context-aware retry strategies
+- Added WebSocket error handling to error_handling example (feature-gated)
+- Refactored model organization to align with endpoint structure
+  - Created new modules: `filings.rs` and `ownership.rs` for better organization
+  - Moved models to match their endpoint usage (e.g., executive models to compliance)
+  - Moved `IPOCalendar` and `IPOEvent` from stock models to calendar models
+  - Moved `StatementType` and `StatementFrequency` from common to financials module
+  - Removed obsolete modules: `alternative.rs`, `executive.rs`, and `fund.rs`
 
 ### Fixed
 - Model parsing errors for optional fields in API responses

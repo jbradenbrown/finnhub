@@ -1,6 +1,29 @@
-//! Fund ownership models.
+//! Ownership data models.
 
 use serde::{Deserialize, Serialize};
+
+/// Ownership.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Ownership {
+    /// Name.
+    pub name: String,
+    /// Share.
+    pub share: i64,
+    /// Change.
+    pub change: Option<i64>,
+    /// Filing date.
+    #[serde(rename = "filingDate")]
+    pub filing_date: String,
+}
+
+/// Ownership data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OwnershipData {
+    /// Symbol.
+    pub symbol: String,
+    /// Ownership data.
+    pub ownership: Vec<Ownership>,
+}
 
 /// Fund ownership data.
 #[derive(Debug, Clone, Serialize, Deserialize)]

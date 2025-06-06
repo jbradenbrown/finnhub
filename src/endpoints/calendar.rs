@@ -3,10 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::{
-        calendar::{EarningsCalendar, EconomicCalendar},
-        stock::corporate_actions::IPOCalendar,
-    },
+    models::calendar::{EarningsCalendar, EconomicCalendar, IPOCalendar},
 };
 
 /// Calendar-related API endpoints.

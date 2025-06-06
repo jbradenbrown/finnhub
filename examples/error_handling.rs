@@ -338,5 +338,9 @@ fn handle_finnhub_error(error: Error) -> String {
             format!("Internal error: {}", msg)
         }
         Error::Timeout => "Request timed out".to_string(),
+        #[cfg(feature = "websocket")]
+        Error::WebSocket(ws_err) => {
+            format!("WebSocket error: {}", ws_err)
+        }
     }
 }
