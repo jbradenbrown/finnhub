@@ -212,12 +212,12 @@ finnhub/
 │   ├── error.rs            # Error types
 │   ├── rate_limiter.rs     # Rate limiting
 │   ├── models/             # Response models
-│   │   ├── stock/          # Stock models (organized by category)
+│   │   ├── stock/          # Stock models (14 modules)
 │   │   ├── forex.rs        # Forex models
 │   │   ├── crypto.rs       # Crypto models
 │   │   └── ...             # Other market models
 │   └── endpoints/          # API endpoint implementations
-│       ├── stock.rs        # Stock endpoints
+│       ├── stock/          # Stock endpoints (14 modules)
 │       ├── forex.rs        # Forex endpoints
 │       └── ...             # Other endpoints
 └── examples/               # Usage examples
