@@ -1,6 +1,6 @@
 [package]
 name = "finnhub"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Jeffrey Brown"]
 description = "A comprehensive Rust client for the Finnhub.io financial data API with 96% endpoint coverage, flexible rate limiting, and WebSocket support"
