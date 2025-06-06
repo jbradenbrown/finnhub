@@ -23,10 +23,10 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-finnhub = "0.1.0"
+finnhub = "0.2.0"
 
 # For WebSocket support
-finnhub = { version = "0.1.0", features = ["websocket"] }
+finnhub = { version = "0.2.0", features = ["websocket"] }
 ```
 
 ## Quick Start
