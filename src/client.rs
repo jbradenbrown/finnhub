@@ -70,7 +70,7 @@ impl Default for ClientConfig {
 }
 
 /// Main client for interacting with the Finnhub API.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FinnhubClient {
     http_client: HttpClient,
     auth: Arc<Auth>,

@@ -6,11 +6,12 @@ use tokio::sync::Mutex;
 use tokio::time::sleep;
 
 /// Rate limiter using token bucket algorithm.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RateLimiter {
     inner: Arc<Mutex<RateLimiterInner>>,
 }
 
+#[derive(Debug)]
 struct RateLimiterInner {
     /// Maximum tokens in the bucket.
     capacity: u32,
