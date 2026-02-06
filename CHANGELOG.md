@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-02-05
+
+### Fixed
+- **Breaking fix**: Corrected `EarningsCallTranscript` model to match actual Finnhub API spec
+  - `TranscriptSegment.speech`: `String` → `Vec<String>` (API returns array of paragraphs)
+  - `TranscriptSegment.position` → `session` (earnings call section: management discussion or Q&A)
+  - Removed non-existent `start_time` / `startTime` field
+  - Added `#[serde(default)]` to all fields for null safety
+- Added missing `test_transcript` integration test to prevent model regression
+
+## [0.2.1] - 2025-01-06
+
+### Added
+- Debug trait implementation for `FinnhubClient` and `RateLimiter`
+
+### Fixed
+- Project structure documentation in README to reflect modular organization
+
 ## [0.2.0] - 2025-06-06
 
 ### Added
@@ -81,6 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - No automatic retry logic (by design - left to application layer)
 - No response caching (by design - left to application layer)
 
-[Unreleased]: https://github.com/jbradenbrown/finnhub/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jbradenbrown/finnhub/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/jbradenbrown/finnhub/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/jbradenbrown/finnhub/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/jbradenbrown/finnhub/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jbradenbrown/finnhub/releases/tag/v0.1.0

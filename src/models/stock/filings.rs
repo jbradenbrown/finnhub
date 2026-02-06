@@ -57,47 +57,59 @@ pub struct InternationalFiling {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EarningsCallTranscript {
     /// Symbol.
+    #[serde(default)]
     pub symbol: String,
-    /// Transcript data.
+    /// Transcript content.
+    #[serde(default)]
     pub transcript: Vec<TranscriptSegment>,
     /// Participant list.
+    #[serde(default)]
     pub participant: Vec<TranscriptParticipant>,
     /// Audio link.
+    #[serde(default)]
     pub audio: String,
     /// Transcript ID.
+    #[serde(default)]
     pub id: String,
     /// Title.
+    #[serde(default)]
     pub title: String,
-    /// Time.
+    /// Time of the event.
+    #[serde(default)]
     pub time: String,
     /// Year.
+    #[serde(default)]
     pub year: i32,
     /// Quarter.
+    #[serde(default)]
     pub quarter: i32,
 }
 
-/// Transcript segment.
+/// Transcript content segment (a single speaker's contribution).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TranscriptSegment {
-    /// Speaker name.
+    /// Speaker's name.
+    #[serde(default)]
     pub name: String,
-    /// Speaker position.
-    pub position: String,
-    /// Start time.
-    #[serde(rename = "startTime")]
-    pub start_time: i32,
-    /// Speech content.
-    pub speech: String,
+    /// Speaker's speech as array of paragraphs.
+    #[serde(default)]
+    pub speech: Vec<String>,
+    /// Earnings call section (e.g. "Management Discussion" or "Q&A").
+    #[serde(default)]
+    pub session: String,
 }
 
 /// Transcript participant.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TranscriptParticipant {
-    /// Participant name.
+    /// Participant's name.
+    #[serde(default)]
     pub name: String,
-    /// Participant description.
+    /// Participant's description.
+    #[serde(default)]
     pub description: String,
-    /// Participant role.
+    /// Whether the speaker is a company executive or an analyst.
+    #[serde(default)]
     pub role: String,
 }
 

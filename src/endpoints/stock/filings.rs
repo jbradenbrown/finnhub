@@ -299,6 +299,23 @@ mod tests {
 
     #[tokio::test]
     #[ignore = "requires API key"]
+    async fn test_transcript() {
+        let client = test_client().await;
+        let result = client.stock().transcripts("AAPL_162777").await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get transcript: {:?}",
+            result.err()
+        );
+
+        let transcript = result.unwrap();
+        assert!(!transcript.transcript.is_empty(), "Transcript should have content");
+        assert!(!transcript.participant.is_empty(), "Transcript should have participants");
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
     async fn test_earnings_call_live() {
         let client = test_client().await;
         // Look for earnings calls in the next 30 days
