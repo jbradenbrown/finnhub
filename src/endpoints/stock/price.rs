@@ -140,4 +140,34 @@ mod tests {
         // Bid-ask may not always be available
         assert!(result.is_ok(), "Failed to get bid-ask: {:?}", result.err());
     }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_tick_data() {
+        let client = test_client().await;
+        // Use a recent trading day
+        let date = "2024-01-02";
+        let limit = 100;
+        let skip = 0;
+        let result = client.stock().tick_data("AAPL", date, limit, skip).await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get tick data: {:?}",
+            result.err()
+        );
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_price_metrics() {
+        let client = test_client().await;
+        let result = client.stock().price_metrics("AAPL").await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get price metrics: {:?}",
+            result.err()
+        );
+    }
 }
