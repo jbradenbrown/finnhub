@@ -4,8 +4,9 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::misc::{
-        AIChatRequest, AIChatResponse, AirlinePriceIndexData, CountryMetadata, CovidInfo,
-        FDACommitteeMeeting, PressRelease, SectorMetric, SymbolLookup, TechnicalIndicator,
+        AIChatRequest, AIChatResponse, AirlinePriceIndexData, BankBranchData, CountryMetadata,
+        CovidInfo, FDACommitteeMeeting, PressRelease, SectorMetric, SymbolLookup,
+        TechnicalIndicator,
     },
 };
 
@@ -117,6 +118,16 @@ impl<'a> MiscEndpoints<'a> {
     pub async fn sector_metrics(&self, region: &str) -> Result<SectorMetric> {
         self.client
             .get(&format!("/sector/metrics?region={}", region))
+            .await
+    }
+
+    /// Get a list of bank branches for a banking symbol.
+    ///
+    /// # Arguments
+    /// * `symbol` - Bank ticker (e.g. `JPM`)
+    pub async fn bank_branch(&self, symbol: &str) -> Result<BankBranchData> {
+        self.client
+            .get(&format!("/bank-branch?symbol={}", symbol))
             .await
     }
 }
@@ -244,6 +255,23 @@ mod tests {
 
         let results = result.unwrap();
         assert!(!results.result.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_bank_branch() {
+        let client = test_client().await;
+        let result = client.misc().bank_branch("JPM").await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get bank branch data: {:?}",
+            result.err()
+        );
+
+        if let Ok(branches) = result {
+            assert_eq!(branches.symbol, "JPM");
+        }
     }
 
     #[tokio::test]

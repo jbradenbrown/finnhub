@@ -93,6 +93,16 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    /// Get the full premium company profile (`/stock/profile`).
+    pub async fn company_profile_premium(
+        &self,
+        symbol: &str,
+    ) -> Result<CompanyProfilePremium> {
+        company::CompanyEndpoints::new(self.client)
+            .profile_premium(symbol)
+            .await
+    }
+
     /// Get company peers.
     pub async fn peers(&self, symbol: &str, grouping: Option<&str>) -> Result<Vec<String>> {
         company::CompanyEndpoints::new(self.client)
@@ -168,6 +178,13 @@ impl<'a> StockEndpoints<'a> {
     pub async fn revenue_breakdown(&self, symbol: &str) -> Result<RevenueBreakdown> {
         analytics::AnalyticsEndpoints::new(self.client)
             .revenue_breakdown(symbol)
+            .await
+    }
+
+    /// Get standardized revenue breakdown and KPIs (`/stock/revenue-breakdown2`).
+    pub async fn revenue_breakdown2(&self, symbol: &str) -> Result<RevenueBreakdown2> {
+        analytics::AnalyticsEndpoints::new(self.client)
+            .revenue_breakdown2(symbol)
             .await
     }
 

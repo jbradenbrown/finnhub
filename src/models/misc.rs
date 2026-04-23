@@ -201,6 +201,31 @@ pub struct SectorMetricData {
     pub metrics: HashMap<String, serde_json::Value>,
 }
 
+/// One bank branch record.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BankBranch {
+    /// Branch ID.
+    pub branch_id: String,
+    /// Street address.
+    pub address: Option<String>,
+    /// State (US two-letter code).
+    pub state: Option<String>,
+    /// Zip code.
+    pub zip_code: Option<String>,
+    /// Last update date.
+    pub date: Option<String>,
+}
+
+/// Bank branch response.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct BankBranchData {
+    /// Bank symbol.
+    pub symbol: String,
+    /// Branches.
+    pub data: Vec<BankBranch>,
+}
+
 /// Sector metric response.
 #[derive(Debug, Deserialize)]
 pub struct SectorMetric {

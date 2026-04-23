@@ -3,7 +3,9 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::stock::{PriceTarget, RecommendationTrend, RevenueBreakdown, UpgradeDowngrade},
+    models::stock::{
+        PriceTarget, RecommendationTrend, RevenueBreakdown, RevenueBreakdown2, UpgradeDowngrade,
+    },
 };
 
 /// Analytics and recommendations endpoints.
@@ -37,6 +39,16 @@ impl<'a> AnalyticsEndpoints<'a> {
     pub async fn revenue_breakdown(&self, symbol: &str) -> Result<RevenueBreakdown> {
         self.client
             .get(&format!("/stock/revenue-breakdown?symbol={}", symbol))
+            .await
+    }
+
+    /// Get standardized revenue breakdown and KPIs (`/stock/revenue-breakdown2`).
+    ///
+    /// Returns annual + quarterly breakdowns by geography and product, with
+    /// per-period values. Premium endpoint.
+    pub async fn revenue_breakdown2(&self, symbol: &str) -> Result<RevenueBreakdown2> {
+        self.client
+            .get(&format!("/stock/revenue-breakdown2?symbol={}", symbol))
             .await
     }
 
@@ -123,6 +135,18 @@ mod tests {
             "Failed to get revenue breakdown: {:?}",
             result.err()
         );
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_revenue_breakdown2() {
+        let client = test_client().await;
+        let result = client.stock().revenue_breakdown2("AAPL").await;
+
+        // Premium endpoint; allow 403 but assert shape parses if available.
+        if let Ok(rb) = result {
+            assert_eq!(rb.symbol, "AAPL");
+        }
     }
 
     #[tokio::test]

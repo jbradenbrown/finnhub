@@ -3,7 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::stock::{CompanyProfile, Symbol},
+    models::stock::{CompanyProfile, CompanyProfilePremium, Symbol},
 };
 
 /// Company information endpoints.
@@ -21,6 +21,18 @@ impl<'a> CompanyEndpoints<'a> {
     pub async fn profile(&self, symbol: &str) -> Result<CompanyProfile> {
         self.client
             .get(&format!("/stock/profile2?symbol={}", symbol))
+            .await
+    }
+
+    /// Get the full premium company profile (`/stock/profile`).
+    ///
+    /// Returns a richer set of fields than [`profile`](Self::profile),
+    /// including GICS/NAICS classification, insider/institutional
+    /// ownership, IR URL, alias, LEI, SEDOL, CUSIP, and more. Requires a
+    /// premium subscription.
+    pub async fn profile_premium(&self, symbol: &str) -> Result<CompanyProfilePremium> {
+        self.client
+            .get(&format!("/stock/profile?symbol={}", symbol))
             .await
     }
 
@@ -57,6 +69,23 @@ mod tests {
         let mut config = ClientConfig::default();
         config.rate_limit_strategy = RateLimitStrategy::FifteenSecondWindow;
         FinnhubClient::with_config(api_key, config)
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_company_profile_premium() {
+        let client = test_client().await;
+        let result = client.stock().company_profile_premium("AAPL").await;
+        assert!(
+            result.is_ok(),
+            "Failed to get premium company profile: {:?}",
+            result.err()
+        );
+
+        if let Ok(profile) = result {
+            assert_eq!(profile.ticker.as_deref(), Some("AAPL"));
+            assert!(profile.name.is_some());
+        }
     }
 
     #[tokio::test]
