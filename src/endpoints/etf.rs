@@ -3,7 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::etf::{ETFCountryExposure, ETFHoldings, ETFProfile, ETFSectorExposure},
+    models::etf::{ETFAllocation, ETFCountryExposure, ETFHoldings, ETFProfile, ETFSectorExposure},
 };
 
 /// ETF-related API endpoints.
@@ -146,6 +146,38 @@ impl<'a> ETFEndpoints<'a> {
         let query = format!("/etf/sector?{}", params.join("&"));
         self.client.get(&query).await
     }
+
+    /// Get ETF asset allocation by market cap × style.
+    ///
+    /// Returns the percentage breakdown across nine cells (small/mid/large
+    /// × value/blend/growth).
+    ///
+    /// # Arguments
+    /// * `symbol` - ETF symbol (optional if using ISIN)
+    /// * `isin` - ETF ISIN (optional if using symbol)
+    pub async fn allocation(
+        &self,
+        symbol: Option<&str>,
+        isin: Option<&str>,
+    ) -> Result<ETFAllocation> {
+        let mut params = vec![];
+
+        if let Some(s) = symbol {
+            params.push(format!("symbol={}", s));
+        }
+        if let Some(i) = isin {
+            params.push(format!("isin={}", i));
+        }
+
+        if params.is_empty() {
+            return Err(crate::error::Error::InvalidRequest(
+                "Either symbol or ISIN must be provided".to_string(),
+            ));
+        }
+
+        let query = format!("/etf/allocation?{}", params.join("&"));
+        self.client.get(&query).await
+    }
 }
 
 #[cfg(test)]
@@ -204,6 +236,22 @@ mod tests {
 
         let exposure = result.unwrap();
         assert!(!exposure.country_exposure.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_allocation() {
+        let client = test_client().await;
+        let result = client.etf().allocation(Some("SPY"), None).await;
+        assert!(
+            result.is_ok(),
+            "Failed to get ETF allocation: {:?}",
+            result.err()
+        );
+
+        if let Ok(allocation) = result {
+            assert_eq!(allocation.symbol, "SPY");
+        }
     }
 
     #[tokio::test]

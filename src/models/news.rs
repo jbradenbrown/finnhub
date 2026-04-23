@@ -89,6 +89,33 @@ pub struct SentimentData {
     pub bullish_percent: f64,
 }
 
+/// One article in a company's newsroom feed.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NewsroomArticle {
+    /// Published time in `YYYY-MM-DD HH:MM:SS` format (EST).
+    pub at_date: Option<String>,
+    /// Article title.
+    pub title: Option<String>,
+    /// URL to download the full text.
+    pub full_text: Option<String>,
+    /// Original article URL.
+    pub url: Option<String>,
+}
+
+/// Newsroom response.
+///
+/// Returned by `/stock/newsroom` — articles published by a company itself
+/// (investor-relations newsroom feed).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Newsroom {
+    /// Company symbol.
+    pub symbol: String,
+    /// Articles.
+    #[serde(default)]
+    pub data: Vec<NewsroomArticle>,
+}
+
 /// News category.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum NewsCategory {

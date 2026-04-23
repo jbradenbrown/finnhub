@@ -54,6 +54,29 @@ impl<'a> NewsEndpoints<'a> {
             .get(&format!("/news-sentiment?symbol={}", symbol))
             .await
     }
+
+    /// Get a company's investor-relations newsroom feed (`/stock/newsroom`).
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol
+    /// * `from` - From date in `YYYY-MM-DD` format (optional)
+    /// * `to` - To date in `YYYY-MM-DD` format (optional)
+    pub async fn newsroom(
+        &self,
+        symbol: &str,
+        from: Option<&str>,
+        to: Option<&str>,
+    ) -> Result<Newsroom> {
+        let mut params = vec![format!("symbol={}", symbol)];
+        if let Some(f) = from {
+            params.push(format!("from={}", f));
+        }
+        if let Some(t) = to {
+            params.push(format!("to={}", t));
+        }
+        let query = format!("/stock/newsroom?{}", params.join("&"));
+        self.client.get(&query).await
+    }
 }
 
 #[cfg(test)]
@@ -97,6 +120,26 @@ mod tests {
             "Failed to get company news: {:?}",
             result.err()
         );
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_newsroom() {
+        let client = test_client().await;
+        let result = client
+            .news()
+            .newsroom("AAPL", Some("2024-01-01"), Some("2024-12-31"))
+            .await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get newsroom: {:?}",
+            result.err()
+        );
+
+        if let Ok(newsroom) = result {
+            assert_eq!(newsroom.symbol, "AAPL");
+        }
     }
 
     #[tokio::test]
