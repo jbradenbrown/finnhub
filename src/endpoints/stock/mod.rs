@@ -94,10 +94,7 @@ impl<'a> StockEndpoints<'a> {
     }
 
     /// Get the full premium company profile (`/stock/profile`).
-    pub async fn company_profile_premium(
-        &self,
-        symbol: &str,
-    ) -> Result<CompanyProfilePremium> {
+    pub async fn company_profile_premium(&self, symbol: &str) -> Result<CompanyProfilePremium> {
         company::CompanyEndpoints::new(self.client)
             .profile_premium(symbol)
             .await
@@ -370,10 +367,7 @@ impl<'a> StockEndpoints<'a> {
     }
 
     /// Get a list of well-known institutional investors.
-    pub async fn institutional_profile(
-        &self,
-        cik: Option<&str>,
-    ) -> Result<InstitutionalProfile> {
+    pub async fn institutional_profile(&self, cik: Option<&str>) -> Result<InstitutionalProfile> {
         ownership::OwnershipEndpoints::new(self.client)
             .institutional_profile(cik)
             .await
@@ -557,11 +551,7 @@ impl<'a> StockEndpoints<'a> {
     }
 
     /// Get dividend per share (DPS) estimates.
-    pub async fn dps_estimates(
-        &self,
-        symbol: &str,
-        freq: Option<&str>,
-    ) -> Result<DPSEstimates> {
+    pub async fn dps_estimates(&self, symbol: &str, freq: Option<&str>) -> Result<DPSEstimates> {
         estimates::EstimatesEndpoints::new(self.client)
             .dps(symbol, freq)
             .await

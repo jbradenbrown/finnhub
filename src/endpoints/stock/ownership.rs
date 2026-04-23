@@ -52,10 +52,7 @@ impl<'a> OwnershipEndpoints<'a> {
     ///
     /// # Arguments
     /// * `cik` - Filter by CIK (optional; leave `None` for the full list)
-    pub async fn institutional_profile(
-        &self,
-        cik: Option<&str>,
-    ) -> Result<InstitutionalProfile> {
+    pub async fn institutional_profile(&self, cik: Option<&str>) -> Result<InstitutionalProfile> {
         let url = match cik {
             Some(c) => format!("/institutional/profile?cik={}", c),
             None => "/institutional/profile".to_string(),

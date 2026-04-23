@@ -60,8 +60,7 @@ mod tests {
         let first = &chain.data[0];
         assert!(!first.expiration_date.is_empty());
         // At least one side should usually have contracts.
-        let has_contracts =
-            !first.options.call.is_empty() || !first.options.put.is_empty();
+        let has_contracts = !first.options.call.is_empty() || !first.options.put.is_empty();
         assert!(has_contracts, "Expected at least one CALL or PUT");
 
         // Spot-check that contract fields parse.

@@ -99,11 +99,7 @@ impl<'a> EstimatesEndpoints<'a> {
     /// # Arguments
     /// * `symbol` - Stock symbol
     /// * `freq` - Frequency: annual or quarterly (optional)
-    pub async fn net_income(
-        &self,
-        symbol: &str,
-        freq: Option<&str>,
-    ) -> Result<NetIncomeEstimates> {
+    pub async fn net_income(&self, symbol: &str, freq: Option<&str>) -> Result<NetIncomeEstimates> {
         let mut params = vec![format!("symbol={}", symbol)];
 
         if let Some(f) = freq {

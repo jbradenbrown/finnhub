@@ -27,11 +27,7 @@ impl<'a> GlobalFilingsEndpoints<'a> {
     /// # Arguments
     /// * `field` - Field to filter on (e.g. `form`, `source`, `country`)
     /// * `source` - Optional source restriction
-    pub async fn filter(
-        &self,
-        field: &str,
-        source: Option<&str>,
-    ) -> Result<SearchFilter> {
+    pub async fn filter(&self, field: &str, source: Option<&str>) -> Result<SearchFilter> {
         let mut params = vec![format!("field={}", field)];
         if let Some(s) = source {
             params.push(format!("source={}", s));
@@ -46,10 +42,7 @@ impl<'a> GlobalFilingsEndpoints<'a> {
     }
 
     /// Search within a single filing's documents.
-    pub async fn search_in_filing(
-        &self,
-        body: &InFilingSearchBody,
-    ) -> Result<InFilingResponse> {
+    pub async fn search_in_filing(&self, body: &InFilingSearchBody) -> Result<InFilingResponse> {
         self.client
             .post("/global-filings/search-in-filing", body)
             .await

@@ -131,11 +131,7 @@ mod tests {
             .newsroom("AAPL", Some("2024-01-01"), Some("2024-12-31"))
             .await;
 
-        assert!(
-            result.is_ok(),
-            "Failed to get newsroom: {:?}",
-            result.err()
-        );
+        assert!(result.is_ok(), "Failed to get newsroom: {:?}", result.err());
 
         if let Ok(newsroom) = result {
             assert_eq!(newsroom.symbol, "AAPL");

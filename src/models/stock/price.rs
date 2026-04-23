@@ -158,4 +158,3 @@ pub struct PricePerformance {
     /// Percentage change.
     pub percent: f64,
 }
-

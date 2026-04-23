@@ -310,8 +310,14 @@ mod tests {
         );
 
         let transcript = result.unwrap();
-        assert!(!transcript.transcript.is_empty(), "Transcript should have content");
-        assert!(!transcript.participant.is_empty(), "Transcript should have participants");
+        assert!(
+            !transcript.transcript.is_empty(),
+            "Transcript should have content"
+        );
+        assert!(
+            !transcript.participant.is_empty(),
+            "Transcript should have participants"
+        );
     }
 
     #[tokio::test]

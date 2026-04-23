@@ -63,4 +63,3 @@ pub struct ThemeStock {
     /// Stock symbol.
     pub symbol: String,
 }
-
