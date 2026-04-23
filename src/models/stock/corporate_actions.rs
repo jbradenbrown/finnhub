@@ -63,3 +63,51 @@ pub struct DividendV2 {
     /// Dividend amount.
     pub amount: f64,
 }
+
+/// Single symbol-change event.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SymbolChangeEvent {
+    /// Effective date.
+    pub at_date: String,
+    /// New symbol.
+    pub new_symbol: String,
+    /// Old symbol.
+    pub old_symbol: String,
+}
+
+/// Symbol change response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SymbolChange {
+    /// Array of symbol-change events.
+    pub data: Vec<SymbolChangeEvent>,
+    /// From date.
+    pub from_date: String,
+    /// To date.
+    pub to_date: String,
+}
+
+/// Single ISIN-change event.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IsinChangeEvent {
+    /// Effective date.
+    pub at_date: String,
+    /// New ISIN.
+    pub new_isin: String,
+    /// Old ISIN.
+    pub old_isin: String,
+}
+
+/// ISIN change response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IsinChange {
+    /// Array of ISIN-change events.
+    pub data: Vec<IsinChangeEvent>,
+    /// From date.
+    pub from_date: String,
+    /// To date.
+    pub to_date: String,
+}

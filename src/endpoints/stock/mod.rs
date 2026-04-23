@@ -217,6 +217,20 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    /// Get symbol changes for US-listed, EU-listed, NSE and ASX securities.
+    pub async fn symbol_change(&self, from: &str, to: &str) -> Result<SymbolChange> {
+        corporate_actions::CorporateActionsEndpoints::new(self.client)
+            .symbol_change(from, to)
+            .await
+    }
+
+    /// Get ISIN changes for EU-listed securities.
+    pub async fn isin_change(&self, from: &str, to: &str) -> Result<IsinChange> {
+        corporate_actions::CorporateActionsEndpoints::new(self.client)
+            .isin_change(from, to)
+            .await
+    }
+
     // ===== Historical endpoints =====
 
     /// Get historical market capitalization data.

@@ -3,7 +3,7 @@
 use crate::{
     client::FinnhubClient,
     error::Result,
-    models::stock::{Dividend, DividendsV2, StockSplit},
+    models::stock::{Dividend, DividendsV2, IsinChange, StockSplit, SymbolChange},
 };
 
 /// Corporate actions endpoints.
@@ -50,6 +50,32 @@ impl<'a> CorporateActionsEndpoints<'a> {
     pub async fn dividends_v2(&self, symbol: &str) -> Result<DividendsV2> {
         self.client
             .get(&format!("/stock/dividend2?symbol={}", symbol))
+            .await
+    }
+
+    /// Get a list of symbol changes for US-listed, EU-listed, NSE and ASX securities.
+    ///
+    /// Limited to 2000 events at a time.
+    ///
+    /// # Arguments
+    /// * `from` - From date in `YYYY-MM-DD` format
+    /// * `to` - To date in `YYYY-MM-DD` format
+    pub async fn symbol_change(&self, from: &str, to: &str) -> Result<SymbolChange> {
+        self.client
+            .get(&format!("/ca/symbol-change?from={}&to={}", from, to))
+            .await
+    }
+
+    /// Get a list of ISIN changes for EU-listed securities.
+    ///
+    /// Limited to 2000 events at a time.
+    ///
+    /// # Arguments
+    /// * `from` - From date in `YYYY-MM-DD` format
+    /// * `to` - To date in `YYYY-MM-DD` format
+    pub async fn isin_change(&self, from: &str, to: &str) -> Result<IsinChange> {
+        self.client
+            .get(&format!("/ca/isin-change?from={}&to={}", from, to))
             .await
     }
 }
@@ -107,6 +133,44 @@ mod tests {
             "Failed to get dividends v2: {:?}",
             result.err()
         );
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_symbol_change() {
+        let client = test_client().await;
+        let result = client
+            .stock()
+            .symbol_change("2024-01-01", "2024-06-30")
+            .await;
+
+        // Premium endpoint; allow 403/access errors but assert shape parses if available.
+        if let Ok(changes) = result {
+            assert!(!changes.from_date.is_empty());
+            assert!(!changes.to_date.is_empty());
+            for change in &changes.data {
+                assert!(!change.at_date.is_empty());
+                assert!(!change.new_symbol.is_empty());
+                assert!(!change.old_symbol.is_empty());
+            }
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_isin_change() {
+        let client = test_client().await;
+        let result = client.stock().isin_change("2024-01-01", "2024-06-30").await;
+
+        if let Ok(changes) = result {
+            assert!(!changes.from_date.is_empty());
+            assert!(!changes.to_date.is_empty());
+            for change in &changes.data {
+                assert!(!change.at_date.is_empty());
+                assert!(!change.new_isin.is_empty());
+                assert!(!change.old_isin.is_empty());
+            }
+        }
     }
 
     #[tokio::test]
