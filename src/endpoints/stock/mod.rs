@@ -342,6 +342,41 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    /// Get a list of well-known institutional investors.
+    pub async fn institutional_profile(
+        &self,
+        cik: Option<&str>,
+    ) -> Result<InstitutionalProfile> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_profile(cik)
+            .await
+    }
+
+    /// Get the holdings/portfolio of an institutional investor (13-F).
+    pub async fn institutional_portfolio(
+        &self,
+        cik: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<InstitutionalPortfolio> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_portfolio(cik, from, to)
+            .await
+    }
+
+    /// Get institutional investors' positions in a particular stock (13-F).
+    pub async fn institutional_ownership(
+        &self,
+        symbol: &str,
+        cusip: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<InstitutionalOwnership> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_ownership(symbol, cusip, from, to)
+            .await
+    }
+
     // ===== Filings endpoints =====
 
     /// Get SEC filings.
