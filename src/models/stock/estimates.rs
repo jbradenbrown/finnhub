@@ -138,6 +138,142 @@ pub struct EBITEstimates {
     pub freq: Option<String>,
 }
 
+/// Net income estimate data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NetIncomeEstimate {
+    /// Average net income estimate.
+    #[serde(rename = "netIncomeAvg")]
+    pub net_income_avg: Option<f64>,
+    /// High net income estimate.
+    #[serde(rename = "netIncomeHigh")]
+    pub net_income_high: Option<f64>,
+    /// Low net income estimate.
+    #[serde(rename = "netIncomeLow")]
+    pub net_income_low: Option<f64>,
+    /// Number of analysts.
+    #[serde(rename = "numberAnalysts")]
+    pub number_analysts: Option<i32>,
+    /// Period.
+    pub period: String,
+    /// Year.
+    pub year: Option<i32>,
+    /// Quarter.
+    pub quarter: Option<i32>,
+}
+
+/// Net income estimates response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NetIncomeEstimates {
+    /// Symbol.
+    pub symbol: String,
+    /// Array of net income estimates.
+    pub data: Vec<NetIncomeEstimate>,
+    /// Frequency.
+    pub freq: Option<String>,
+}
+
+/// Pretax income estimate data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PretaxIncomeEstimate {
+    /// Average pretax income estimate.
+    #[serde(rename = "pretaxIncomeAvg")]
+    pub pretax_income_avg: Option<f64>,
+    /// High pretax income estimate.
+    #[serde(rename = "pretaxIncomeHigh")]
+    pub pretax_income_high: Option<f64>,
+    /// Low pretax income estimate.
+    #[serde(rename = "pretaxIncomeLow")]
+    pub pretax_income_low: Option<f64>,
+    /// Number of analysts.
+    #[serde(rename = "numberAnalysts")]
+    pub number_analysts: Option<i32>,
+    /// Period.
+    pub period: String,
+    /// Year.
+    pub year: Option<i32>,
+    /// Quarter.
+    pub quarter: Option<i32>,
+}
+
+/// Pretax income estimates response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PretaxIncomeEstimates {
+    /// Symbol.
+    pub symbol: String,
+    /// Array of pretax income estimates.
+    pub data: Vec<PretaxIncomeEstimate>,
+    /// Frequency.
+    pub freq: Option<String>,
+}
+
+/// Gross income estimate data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GrossIncomeEstimate {
+    /// Average gross income estimate.
+    #[serde(rename = "grossIncomeAvg")]
+    pub gross_income_avg: Option<f64>,
+    /// High gross income estimate.
+    #[serde(rename = "grossIncomeHigh")]
+    pub gross_income_high: Option<f64>,
+    /// Low gross income estimate.
+    #[serde(rename = "grossIncomeLow")]
+    pub gross_income_low: Option<f64>,
+    /// Number of analysts.
+    #[serde(rename = "numberAnalysts")]
+    pub number_analysts: Option<i32>,
+    /// Period.
+    pub period: String,
+    /// Year.
+    pub year: Option<i32>,
+    /// Quarter.
+    pub quarter: Option<i32>,
+}
+
+/// Gross income estimates response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GrossIncomeEstimates {
+    /// Symbol.
+    pub symbol: String,
+    /// Array of gross income estimates.
+    pub data: Vec<GrossIncomeEstimate>,
+    /// Frequency.
+    pub freq: Option<String>,
+}
+
+/// Dividend per share estimate data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DPSEstimate {
+    /// Average DPS estimate.
+    #[serde(rename = "dpsAvg")]
+    pub dps_avg: Option<f64>,
+    /// High DPS estimate.
+    #[serde(rename = "dpsHigh")]
+    pub dps_high: Option<f64>,
+    /// Low DPS estimate.
+    #[serde(rename = "dpsLow")]
+    pub dps_low: Option<f64>,
+    /// Number of analysts.
+    #[serde(rename = "numberAnalysts")]
+    pub number_analysts: Option<i32>,
+    /// Period.
+    pub period: String,
+    /// Year.
+    pub year: Option<i32>,
+    /// Quarter.
+    pub quarter: Option<i32>,
+}
+
+/// DPS (dividend per share) estimates response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DPSEstimates {
+    /// Symbol.
+    pub symbol: String,
+    /// Array of DPS estimates.
+    pub data: Vec<DPSEstimate>,
+    /// Frequency.
+    pub freq: Option<String>,
+}
+
 /// Earnings quality score response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EarningsQualityScore {

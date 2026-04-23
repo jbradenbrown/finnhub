@@ -447,6 +447,50 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    /// Get net income estimates.
+    pub async fn net_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<NetIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .net_income(symbol, freq)
+            .await
+    }
+
+    /// Get pretax income estimates.
+    pub async fn pretax_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<PretaxIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .pretax_income(symbol, freq)
+            .await
+    }
+
+    /// Get gross income estimates.
+    pub async fn gross_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<GrossIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .gross_income(symbol, freq)
+            .await
+    }
+
+    /// Get dividend per share (DPS) estimates.
+    pub async fn dps_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<DPSEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .dps(symbol, freq)
+            .await
+    }
+
     // ===== Compliance endpoints =====
 
     /// Get company executives.
