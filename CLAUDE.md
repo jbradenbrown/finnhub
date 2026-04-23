@@ -6,7 +6,7 @@ This is a comprehensive Rust client library for the Finnhub.io financial data AP
 
 ## Key Features
 
-- **Full API Coverage**: Implements all 107 endpoints from the Finnhub API
+- **Full API Coverage**: Implements 122/123 endpoints from the Finnhub API (only `/global-filings/download` deferred — returns raw bytes, not JSON)
 - **Type Safety**: Strongly typed request/response models derived from OpenAPI spec
 - **Async/Await**: Built on Tokio for high-performance async operations
 - **Rate Limiting**: Built-in rate limiter respecting 30 requests/second limit
@@ -29,58 +29,62 @@ finnhub/
 │   ├── models/             # Data models organized by category
 │   │   ├── mod.rs
 │   │   ├── common.rs       # Common types (timestamps, etc.)
-│   │   ├── stock/          # Stock models (14 files)
-│   │   │   ├── analytics.rs     # Recommendations, price targets, revenue breakdown
+│   │   ├── stock/          # Stock models (15 files)
+│   │   │   ├── analytics.rs     # Recommendations, price targets, revenue breakdown (v1+v2)
 │   │   │   ├── common.rs        # Shared types (CandleResolution)
-│   │   │   ├── company.rs       # Company profiles, peers, symbols
+│   │   │   ├── company.rs       # Company profiles (basic + premium), symbols
 │   │   │   ├── compliance.rs    # ESG, executives, lobbying, patents, visas
-│   │   │   ├── corporate_actions.rs # Dividends, splits
-│   │   │   ├── estimates.rs     # Earnings estimates, quality scores
+│   │   │   ├── corporate_actions.rs # Dividends, splits, symbol/ISIN changes
+│   │   │   ├── estimates.rs     # Earnings/revenue/income estimates (EPS, revenue, EBIT, EBITDA, net/pretax/gross income, DPS), quality scores
 │   │   │   ├── filings.rs       # SEC filings, transcripts, presentations
 │   │   │   ├── financials.rs    # Financial statements, metrics, earnings
 │   │   │   ├── historical.rs    # Historical data (market cap, employees, ESG, NBBO)
 │   │   │   ├── insider.rs       # Insider transactions, sentiment
 │   │   │   ├── market.rs        # Market status, holidays, investment themes
-│   │   │   ├── ownership.rs     # Institutional and fund ownership
+│   │   │   ├── options.rs       # Option chain (calls/puts with Greeks)
+│   │   │   ├── ownership.rs     # Fund ownership + institutional 13-F (profile/portfolio/ownership)
 │   │   │   ├── price.rs         # Quotes, candles, bid-ask, tick data
 │   │   │   └── sentiment.rs     # Social and filing sentiment analysis
 │   │   ├── bond.rs         # Bond models
 │   │   ├── calendar.rs     # Calendar event models
 │   │   ├── crypto.rs       # Cryptocurrency models
 │   │   ├── economic.rs     # Economic data models
-│   │   ├── etf.rs          # ETF models
+│   │   ├── etf.rs          # ETF models (incl. allocation)
 │   │   ├── forex.rs        # Forex models
+│   │   ├── global_filings.rs # Global filings search models (filter/search/in-filing)
 │   │   ├── index.rs        # Index models
-│   │   ├── misc.rs         # Miscellaneous models
+│   │   ├── misc.rs         # Miscellaneous models (incl. bank branch)
 │   │   ├── mutual_fund.rs  # Mutual fund models
-│   │   ├── news.rs         # News models
+│   │   ├── news.rs         # News models (incl. newsroom)
 │   │   └── scanner.rs      # Scanner/technical models
 │   ├── endpoints/          # API endpoint implementations
 │   │   ├── mod.rs
-│   │   ├── stock/          # Stock endpoints (14 modules)
-│   │   │   ├── analytics.rs     # Price targets, recommendations
-│   │   │   ├── company.rs       # Company profiles, peers
+│   │   ├── stock/          # Stock endpoints (15 modules)
+│   │   │   ├── analytics.rs     # Price targets, recommendations, revenue breakdown (v1+v2)
+│   │   │   ├── company.rs       # Company profiles (basic + premium), peers, symbols
 │   │   │   ├── compliance.rs    # ESG, patents, visas
-│   │   │   ├── corporate_actions.rs # Dividends, splits
-│   │   │   ├── estimates.rs     # Earnings estimates
+│   │   │   ├── corporate_actions.rs # Dividends, splits, symbol/ISIN changes
+│   │   │   ├── estimates.rs     # All earnings/revenue/income estimates
 │   │   │   ├── filings.rs       # SEC filings, transcripts
 │   │   │   ├── financials.rs    # Financial statements
 │   │   │   ├── historical.rs    # Historical data
 │   │   │   ├── insider.rs       # Insider transactions
 │   │   │   ├── market.rs        # Market status, holidays
-│   │   │   ├── ownership.rs     # Ownership data
+│   │   │   ├── options.rs       # Option chain
+│   │   │   ├── ownership.rs     # Ownership + institutional 13-F
 │   │   │   ├── price.rs         # Quotes, candles, ticks
 │   │   │   └── sentiment.rs     # Sentiment analysis
 │   │   ├── bond.rs         # Bond endpoints (4)
 │   │   ├── calendar.rs     # Calendar endpoints (3)
 │   │   ├── crypto.rs       # Crypto endpoints (4)
 │   │   ├── economic.rs     # Economic endpoints (2)
-│   │   ├── etf.rs          # ETF endpoints (4)
+│   │   ├── etf.rs          # ETF endpoints (5)
 │   │   ├── forex.rs        # Forex endpoints (4)
+│   │   ├── global_filings.rs # Global filings endpoints (3, GET + POST)
 │   │   ├── index.rs        # Index endpoints (2)
-│   │   ├── misc.rs         # Misc endpoints (8)
+│   │   ├── misc.rs         # Misc endpoints (10)
 │   │   ├── mutual_fund.rs  # Mutual fund endpoints (6)
-│   │   ├── news.rs         # News endpoints (3)
+│   │   ├── news.rs         # News endpoints (4)
 │   │   └── scanner.rs      # Scanner endpoints (3)
 │   └── websocket/          # WebSocket implementation
 │       ├── mod.rs
@@ -290,18 +294,20 @@ Note: Each unit test creates its own client instance with its own rate limiter. 
 - [x] Rate Limiting (token bucket, 30 req/s)
 - [x] Error Handling (comprehensive error types)
 - [x] Basic Module Structure
-- [x] Stock Endpoints (52/54) - quote, company_profile, candles, financials, price_target, recommendations, insider_transactions, metrics, earnings, dividends, splits, symbols, historical_market_cap, historical_employee_count, historical_esg, peers, market_status, ownership, revenue_breakdown, insider_sentiment, upgrade_downgrade, social_sentiment, supply_chain, sec_filings, bid_ask, tick_data, financials_reported, executives, congressional_trading, lobbying, usa_spending, eps_estimates, revenue_estimates, ebitda_estimates, ebit_estimates, earnings_quality_score, historical_nbbo, investment_theme, market_holiday, international_filings, transcripts, transcripts_list, esg, fund_ownership, uspto_patents, visa_applications, filing_sentiment, similarity_index, earnings_call_live, presentations, price_metrics, dividends_v2
+- [x] Stock Endpoints (66/66) - all GET stock endpoints. Adds since v0.2: company_profile_premium, option_chain, revenue_breakdown2, symbol_change, isin_change, institutional_profile/portfolio/ownership, net/pretax/gross income estimates, dps_estimates
 - [x] Forex Endpoints (4/4) - symbols, candles, rates, exchanges
 - [x] Crypto Endpoints (4/4) - exchanges, symbols, candles, profile
 - [x] Bond Endpoints (4/4) - profile, price, tick, yield_curve
-- [x] ETF Endpoints (4/4) - profile, holdings, country_exposure, sector_exposure
+- [x] ETF Endpoints (5/5) - profile, holdings, country_exposure, sector_exposure, allocation
 - [x] Mutual Fund Endpoints (6/6) - profile, holdings, country_exposure, sector_exposure, eet, eet_pai
 - [x] Economic Data Endpoints (2/2) - data, codes
-- [x] News Endpoints (3/3) - market_news, company_news, news_sentiment
+- [x] News Endpoints (4/4) - market_news, company_news, news_sentiment, newsroom
 - [x] Calendar Endpoints (3/3) - earnings, economic, ipo
 - [x] Index Endpoints (2/2) - constituents, historical_constituents
-- [x] Misc Endpoints (8/9) - airline_price_index, country, covid19, fda_calendar, technical_indicator, press_releases, symbol_search, sector_metrics (ai_chat requires POST)
+- [x] Misc Endpoints (10/10) - airline_price_index, country, covid19, fda_calendar, technical_indicator, press_releases, symbol_search, sector_metrics, ai_chat (POST), bank_branch
 - [x] Scanner Endpoints (3/3) - pattern_recognition, support_resistance, aggregate_indicators
+- [x] Global Filings Endpoints (3/4) - filter (GET), search (POST), search_in_filing (POST). `download` deferred — returns raw bytes, not JSON
+- [x] POST request support (used by ai_chat and global_filings)
 - [x] WebSocket Support Structure (feature-gated)
 - [x] Basic Example
 - [x] README
@@ -545,3 +551,22 @@ Note: Each unit test creates its own client instance with its own rate limiter. 
   - Moved `StatementType` and `StatementFrequency` from common to financials module
   - Removed obsolete modules: `alternative.rs`, `executive.rs`, and `fund.rs`
   - Updated stock models from 16 files to 14 better-organized files
+
+### 2026-04-23: API Coverage Catch-Up (v0.2 → upstream parity)
+- Diffed local Rust client against the live `https://finnhub.io/static/swagger.json` (114 paths) and the official `finnhub-python` v2.4.28 client to find drift since 2025-05.
+- Added POST support to `FinnhubClient` (`client.post(endpoint, body)`); used by `ai_chat` and the new global-filings POST endpoints.
+- Wired up `ai_chat` (was an `unimplemented!()` stub).
+- New stock endpoints:
+  - `option_chain` — `/stock/option-chain` (new `stock/options` module, full Greeks + intrinsic/time value)
+  - `company_profile_premium` — `/stock/profile` (richer than profile2: GICS, NAICS, IR URL, LEI, SEDOL, CUSIP, insider/institutional ownership)
+  - `revenue_breakdown2` — `/stock/revenue-breakdown2` (annual + quarterly by geography and product)
+  - `symbol_change`, `isin_change` — `/ca/{symbol-change,isin-change}`
+  - `institutional_profile`, `institutional_portfolio`, `institutional_ownership` — 13-F-flavored ownership in `stock/ownership`
+  - `net_income_estimates`, `pretax_income_estimates`, `gross_income_estimates`, `dps_estimates` — `/stock/{net,pretax,gross}-income-estimate` and `/stock/dps-estimate`
+- New non-stock endpoints:
+  - ETF: `allocation` — `/etf/allocation` (9-cell market-cap × style breakdown)
+  - News: `newsroom` — `/stock/newsroom` (company-published IR feed)
+  - Misc: `bank_branch` — `/bank-branch`
+  - Global filings: new `global_filings` module with `filter` (GET), `search` (POST), `search_in_filing` (POST)
+- Skipped on purpose: `/stock/exchange` (returns 404; dead endpoint despite being in finnhub-python), `/global-filings/download` (returns raw bytes; doesn't fit JSON helpers).
+- Coverage went from 103/107 (96.3%) to **122/123 (99.2%)**. Adds 18 new tests, all verified against live API where the test key permitted (premium endpoints tolerate 403 gracefully).
