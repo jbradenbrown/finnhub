@@ -21,10 +21,8 @@ impl<'a> MiscEndpoints<'a> {
     }
 
     /// Chat with AI copilot powered by Neyman AI.
-    pub async fn ai_chat(&self, _request: &AIChatRequest) -> Result<AIChatResponse> {
-        // Note: This is a POST endpoint, which would require implementing POST support in the client
-        // For now, this is a placeholder
-        unimplemented!("POST endpoints not yet implemented")
+    pub async fn ai_chat(&self, request: &AIChatRequest) -> Result<AIChatResponse> {
+        self.client.post("/ai-chat", request).await
     }
 
     /// Get airline ticket price index.
