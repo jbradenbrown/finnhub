@@ -10,6 +10,7 @@ pub mod financials;
 pub mod historical;
 pub mod insider;
 pub mod market;
+pub mod options;
 pub mod ownership;
 pub mod price;
 pub mod sentiment;
@@ -71,6 +72,15 @@ impl<'a> StockEndpoints<'a> {
     pub async fn price_metrics(&self, symbol: &str) -> Result<PriceMetrics> {
         price::PriceEndpoints::new(self.client)
             .price_metrics(symbol)
+            .await
+    }
+
+    // ===== Options endpoints =====
+
+    /// Get the option chain for a symbol (calls and puts by expiration with Greeks).
+    pub async fn option_chain(&self, symbol: &str) -> Result<OptionChain> {
+        options::OptionsEndpoints::new(self.client)
+            .option_chain(symbol)
             .await
     }
 
