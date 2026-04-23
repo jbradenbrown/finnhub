@@ -7,6 +7,7 @@ pub mod crypto;
 pub mod economic;
 pub mod etf;
 pub mod forex;
+pub mod global_filings;
 pub mod index;
 pub mod misc;
 pub mod mutual_fund;

@@ -9,8 +9,8 @@ use crate::{
     auth::{Auth, AuthMethod},
     endpoints::{
         BondEndpoints, CalendarEndpoints, CryptoEndpoints, ETFEndpoints, EconomicEndpoints,
-        ForexEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints, NewsEndpoints,
-        ScannerEndpoints, StockEndpoints,
+        ForexEndpoints, GlobalFilingsEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints,
+        NewsEndpoints, ScannerEndpoints, StockEndpoints,
     },
     error::{Error, Result},
     rate_limiter::RateLimiter,
@@ -182,6 +182,11 @@ impl FinnhubClient {
     /// Get scanner/technical analysis endpoints.
     pub fn scanner(&self) -> ScannerEndpoints<'_> {
         ScannerEndpoints::new(self)
+    }
+
+    /// Get global-filings endpoints (search across SEC and other regulators).
+    pub fn global_filings(&self) -> GlobalFilingsEndpoints<'_> {
+        GlobalFilingsEndpoints::new(self)
     }
 
     /// Make a GET request to the API.
