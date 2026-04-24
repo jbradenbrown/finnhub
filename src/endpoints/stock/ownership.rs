@@ -214,6 +214,66 @@ mod tests {
         );
     }
 
+    /// Fixture-based parse test for `InstitutionalPortfolio`.
+    ///
+    /// The nested position struct has several camelCase renames
+    /// (`noVoting`, `sharedVoting`, `soleVoting`, `putCall`) that are
+    /// easy to get wrong. This test deserializes a trimmed real API
+    /// response and asserts the field values round-trip correctly, so
+    /// a rename regression is caught even without a premium API key.
+    #[test]
+    fn test_institutional_portfolio_fixture_parses() {
+        use crate::models::stock::InstitutionalPortfolio;
+
+        // Trimmed from a real /institutional/portfolio response.
+        let sample = r#"{
+          "cik": "1000097",
+          "name": "KINGDON CAPITAL MANAGEMENT, L.L.C.",
+          "data": [
+            {
+              "filingDate": "2022-06-30",
+              "reportDate": "2022-06-30",
+              "portfolio": [
+                {
+                  "change": -41600,
+                  "cusip": "002824100",
+                  "name": "ABBOTT LABS",
+                  "noVoting": 0,
+                  "percentage": 0.41,
+                  "putCall": "",
+                  "share": 29000000,
+                  "sharedVoting": 1000,
+                  "soleVoting": 41600,
+                  "symbol": "ABT",
+                  "value": 1150430000.0
+                }
+              ]
+            }
+          ]
+        }"#;
+
+        let parsed: InstitutionalPortfolio = serde_json::from_str(sample).unwrap();
+        assert_eq!(parsed.cik, "1000097");
+        assert_eq!(parsed.name.as_deref(), Some("KINGDON CAPITAL MANAGEMENT, L.L.C."));
+        assert_eq!(parsed.data.len(), 1);
+
+        let group = &parsed.data[0];
+        assert_eq!(group.filing_date, "2022-06-30");
+        assert_eq!(group.report_date, "2022-06-30");
+        assert_eq!(group.portfolio.len(), 1);
+
+        let pos = &group.portfolio[0];
+        assert_eq!(pos.symbol.as_deref(), Some("ABT"));
+        assert_eq!(pos.change, Some(-41600));
+        // Verify the camelCase renames actually landed on the right fields.
+        assert_eq!(pos.no_voting, Some(0));
+        assert_eq!(pos.shared_voting, Some(1000));
+        assert_eq!(pos.sole_voting, Some(41600));
+        assert_eq!(pos.put_call.as_deref(), Some(""));
+        assert_eq!(pos.share, Some(29000000));
+        assert_eq!(pos.value, Some(1150430000.0));
+    }
+
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_institutional_ownership_13f() {

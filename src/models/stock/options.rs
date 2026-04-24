@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct OptionContract {
     /// OCC contract symbol (e.g. `AAPL260424C00110000`).
-    pub contract_name: String,
+    pub contract_name: Option<String>,
     /// Contract size (e.g. `REGULAR`).
     pub contract_size: Option<String>,
     /// Contract period (e.g. `WEEKLY`, `MONTHLY`).
@@ -16,14 +16,15 @@ pub struct OptionContract {
     pub currency: Option<String>,
     /// Option type: `CALL` or `PUT`.
     #[serde(rename = "type")]
-    pub option_type: String,
+    pub option_type: Option<String>,
     /// In-the-money flag (`TRUE`/`FALSE`).
     pub in_the_money: Option<String>,
     /// Last trade date-time.
     pub last_trade_date_time: Option<String>,
     /// Expiration date.
-    pub expiration_date: String,
-    /// Strike price.
+    pub expiration_date: Option<String>,
+    /// Strike price. Present on every observed contract so far; kept
+    /// required because it's the contract's identity.
     pub strike: f64,
     /// Last traded price.
     pub last_price: Option<f64>,

@@ -24,6 +24,13 @@ impl<'a> GlobalFilingsEndpoints<'a> {
     /// Each returned entry's `id` can be used in the matching field of
     /// [`SearchBody`] (e.g. filter by `form` to discover form-type ids).
     ///
+    /// # Response shape
+    ///
+    /// Assumed to be a top-level JSON array (`[{id, name}, …]`). This
+    /// endpoint is premium-only; if a live response turns out to be
+    /// wrapped (`{data: [...]}`), this deserialization will fail and
+    /// the return type will need to be wrapped accordingly.
+    ///
     /// # Arguments
     /// * `field` - Field to filter on (e.g. `form`, `source`, `country`)
     /// * `source` - Optional source restriction

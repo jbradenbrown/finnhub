@@ -65,9 +65,9 @@ mod tests {
 
         // Spot-check that contract fields parse.
         if let Some(c) = first.options.call.first() {
-            assert_eq!(c.option_type, "CALL");
+            assert_eq!(c.option_type.as_deref(), Some("CALL"));
             assert!(c.strike > 0.0);
-            assert!(!c.contract_name.is_empty());
+            assert!(c.contract_name.as_deref().is_some_and(|s| !s.is_empty()));
         }
     }
 }

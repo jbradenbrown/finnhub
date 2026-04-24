@@ -147,9 +147,11 @@ mod tests {
         // Premium endpoint; allow 403/access errors but assert shape parses if available.
         if let Ok(changes) = result {
             for change in &changes.data {
-                assert!(!change.at_date.is_empty());
-                assert!(!change.new_symbol.is_empty());
-                assert!(!change.old_symbol.is_empty());
+                // Fields are optional — just confirm either at_date OR a symbol is set.
+                let has_any = change.at_date.is_some()
+                    || change.new_symbol.is_some()
+                    || change.old_symbol.is_some();
+                assert!(has_any, "expected at least one field to be present");
             }
         }
     }
@@ -162,9 +164,10 @@ mod tests {
 
         if let Ok(changes) = result {
             for change in &changes.data {
-                assert!(!change.at_date.is_empty());
-                assert!(!change.new_isin.is_empty());
-                assert!(!change.old_isin.is_empty());
+                let has_any = change.at_date.is_some()
+                    || change.new_isin.is_some()
+                    || change.old_isin.is_some();
+                assert!(has_any, "expected at least one field to be present");
             }
         }
     }

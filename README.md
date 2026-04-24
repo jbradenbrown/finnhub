@@ -151,7 +151,11 @@ if let Some(expiry) = chain.data.first() {
     if let Some(c) = expiry.options.call.first() {
         println!(
             "  {} strike ${} bid {:?} ask {:?} delta {:?}",
-            c.contract_name, c.strike, c.bid, c.ask, c.delta,
+            c.contract_name.as_deref().unwrap_or("?"),
+            c.strike,
+            c.bid,
+            c.ask,
+            c.delta,
         );
     }
 }
@@ -171,7 +175,7 @@ for snapshot in &portfolio.data {
 
 // Who holds AAPL?
 let holders = client.stock()
-    .institutional_ownership("AAPL", "", "2024-01-01", "2024-06-30")
+    .institutional_ownership("AAPL", None, "2024-01-01", "2024-06-30")
     .await?;
 ```
 

@@ -69,11 +69,11 @@ pub struct DividendV2 {
 #[serde(rename_all = "camelCase")]
 pub struct SymbolChangeEvent {
     /// Effective date.
-    pub at_date: String,
+    pub at_date: Option<String>,
     /// New symbol.
-    pub new_symbol: String,
+    pub new_symbol: Option<String>,
     /// Old symbol.
-    pub old_symbol: String,
+    pub old_symbol: Option<String>,
 }
 
 /// Symbol change response.
@@ -94,11 +94,11 @@ pub struct SymbolChange {
 #[serde(rename_all = "camelCase")]
 pub struct IsinChangeEvent {
     /// Effective date.
-    pub at_date: String,
+    pub at_date: Option<String>,
     /// New ISIN.
-    pub new_isin: String,
+    pub new_isin: Option<String>,
     /// Old ISIN.
-    pub old_isin: String,
+    pub old_isin: Option<String>,
 }
 
 /// ISIN change response.
