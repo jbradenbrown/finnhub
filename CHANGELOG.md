@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-23
+
+### Added
+
+- **POST request support** on `FinnhubClient` (`client.post(endpoint, body)`).
+  Used by `ai_chat` and the new `global_filings` POST endpoints.
+- **Option chain** — `client.stock().option_chain(symbol)` returns calls/puts
+  per expiration with full Greeks (delta, gamma, theta, vega, rho), implied
+  volatility, theoretical/intrinsic/time value, and days-to-expiry.
+  Lives in a new `stock/options` module.
+- **Premium company profile** — `client.stock().company_profile_premium(symbol)`
+  hits `/stock/profile` (richer than `profile2`: GICS/NAICS classifications,
+  insider/institutional ownership, IR URL, LEI, SEDOL, CUSIP). The existing
+  `company_profile()` is unchanged.
+- **Revenue breakdown v2** — `client.stock().revenue_breakdown2(symbol)`
+  returns annual + quarterly breakdowns by geography and product (premium).
+- **Symbol/ISIN change events** — `client.stock().symbol_change(from, to)` and
+  `isin_change(from, to)` cover `/ca/{symbol-change,isin-change}` (premium).
+- **Institutional 13-F endpoints** — `institutional_profile`,
+  `institutional_portfolio`, and `institutional_ownership` on the stock
+  facade, distinct from the existing generic `/stock/ownership`.
+- **Income/DPS estimates** — `net_income_estimates`, `pretax_income_estimates`,
+  `gross_income_estimates`, `dps_estimates` on the stock facade.
+- **ETF allocation** — `client.etf().allocation(symbol, isin)` returns the
+  9-cell market-cap × style breakdown (`/etf/allocation`).
+- **Newsroom feed** — `client.news().newsroom(symbol, from, to)` returns the
+  company's IR-published article feed (`/stock/newsroom`).
+- **Bank branches** — `client.misc().bank_branch(symbol)` returns branch
+  listings for a banking symbol (`/bank-branch`).
+- **Global filings module** — `client.global_filings()` exposes:
+  - `filter(field, source)` — list filter values for a search field
+  - `search(&SearchBody)` — full-text search across global filings (POST)
+  - `search_in_filing(&InFilingSearchBody)` — find documents within a
+    specific filing (POST)
+  - All three are premium endpoints.
+- **`ai_chat` is now functional.** It was previously a `unimplemented!()`
+  stub waiting on POST support.
+
+### Changed
+
+- API coverage: **103/107 → 122/123 (96.3% → 99.2%)**.
+- `FinnhubClient::get` and `post` share a `build_url()` helper internally.
+  No external behavior change.
+
+### Notes
+
+- `/stock/exchange` is intentionally not implemented: the endpoint returns
+  404 from Finnhub even though it appears in their Python client.
+- `/global-filings/download` is intentionally not implemented: it returns
+  raw bytes rather than JSON, which doesn't fit the current request
+  helpers.
+
 ## [0.2.2] - 2025-02-05
 
 ### Fixed
@@ -99,7 +151,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - No automatic retry logic (by design - left to application layer)
 - No response caching (by design - left to application layer)
 
-[Unreleased]: https://github.com/jbradenbrown/finnhub/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/jbradenbrown/finnhub/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/jbradenbrown/finnhub/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/jbradenbrown/finnhub/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/jbradenbrown/finnhub/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/jbradenbrown/finnhub/compare/v0.1.0...v0.2.0

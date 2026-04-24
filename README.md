@@ -9,13 +9,14 @@ A comprehensive Rust client for the [Finnhub.io](https://finnhub.io) financial d
 ## Features
 
 - 🚀 Full async/await support with Tokio
-- 📊 Extensive API coverage (103/107 endpoints - 96.3%)
+- 📊 Near-complete API coverage (122/123 endpoints - 99.2%)
 - 🔒 Type-safe request and response models
 - ⚡ Built-in rate limiting (30 requests/second)
 - 🔄 WebSocket support (minimal implementation, feature-gated)
 - 🛡️ Comprehensive error handling
 - 📝 Well-organized module structure
 - 🎯 Zero-copy deserialization where possible
+- 📨 GET and POST request support
 
 ## Installation
 
@@ -23,10 +24,10 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-finnhub = "0.2.0"
+finnhub = "0.3"
 
 # For WebSocket support
-finnhub = { version = "0.2.0", features = ["websocket"] }
+finnhub = { version = "0.3", features = ["websocket"] }
 ```
 
 ## Quick Start
@@ -75,17 +76,20 @@ let client = FinnhubClient::with_config("your-api-key", config);
 
 ## API Coverage
 
-### Stock Market Data (52/54 endpoints - 96.3%)
+### Stock Market Data (66/66 endpoints)
 - ✅ **Quotes & Prices**: Real-time quotes, candles (OHLCV), ⚠️ bid/ask *[Premium]*, ⚠️ tick data *[Premium]*
-- ✅ **Company Info**: Profile, peers, executives, ⚠️ market cap history *[Premium]*
-- ✅ **Fundamentals**: Financials, metrics, earnings, dividends
-- ✅ **Estimates**: Price targets, recommendations, earnings estimates
+- ✅ **Options** *(new in 0.3)*: Full option chain with Greeks, OI, IV, theoretical/intrinsic/time value
+- ✅ **Company Info**: Profile (basic + ⚠️ premium), peers, executives, ⚠️ market cap history *[Premium]*
+- ✅ **Fundamentals**: Financials, metrics, earnings, dividends, ⚠️ revenue breakdown v1+v2 *[v2 Premium]*
+- ✅ **Estimates**: Price targets, recommendations, EPS/revenue/EBIT/EBITDA/net-income/pretax/gross-income/DPS estimates, earnings quality
 - ⚠️ **Alternative Data**: ESG scores, patents, visa applications, lobbying *[Most require Premium]*
-- ✅ **Insider Data**: Transactions, ownership, ⚠️ sentiment *[Premium]*
+- ✅ **Insider & Ownership**: Insider transactions, ⚠️ sentiment *[Premium]*, fund ownership, ⚠️ institutional 13-F profile/portfolio/ownership *[Premium]*
+- ✅ **Corporate Actions**: Dividends, splits, ⚠️ symbol/ISIN changes *[Premium]*
 - ✅ **Market Info**: Symbols, market status, holidays
+- ✅ **Filings**: SEC filings, transcripts, presentations, similarity index
 
 ### Other Markets
-- ✅ **ETFs** (4/4): Profile, holdings, country/sector exposure
+- ✅ **ETFs** (5/5): Profile, holdings, country/sector exposure, allocation *(new in 0.3)*
 - ⚠️ **Forex** (4/4): Symbols, candles, rates, exchanges *[Premium]*
 - ⚠️ **Crypto** (4/4): Exchanges, symbols, candles, profile *[Premium]*
 - ⚠️ **Bonds** (4/4): Profile, price, tick data, yield curve *[Premium]*
@@ -94,15 +98,16 @@ let client = FinnhubClient::with_config("your-api-key", config);
 
 ### Data & Analytics
 - ✅ **Economic Data** (2/2): Economic indicators and codes
-- ✅ **News** (3/3): Market news, company news, sentiment
+- ✅ **News** (4/4): Market news, company news, sentiment, newsroom *(new in 0.3)*
 - ✅ **Calendar** (3/3): Earnings, economic events, IPO calendar
 - ✅ **Technical Analysis** (3/3): Pattern recognition, support/resistance, aggregate indicators
+- ⚠️ **Global Filings** *(new in 0.3, 3/4)*: Filter, search, in-filing search *[Premium]* — `download` deferred (raw bytes)
 
 ### Miscellaneous
 - ✅ **Search & Lookup**: Symbol search, country metadata
-- ✅ **Alternative Data**: COVID-19, FDA calendar, airline price index
+- ✅ **Alternative Data**: COVID-19, FDA calendar, airline price index, bank branches *(new in 0.3)*
 - ✅ **Market Analysis**: Sector metrics, press releases, technical indicators
-- 🚧 **AI Features**: AI chat (requires POST support)
+- ✅ **AI Features**: AI chat *(now functional in 0.3 via POST support)*
 
 ### Advanced Features
 - ⚠️ **WebSocket**: Basic structure only (not production-ready)
@@ -126,6 +131,48 @@ let insiders = client.stock().insider_transactions("AAPL").await?;
 // Get price target consensus
 let target = client.stock().price_target("AAPL").await?;
 println!("Average target: ${:.2}", target.target_mean);
+```
+
+### Option Chains
+
+```rust
+let chain = client.stock().option_chain("AAPL").await?;
+println!("Underlying last price: ${:.2}", chain.last_trade_price.unwrap_or_default());
+
+if let Some(expiry) = chain.data.first() {
+    println!(
+        "Expiration {}: {} calls / {} puts, IV {:.2}%",
+        expiry.expiration_date,
+        expiry.options.call.len(),
+        expiry.options.put.len(),
+        expiry.implied_volatility.unwrap_or_default(),
+    );
+
+    if let Some(c) = expiry.options.call.first() {
+        println!(
+            "  {} strike ${} bid {:?} ask {:?} delta {:?}",
+            c.contract_name, c.strike, c.bid, c.ask, c.delta,
+        );
+    }
+}
+```
+
+### Institutional 13-F Holdings
+
+```rust
+// Berkshire Hathaway portfolio (CIK 1067983)
+let portfolio = client.stock()
+    .institutional_portfolio("1067983", "2024-01-01", "2024-06-30")
+    .await?;
+
+for snapshot in &portfolio.data {
+    println!("Filed {}: {} positions", snapshot.filing_date, snapshot.portfolio.len());
+}
+
+// Who holds AAPL?
+let holders = client.stock()
+    .institutional_ownership("AAPL", "", "2024-01-01", "2024-06-30")
+    .await?;
 ```
 
 ### Alternative Data
@@ -207,17 +254,19 @@ println!("Upcoming FDA events: {}", fda.len());
 ```
 finnhub/
 ├── src/
-│   ├── client.rs           # Main client implementation
+│   ├── client.rs           # Main client implementation (GET + POST)
 │   ├── auth.rs             # Authentication handling
 │   ├── error.rs            # Error types
 │   ├── rate_limiter.rs     # Rate limiting
 │   ├── models/             # Response models
-│   │   ├── stock/          # Stock models (14 modules)
+│   │   ├── stock/          # Stock models (15 modules, incl. options)
+│   │   ├── global_filings.rs # Global filings search models
 │   │   ├── forex.rs        # Forex models
 │   │   ├── crypto.rs       # Crypto models
 │   │   └── ...             # Other market models
 │   └── endpoints/          # API endpoint implementations
-│       ├── stock/          # Stock endpoints (14 modules)
+│       ├── stock/          # Stock endpoints (15 modules)
+│       ├── global_filings.rs # /global-filings endpoints
 │       ├── forex.rs        # Forex endpoints
 │       └── ...             # Other endpoints
 └── examples/               # Usage examples
