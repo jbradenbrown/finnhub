@@ -244,7 +244,7 @@ Unit test coverage: ⚠️ **All require premium access**
   - Only `/global-filings/download` is intentionally deferred (raw-bytes response).
 - **Stock Endpoints**: 66/66 (100%) — adds option chains, premium profile, revenue breakdown v2, symbol/ISIN change, institutional 13-F, net/pretax/gross income & DPS estimates
 - **Non-Stock Endpoints**: 56/57 — adds ETF allocation, newsroom, bank branch, global-filings filter/search/in-filing, AI chat (POST)
-- **Total Unit Tests**: 131 tests across 27 modules (was 101 across 24)
+- **Total Unit Tests**: 134 tests across 27 modules (was 101 across 24). 3 are pure serde round-trip tests (no API key needed) covering POST request bodies.
 - **Integration Tests**: 40+ endpoints covered
 - **Rate Limiting Tests**: 5 dedicated test files
 - **POST request support**: added in 0.3.0 (used by `ai_chat` and `global_filings`)

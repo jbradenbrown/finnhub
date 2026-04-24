@@ -85,20 +85,23 @@ impl<'a> OwnershipEndpoints<'a> {
     /// Get institutional investors' positions in a particular stock over time.
     ///
     /// Data is sourced from 13-F filings; limited to one year of data at a time.
-    /// Pass either a `symbol` or a `cusip` (or both).
+    /// `symbol` is primary; `cusip` is an optional secondary filter.
     ///
     /// # Arguments
     /// * `symbol` - Filter by symbol
-    /// * `cusip` - Filter by CUSIP (use empty string to omit)
+    /// * `cusip` - Optional CUSIP filter
     /// * `from` - From date in `YYYY-MM-DD` format
     /// * `to` - To date in `YYYY-MM-DD` format
     pub async fn institutional_ownership(
         &self,
         symbol: &str,
-        cusip: &str,
+        cusip: Option<&str>,
         from: &str,
         to: &str,
     ) -> Result<InstitutionalOwnership> {
+        // The API always expects a `cusip` query parameter; pass empty when
+        // the caller hasn't supplied one.
+        let cusip = cusip.unwrap_or("");
         self.client
             .get(&format!(
                 "/institutional/ownership?symbol={}&cusip={}&from={}&to={}",
@@ -217,7 +220,7 @@ mod tests {
         let client = test_client().await;
         let result = client
             .stock()
-            .institutional_ownership("AAPL", "", "2024-01-01", "2024-06-30")
+            .institutional_ownership("AAPL", None, "2024-01-01", "2024-06-30")
             .await;
 
         assert!(

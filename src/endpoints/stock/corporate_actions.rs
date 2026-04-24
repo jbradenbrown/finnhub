@@ -146,8 +146,6 @@ mod tests {
 
         // Premium endpoint; allow 403/access errors but assert shape parses if available.
         if let Ok(changes) = result {
-            assert!(!changes.from_date.is_empty());
-            assert!(!changes.to_date.is_empty());
             for change in &changes.data {
                 assert!(!change.at_date.is_empty());
                 assert!(!change.new_symbol.is_empty());
@@ -163,8 +161,6 @@ mod tests {
         let result = client.stock().isin_change("2024-01-01", "2024-06-30").await;
 
         if let Ok(changes) = result {
-            assert!(!changes.from_date.is_empty());
-            assert!(!changes.to_date.is_empty());
             for change in &changes.data {
                 assert!(!change.at_date.is_empty());
                 assert!(!change.new_isin.is_empty());

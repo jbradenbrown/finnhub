@@ -389,7 +389,7 @@ impl<'a> StockEndpoints<'a> {
     pub async fn institutional_ownership(
         &self,
         symbol: &str,
-        cusip: &str,
+        cusip: Option<&str>,
         from: &str,
         to: &str,
     ) -> Result<InstitutionalOwnership> {

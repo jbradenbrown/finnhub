@@ -81,11 +81,12 @@ pub struct SymbolChangeEvent {
 #[serde(rename_all = "camelCase")]
 pub struct SymbolChange {
     /// Array of symbol-change events.
+    #[serde(default)]
     pub data: Vec<SymbolChangeEvent>,
-    /// From date.
-    pub from_date: String,
-    /// To date.
-    pub to_date: String,
+    /// From date (may be omitted on empty/error responses).
+    pub from_date: Option<String>,
+    /// To date (may be omitted on empty/error responses).
+    pub to_date: Option<String>,
 }
 
 /// Single ISIN-change event.
@@ -105,9 +106,10 @@ pub struct IsinChangeEvent {
 #[serde(rename_all = "camelCase")]
 pub struct IsinChange {
     /// Array of ISIN-change events.
+    #[serde(default)]
     pub data: Vec<IsinChangeEvent>,
-    /// From date.
-    pub from_date: String,
-    /// To date.
-    pub to_date: String,
+    /// From date (may be omitted on empty/error responses).
+    pub from_date: Option<String>,
+    /// To date (may be omitted on empty/error responses).
+    pub to_date: Option<String>,
 }

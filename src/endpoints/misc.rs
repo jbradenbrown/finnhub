@@ -257,6 +257,41 @@ mod tests {
         assert!(!results.result.is_empty());
     }
 
+    #[test]
+    fn test_ai_chat_request_serialization() {
+        // Covers the POST body shape without requiring premium API access.
+        use crate::models::misc::{AIChatMessage, AIChatRequest};
+
+        let request = AIChatRequest {
+            messages: vec![AIChatMessage {
+                role: "user".to_string(),
+                content: "What is AAPL's P/E ratio?".to_string(),
+            }],
+            stream: Some(false),
+        };
+        let json = serde_json::to_value(&request).unwrap();
+        let obj = json.as_object().unwrap();
+
+        assert_eq!(obj.get("stream").and_then(|v| v.as_bool()), Some(false));
+        let msgs = obj.get("messages").and_then(|v| v.as_array()).unwrap();
+        assert_eq!(msgs.len(), 1);
+        assert_eq!(
+            msgs[0].get("role").and_then(|v| v.as_str()),
+            Some("user")
+        );
+
+        // `stream` is Optional with skip_serializing_if; confirm omission works.
+        let request_no_stream = AIChatRequest {
+            messages: vec![AIChatMessage {
+                role: "system".to_string(),
+                content: "hi".to_string(),
+            }],
+            stream: None,
+        };
+        let json = serde_json::to_value(&request_no_stream).unwrap();
+        assert!(!json.as_object().unwrap().contains_key("stream"));
+    }
+
     #[tokio::test]
     #[ignore = "requires API key"]
     async fn test_bank_branch() {
