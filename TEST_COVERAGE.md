@@ -38,7 +38,7 @@ Each endpoint module contains comprehensive unit tests:
 
 ## Endpoint Test Coverage by Category
 
-### Stock Endpoints (52/54 endpoints implemented)
+### Stock Endpoints (66/66 endpoints implemented)
 
 #### Price & Market Data
 - **`analytics.rs`** - 5 unit tests
@@ -47,9 +47,10 @@ Each endpoint module contains comprehensive unit tests:
   - ✅ `test_revenue_breakdown()` - Revenue by segments
   - ✅ `test_upgrade_downgrade()` - Analyst upgrades/downgrades
 
-#### Company Information  
+#### Company Information
 - **`company.rs`** - Unit tests
-  - ✅ `test_company_profile()` - Company profile data
+  - ✅ `test_company_profile()` - Company profile data (basic)
+  - ✅ `test_company_profile_premium()` - Premium company profile (GICS/NAICS, ownership, etc.)
   - ✅ `test_peers()` - Company peers
   - ✅ `test_symbols()` - Stock symbols by exchange
 
@@ -65,18 +66,28 @@ Each endpoint module contains comprehensive unit tests:
   - ✅ `test_visa_applications()` - H1B visa applications
 
 #### Corporate Actions
-- **`corporate_actions.rs`** - 4 unit tests
+- **`corporate_actions.rs`** - 6 unit tests
   - ✅ `test_dividends()` - Dividend history
   - ✅ `test_splits()` - Stock splits
   - ✅ `test_dividends_v2()` - Alternative dividends endpoint
+  - ✅ `test_symbol_change()` - Ticker change events (premium)
+  - ✅ `test_isin_change()` - ISIN change events (premium)
 
 #### Estimates & Earnings
-- **`estimates.rs`** - 7 unit tests
+- **`estimates.rs`** - 11 unit tests
   - ✅ `test_eps_estimates()` - EPS estimates
-  - ✅ `test_revenue_estimates()` - Revenue estimates  
+  - ✅ `test_revenue_estimates()` - Revenue estimates
   - ✅ `test_ebitda_estimates()` - EBITDA estimates
   - ✅ `test_ebit_estimates()` - EBIT estimates
+  - ✅ `test_net_income_estimates()` - Net income estimates
+  - ✅ `test_pretax_income_estimates()` - Pretax income estimates
+  - ✅ `test_gross_income_estimates()` - Gross income estimates
+  - ✅ `test_dps_estimates()` - Dividend per share estimates
   - ✅ `test_earnings_quality_score()` - Earnings quality metrics
+
+#### Options
+- **`options.rs`** - 1 unit test
+  - ✅ `test_option_chain()` - Option chain with full Greeks
 
 #### SEC Filings & Documents
 - **`filings.rs`** - 9 unit tests
@@ -116,22 +127,28 @@ Each endpoint module contains comprehensive unit tests:
   - ✅ `test_investment_theme()` - Investment themes
 
 #### Ownership Data
-- **`ownership.rs`** - 4 unit tests
-  - ✅ `test_ownership()` - Institutional ownership
+- **`ownership.rs`** - 7 unit tests
+  - ✅ `test_ownership()` - Generic stock ownership
   - ✅ `test_fund_ownership()` - Fund ownership data
+  - ✅ `test_institutional_profile_list()` - Well-known institutional investors
+  - ✅ `test_institutional_portfolio()` - 13-F portfolio holdings by CIK
+  - ✅ `test_institutional_ownership_13f()` - 13-F holders for a stock
 
 #### Price Data
-- **`price.rs`** - 3/5 unit tests ⚠️ **INCOMPLETE COVERAGE**
+- **`price.rs`** - 5 unit tests
   - ✅ `test_quote()` - Real-time stock quotes
   - ✅ `test_candles()` - OHLCV candle data
   - ✅ `test_bid_ask()` - Bid/ask prices
-  - ❌ `tick_data()` - **MISSING TEST** - Tick-level trading data
-  - ❌ `price_metrics()` - **MISSING TEST** - Price performance metrics
+  - ✅ `test_tick_data()` - Tick-level trading data
+  - ✅ `test_price_metrics()` - Price performance metrics
 
 #### Sentiment Analysis
 - **`sentiment.rs`** - 3 unit tests
   - ✅ `test_social_sentiment()` - Social media sentiment
   - ✅ `test_news_sentiment()` - News sentiment analysis
+
+#### Analytics
+- **`analytics.rs`** - Adds `test_revenue_breakdown2()` for the v2 breakdown (premium).
 
 ### Forex Endpoints (4/4 endpoints implemented)
 Unit test coverage: ❌ **Currently Untestable Due to API Access**
@@ -147,12 +164,13 @@ Unit test coverage: ❌ **Currently Untestable Due to API Access**
 - ❌ `test_candles` - requires access
 - ❌ `test_profile` - requires access
 
-### ETF Endpoints (4/4 endpoints implemented)
-Unit test coverage: ✅ **All Tests Passing** 
+### ETF Endpoints (5/5 endpoints implemented)
+Unit test coverage: ✅ **All Tests Passing**
 - ✅ `test_profile` - passing (fixed model structure)
 - ✅ `test_holdings` - passing
-- ✅ `test_country_exposure` - passing  
+- ✅ `test_country_exposure` - passing
 - ✅ `test_sector_exposure` - passing (fixed field mapping)
+- ✅ `test_allocation` - passing (9-cell market-cap × style breakdown)
 
 ### Bond Endpoints (4/4 endpoints implemented)
 Unit test coverage: ❌ **Currently Untestable Due to API Access**
@@ -170,11 +188,12 @@ Unit test coverage: ❌ **Currently Untestable Due to API Access**
 - ❌ `test_eet` - requires access
 - ❌ `test_eet_pai` - requires access
 
-### News Endpoints (3/3 endpoints implemented)
+### News Endpoints (4/4 endpoints implemented)
 Unit test coverage: ✅ **All Tests Passing**
 - ✅ `test_market_news` - passing
 - ✅ `test_company_news` - passing
 - ✅ `test_news_sentiment` - passing (fixed field mapping)
+- ✅ `test_newsroom` - passing (company IR newsroom feed)
 
 ### Calendar Endpoints (3/3 endpoints implemented)
 Unit test coverage: ⚠️ **Partial Success**
@@ -198,7 +217,7 @@ Unit test coverage: ⚠️ **Partial Success**
 - ✅ `test_support_resistance` - passing
 - ✅ `test_aggregate_indicators` - passing
 
-### Miscellaneous Endpoints (8/9 endpoints implemented)
+### Miscellaneous Endpoints (10/10 endpoints implemented)
 Unit test coverage: ⚠️ **Mixed Results**
 - ❌ `test_airline_price_index` - requires access
 - ✅ `test_country` - passing
@@ -208,17 +227,27 @@ Unit test coverage: ⚠️ **Mixed Results**
 - ✅ `test_press_releases` - passing
 - ✅ `test_symbol_search` - passing (fixed)
 - ❌ `test_sector_metrics` - requires access
+- ✅ `test_bank_branch` - passing (bank branch listing by ticker)
+- 🚧 `ai_chat` - now functional (POST), no dedicated unit test yet
+
+### Global Filings Endpoints (3/4 endpoints implemented)
+Unit test coverage: ⚠️ **All require premium access**
+- 🔒 `test_filter` - tolerates 403 (premium); shape parses on success
+- 🔒 `test_search` - tolerates 403 (premium); POST body validation only
+- 🔒 `test_search_in_filing` - tolerates 403 (premium)
+- ❌ `download` - **deferred**: returns raw bytes rather than JSON
 
 ## Test Quality Metrics
 
 ### Coverage Summary
-- **Total Endpoints**: 103/107 implemented (96.3%)
-- **Stock Endpoints**: 52/54 (96.3%) - Highest coverage with 62 unit tests
-- **Stock Unit Test Coverage**: 50/52 functions tested (96.2%) - 2 functions missing tests in `price.rs`
-- **Non-Stock Unit Tests**: 39 tests across 11 endpoint modules
-- **Total Unit Tests**: 101 tests across 24 modules
+- **Total Endpoints**: 122/123 implemented (99.2%)
+  - Only `/global-filings/download` is intentionally deferred (raw-bytes response).
+- **Stock Endpoints**: 66/66 (100%) — adds option chains, premium profile, revenue breakdown v2, symbol/ISIN change, institutional 13-F, net/pretax/gross income & DPS estimates
+- **Non-Stock Endpoints**: 56/57 — adds ETF allocation, newsroom, bank branch, global-filings filter/search/in-filing, AI chat (POST)
+- **Total Unit Tests**: 134 tests across 27 modules (was 101 across 24). 3 are pure serde round-trip tests (no API key needed) covering POST request bodies.
 - **Integration Tests**: 40+ endpoints covered
 - **Rate Limiting Tests**: 5 dedicated test files
+- **POST request support**: added in 0.3.0 (used by `ai_chat` and `global_filings`)
 
 ### Stock Unit Test Results (Latest Run)
 **✅ Passing Tests: 49/65 (75.4%)**
@@ -360,4 +389,4 @@ FINNHUB_API_KEY=your_key cargo test rate_limit -- --ignored --nocapture
 - Investor presentations
 - Bid-ask spreads
 
-Last Updated: 2025-05-30
+Last Updated: 2026-04-23 (v0.3.0)

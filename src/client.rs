@@ -1,7 +1,7 @@
 //! Main Finnhub client implementation.
 
 use reqwest::{Client as HttpClient, Response};
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 use std::sync::Arc;
 use url::Url;
 
@@ -9,8 +9,8 @@ use crate::{
     auth::{Auth, AuthMethod},
     endpoints::{
         BondEndpoints, CalendarEndpoints, CryptoEndpoints, ETFEndpoints, EconomicEndpoints,
-        ForexEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints, NewsEndpoints,
-        ScannerEndpoints, StockEndpoints,
+        ForexEndpoints, GlobalFilingsEndpoints, IndexEndpoints, MiscEndpoints, MutualFundEndpoints,
+        NewsEndpoints, ScannerEndpoints, StockEndpoints,
     },
     error::{Error, Result},
     rate_limiter::RateLimiter,
@@ -184,16 +184,38 @@ impl FinnhubClient {
         ScannerEndpoints::new(self)
     }
 
+    /// Get global-filings endpoints (search across SEC and other regulators).
+    pub fn global_filings(&self) -> GlobalFilingsEndpoints<'_> {
+        GlobalFilingsEndpoints::new(self)
+    }
+
     /// Make a GET request to the API.
     pub(crate) async fn get<T>(&self, endpoint: &str) -> Result<T>
     where
         T: DeserializeOwned,
     {
         self.rate_limiter.acquire().await?;
+        let url = self.build_url(endpoint);
+        let response = self.http_client.get(url).send().await?;
+        self.handle_response(response).await
+    }
 
+    /// Make a POST request to the API with a JSON body.
+    pub(crate) async fn post<B, T>(&self, endpoint: &str, body: &B) -> Result<T>
+    where
+        B: Serialize + ?Sized,
+        T: DeserializeOwned,
+    {
+        self.rate_limiter.acquire().await?;
+        let url = self.build_url(endpoint);
+        let response = self.http_client.post(url).json(body).send().await?;
+        self.handle_response(response).await
+    }
+
+    /// Build the full request URL, applying URL-parameter auth when configured.
+    fn build_url(&self, endpoint: &str) -> Url {
         let mut url = self.base_url.clone();
 
-        // Split endpoint into path and query parts
         let (path, query) = if let Some(query_start) = endpoint.find('?') {
             (&endpoint[..query_start], Some(&endpoint[query_start + 1..]))
         } else {
@@ -202,7 +224,6 @@ impl FinnhubClient {
 
         url.set_path(&format!("/api/v1{}", path));
 
-        // Add any existing query parameters from the endpoint
         if let Some(query_str) = query {
             let mut pairs = url.query_pairs_mut();
             for param in query_str.split('&') {
@@ -212,12 +233,8 @@ impl FinnhubClient {
             }
         }
 
-        // Apply auth to URL if using URL parameter method
         self.auth.apply_to_url(&mut url);
-
-        let response = self.http_client.get(url).send().await?;
-
-        self.handle_response(response).await
+        url
     }
 
     /// Handle API response.

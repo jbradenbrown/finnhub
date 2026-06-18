@@ -10,6 +10,7 @@ pub mod financials;
 pub mod historical;
 pub mod insider;
 pub mod market;
+pub mod options;
 pub mod ownership;
 pub mod price;
 pub mod sentiment;
@@ -74,12 +75,28 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    // ===== Options endpoints =====
+
+    /// Get the option chain for a symbol (calls and puts by expiration with Greeks).
+    pub async fn option_chain(&self, symbol: &str) -> Result<OptionChain> {
+        options::OptionsEndpoints::new(self.client)
+            .option_chain(symbol)
+            .await
+    }
+
     // ===== Company endpoints =====
 
     /// Get company profile.
     pub async fn company_profile(&self, symbol: &str) -> Result<CompanyProfile> {
         company::CompanyEndpoints::new(self.client)
             .profile(symbol)
+            .await
+    }
+
+    /// Get the full premium company profile (`/stock/profile`).
+    pub async fn company_profile_premium(&self, symbol: &str) -> Result<CompanyProfilePremium> {
+        company::CompanyEndpoints::new(self.client)
+            .profile_premium(symbol)
             .await
     }
 
@@ -161,6 +178,13 @@ impl<'a> StockEndpoints<'a> {
             .await
     }
 
+    /// Get standardized revenue breakdown and KPIs (`/stock/revenue-breakdown2`).
+    pub async fn revenue_breakdown2(&self, symbol: &str) -> Result<RevenueBreakdown2> {
+        analytics::AnalyticsEndpoints::new(self.client)
+            .revenue_breakdown2(symbol)
+            .await
+    }
+
     /// Get stock upgrades and downgrades.
     pub async fn upgrade_downgrade(
         &self,
@@ -214,6 +238,20 @@ impl<'a> StockEndpoints<'a> {
     pub async fn dividends_v2(&self, symbol: &str) -> Result<DividendsV2> {
         corporate_actions::CorporateActionsEndpoints::new(self.client)
             .dividends_v2(symbol)
+            .await
+    }
+
+    /// Get symbol changes for US-listed, EU-listed, NSE and ASX securities.
+    pub async fn symbol_change(&self, from: &str, to: &str) -> Result<SymbolChange> {
+        corporate_actions::CorporateActionsEndpoints::new(self.client)
+            .symbol_change(from, to)
+            .await
+    }
+
+    /// Get ISIN changes for EU-listed securities.
+    pub async fn isin_change(&self, from: &str, to: &str) -> Result<IsinChange> {
+        corporate_actions::CorporateActionsEndpoints::new(self.client)
+            .isin_change(from, to)
             .await
     }
 
@@ -325,6 +363,38 @@ impl<'a> StockEndpoints<'a> {
     pub async fn fund_ownership(&self, symbol: &str, limit: Option<i64>) -> Result<FundOwnership> {
         ownership::OwnershipEndpoints::new(self.client)
             .fund(symbol, limit)
+            .await
+    }
+
+    /// Get a list of well-known institutional investors.
+    pub async fn institutional_profile(&self, cik: Option<&str>) -> Result<InstitutionalProfile> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_profile(cik)
+            .await
+    }
+
+    /// Get the holdings/portfolio of an institutional investor (13-F).
+    pub async fn institutional_portfolio(
+        &self,
+        cik: &str,
+        from: &str,
+        to: &str,
+    ) -> Result<InstitutionalPortfolio> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_portfolio(cik, from, to)
+            .await
+    }
+
+    /// Get institutional investors' positions in a particular stock (13-F).
+    pub async fn institutional_ownership(
+        &self,
+        symbol: &str,
+        cusip: Option<&str>,
+        from: &str,
+        to: &str,
+    ) -> Result<InstitutionalOwnership> {
+        ownership::OwnershipEndpoints::new(self.client)
+            .institutional_ownership(symbol, cusip, from, to)
             .await
     }
 
@@ -444,6 +514,46 @@ impl<'a> StockEndpoints<'a> {
     ) -> Result<EarningsQualityScore> {
         estimates::EstimatesEndpoints::new(self.client)
             .earnings_quality_score(symbol, freq)
+            .await
+    }
+
+    /// Get net income estimates.
+    pub async fn net_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<NetIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .net_income(symbol, freq)
+            .await
+    }
+
+    /// Get pretax income estimates.
+    pub async fn pretax_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<PretaxIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .pretax_income(symbol, freq)
+            .await
+    }
+
+    /// Get gross income estimates.
+    pub async fn gross_income_estimates(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<GrossIncomeEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .gross_income(symbol, freq)
+            .await
+    }
+
+    /// Get dividend per share (DPS) estimates.
+    pub async fn dps_estimates(&self, symbol: &str, freq: Option<&str>) -> Result<DPSEstimates> {
+        estimates::EstimatesEndpoints::new(self.client)
+            .dps(symbol, freq)
             .await
     }
 

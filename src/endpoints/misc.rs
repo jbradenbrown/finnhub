@@ -4,8 +4,9 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::misc::{
-        AIChatRequest, AIChatResponse, AirlinePriceIndexData, CountryMetadata, CovidInfo,
-        FDACommitteeMeeting, PressRelease, SectorMetric, SymbolLookup, TechnicalIndicator,
+        AIChatRequest, AIChatResponse, AirlinePriceIndexData, BankBranchData, CountryMetadata,
+        CovidInfo, FDACommitteeMeeting, PressRelease, SectorMetric, SymbolLookup,
+        TechnicalIndicator,
     },
 };
 
@@ -21,10 +22,8 @@ impl<'a> MiscEndpoints<'a> {
     }
 
     /// Chat with AI copilot powered by Neyman AI.
-    pub async fn ai_chat(&self, _request: &AIChatRequest) -> Result<AIChatResponse> {
-        // Note: This is a POST endpoint, which would require implementing POST support in the client
-        // For now, this is a placeholder
-        unimplemented!("POST endpoints not yet implemented")
+    pub async fn ai_chat(&self, request: &AIChatRequest) -> Result<AIChatResponse> {
+        self.client.post("/ai-chat", request).await
     }
 
     /// Get airline ticket price index.
@@ -119,6 +118,16 @@ impl<'a> MiscEndpoints<'a> {
     pub async fn sector_metrics(&self, region: &str) -> Result<SectorMetric> {
         self.client
             .get(&format!("/sector/metrics?region={}", region))
+            .await
+    }
+
+    /// Get a list of bank branches for a banking symbol.
+    ///
+    /// # Arguments
+    /// * `symbol` - Bank ticker (e.g. `JPM`)
+    pub async fn bank_branch(&self, symbol: &str) -> Result<BankBranchData> {
+        self.client
+            .get(&format!("/bank-branch?symbol={}", symbol))
             .await
     }
 }
@@ -246,6 +255,58 @@ mod tests {
 
         let results = result.unwrap();
         assert!(!results.result.is_empty());
+    }
+
+    #[test]
+    fn test_ai_chat_request_serialization() {
+        // Covers the POST body shape without requiring premium API access.
+        use crate::models::misc::{AIChatMessage, AIChatRequest};
+
+        let request = AIChatRequest {
+            messages: vec![AIChatMessage {
+                role: "user".to_string(),
+                content: "What is AAPL's P/E ratio?".to_string(),
+            }],
+            stream: Some(false),
+        };
+        let json = serde_json::to_value(&request).unwrap();
+        let obj = json.as_object().unwrap();
+
+        assert_eq!(obj.get("stream").and_then(|v| v.as_bool()), Some(false));
+        let msgs = obj.get("messages").and_then(|v| v.as_array()).unwrap();
+        assert_eq!(msgs.len(), 1);
+        assert_eq!(
+            msgs[0].get("role").and_then(|v| v.as_str()),
+            Some("user")
+        );
+
+        // `stream` is Optional with skip_serializing_if; confirm omission works.
+        let request_no_stream = AIChatRequest {
+            messages: vec![AIChatMessage {
+                role: "system".to_string(),
+                content: "hi".to_string(),
+            }],
+            stream: None,
+        };
+        let json = serde_json::to_value(&request_no_stream).unwrap();
+        assert!(!json.as_object().unwrap().contains_key("stream"));
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_bank_branch() {
+        let client = test_client().await;
+        let result = client.misc().bank_branch("JPM").await;
+
+        assert!(
+            result.is_ok(),
+            "Failed to get bank branch data: {:?}",
+            result.err()
+        );
+
+        if let Ok(branches) = result {
+            assert_eq!(branches.symbol, "JPM");
+        }
     }
 
     #[tokio::test]

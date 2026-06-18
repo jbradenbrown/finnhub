@@ -135,5 +135,3 @@ impl fmt::Display for StatementFrequency {
         }
     }
 }
-
-

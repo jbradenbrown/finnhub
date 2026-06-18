@@ -4,7 +4,8 @@ use crate::{
     client::FinnhubClient,
     error::Result,
     models::stock::{
-        EBITDAEstimates, EBITEstimates, EPSEstimates, EarningsQualityScore, RevenueEstimates,
+        DPSEstimates, EBITDAEstimates, EBITEstimates, EPSEstimates, EarningsQualityScore,
+        GrossIncomeEstimates, NetIncomeEstimates, PretaxIncomeEstimates, RevenueEstimates,
     },
 };
 
@@ -88,6 +89,86 @@ impl<'a> EstimatesEndpoints<'a> {
         }
 
         let query = format!("/stock/ebit-estimate?{}", params.join("&"));
+        self.client.get(&query).await
+    }
+
+    /// Get net income estimates.
+    ///
+    /// Returns analysts' net income estimates for a company.
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol
+    /// * `freq` - Frequency: annual or quarterly (optional)
+    pub async fn net_income(&self, symbol: &str, freq: Option<&str>) -> Result<NetIncomeEstimates> {
+        let mut params = vec![format!("symbol={}", symbol)];
+
+        if let Some(f) = freq {
+            params.push(format!("freq={}", f));
+        }
+
+        let query = format!("/stock/net-income-estimate?{}", params.join("&"));
+        self.client.get(&query).await
+    }
+
+    /// Get pretax income estimates.
+    ///
+    /// Returns analysts' pretax income estimates for a company.
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol
+    /// * `freq` - Frequency: annual or quarterly (optional)
+    pub async fn pretax_income(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<PretaxIncomeEstimates> {
+        let mut params = vec![format!("symbol={}", symbol)];
+
+        if let Some(f) = freq {
+            params.push(format!("freq={}", f));
+        }
+
+        let query = format!("/stock/pretax-income-estimate?{}", params.join("&"));
+        self.client.get(&query).await
+    }
+
+    /// Get gross income estimates.
+    ///
+    /// Returns analysts' gross income estimates for a company.
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol
+    /// * `freq` - Frequency: annual or quarterly (optional)
+    pub async fn gross_income(
+        &self,
+        symbol: &str,
+        freq: Option<&str>,
+    ) -> Result<GrossIncomeEstimates> {
+        let mut params = vec![format!("symbol={}", symbol)];
+
+        if let Some(f) = freq {
+            params.push(format!("freq={}", f));
+        }
+
+        let query = format!("/stock/gross-income-estimate?{}", params.join("&"));
+        self.client.get(&query).await
+    }
+
+    /// Get dividend per share (DPS) estimates.
+    ///
+    /// Returns analysts' dividend per share estimates for a company.
+    ///
+    /// # Arguments
+    /// * `symbol` - Stock symbol
+    /// * `freq` - Frequency: annual or quarterly (optional)
+    pub async fn dps(&self, symbol: &str, freq: Option<&str>) -> Result<DPSEstimates> {
+        let mut params = vec![format!("symbol={}", symbol)];
+
+        if let Some(f) = freq {
+            params.push(format!("freq={}", f));
+        }
+
+        let query = format!("/stock/dps-estimate?{}", params.join("&"));
         self.client.get(&query).await
     }
 
@@ -283,6 +364,73 @@ mod tests {
             "Failed to get earnings quality score: {:?}",
             result.err()
         );
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_net_income_estimates() {
+        let client = test_client().await;
+        let result = client.stock().net_income_estimates("AAPL", None).await;
+
+        if let Ok(estimates) = result {
+            assert!(!estimates.symbol.is_empty());
+            for estimate in &estimates.data {
+                assert!(!estimate.period.is_empty());
+                if let (Some(avg), Some(high), Some(low)) = (
+                    estimate.net_income_avg,
+                    estimate.net_income_high,
+                    estimate.net_income_low,
+                ) {
+                    assert!(high >= avg);
+                    assert!(low <= avg);
+                }
+            }
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_pretax_income_estimates() {
+        let client = test_client().await;
+        let result = client
+            .stock()
+            .pretax_income_estimates("AAPL", Some("annual"))
+            .await;
+
+        if let Ok(estimates) = result {
+            assert_eq!(estimates.freq.as_deref(), Some("annual"));
+            for estimate in &estimates.data {
+                assert!(!estimate.period.is_empty());
+            }
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_gross_income_estimates() {
+        let client = test_client().await;
+        let result = client.stock().gross_income_estimates("AAPL", None).await;
+
+        if let Ok(estimates) = result {
+            assert!(!estimates.symbol.is_empty());
+            for estimate in &estimates.data {
+                assert!(!estimate.period.is_empty());
+            }
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "requires API key"]
+    async fn test_dps_estimates() {
+        let client = test_client().await;
+        let result = client.stock().dps_estimates("AAPL", None).await;
+
+        if let Ok(estimates) = result {
+            assert!(!estimates.symbol.is_empty());
+            for estimate in &estimates.data {
+                assert!(!estimate.period.is_empty());
+            }
+        }
     }
 
     #[tokio::test]

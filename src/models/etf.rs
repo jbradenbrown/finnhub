@@ -148,3 +148,36 @@ pub struct ETFSectorExposure {
     #[serde(rename = "sectorExposure")]
     pub sector_exposure: Vec<SectorExposure>,
 }
+
+/// ETF asset allocation breakdown by market cap × style.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ETFAllocationData {
+    /// Large-cap blend percent.
+    pub large_blend: Option<f64>,
+    /// Large-cap growth percent.
+    pub large_growth: Option<f64>,
+    /// Large-cap value percent.
+    pub large_value: Option<f64>,
+    /// Mid-cap blend percent.
+    pub mid_blend: Option<f64>,
+    /// Mid-cap growth percent.
+    pub mid_growth: Option<f64>,
+    /// Mid-cap value percent.
+    pub mid_value: Option<f64>,
+    /// Small-cap blend percent.
+    pub small_blend: Option<f64>,
+    /// Small-cap growth percent.
+    pub small_growth: Option<f64>,
+    /// Small-cap value percent.
+    pub small_value: Option<f64>,
+}
+
+/// ETF allocation response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ETFAllocation {
+    /// ETF symbol.
+    pub symbol: String,
+    /// Allocation data.
+    pub data: Option<ETFAllocationData>,
+}

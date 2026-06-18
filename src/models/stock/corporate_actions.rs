@@ -63,3 +63,53 @@ pub struct DividendV2 {
     /// Dividend amount.
     pub amount: f64,
 }
+
+/// Single symbol-change event.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SymbolChangeEvent {
+    /// Effective date.
+    pub at_date: Option<String>,
+    /// New symbol.
+    pub new_symbol: Option<String>,
+    /// Old symbol.
+    pub old_symbol: Option<String>,
+}
+
+/// Symbol change response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SymbolChange {
+    /// Array of symbol-change events.
+    #[serde(default)]
+    pub data: Vec<SymbolChangeEvent>,
+    /// From date (may be omitted on empty/error responses).
+    pub from_date: Option<String>,
+    /// To date (may be omitted on empty/error responses).
+    pub to_date: Option<String>,
+}
+
+/// Single ISIN-change event.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IsinChangeEvent {
+    /// Effective date.
+    pub at_date: Option<String>,
+    /// New ISIN.
+    pub new_isin: Option<String>,
+    /// Old ISIN.
+    pub old_isin: Option<String>,
+}
+
+/// ISIN change response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IsinChange {
+    /// Array of ISIN-change events.
+    #[serde(default)]
+    pub data: Vec<IsinChangeEvent>,
+    /// From date (may be omitted on empty/error responses).
+    pub from_date: Option<String>,
+    /// To date (may be omitted on empty/error responses).
+    pub to_date: Option<String>,
+}

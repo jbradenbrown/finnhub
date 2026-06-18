@@ -2,7 +2,7 @@
 //! This ensures all examples in the documentation are valid and compile.
 
 use finnhub::{
-    auth::AuthMethod, 
+    auth::AuthMethod,
     models::{
         news::NewsCategory,
         stock::{Quote, StatementFrequency, StatementType},
@@ -134,7 +134,10 @@ async fn stock_market_examples(api_key: &str) -> Result<()> {
             StatementFrequency::Annual,
         )
         .await?;
-    println!("  ✓ Got financials: {} statements", financials.financials.len());
+    println!(
+        "  ✓ Got financials: {} statements",
+        financials.financials.len()
+    );
 
     // Get insider transactions
     let _insiders = client.stock().insider_transactions("AAPL").await?;
@@ -156,11 +159,13 @@ async fn alternative_data_examples(api_key: &str) -> Result<()> {
     let sentiment = client.stock().social_sentiment("AAPL", from, to).await?;
     println!("  Symbol: {}", sentiment.symbol);
     println!("  Total data points: {}", sentiment.data.len());
-    
+
     println!("\n  Premium endpoints (not called due to access restrictions):");
     println!("    - ESG scores: client.stock().esg(\"AAPL\")");
     println!("    - Patent applications: client.stock().uspto_patents(\"NVDA\", from, to)");
-    println!("    - Congressional trading: client.stock().congressional_trading(\"AAPL\", None, None)");
+    println!(
+        "    - Congressional trading: client.stock().congressional_trading(\"AAPL\", None, None)"
+    );
     println!("    - Lobbying data: client.stock().lobbying(\"AAPL\", from, to)");
 
     Ok(())
@@ -170,15 +175,17 @@ async fn calendar_events_example(api_key: &str) -> Result<()> {
     let client = FinnhubClient::new(api_key);
 
     // Earnings calendar
-    let earnings = client.calendar()
+    let earnings = client
+        .calendar()
         .earnings(Some("2024-01-01"), Some("2024-01-07"), None)
         .await?;
-    println!("  Upcoming earnings: {} companies", earnings.earnings_calendar.len());
+    println!(
+        "  Upcoming earnings: {} companies",
+        earnings.earnings_calendar.len()
+    );
 
-    // IPO calendar  
-    let ipos = client.calendar()
-        .ipo("2024-01-01", "2024-01-31")
-        .await?;
+    // IPO calendar
+    let ipos = client.calendar().ipo("2024-01-01", "2024-01-31").await?;
     println!("  Recent IPOs: {} companies", ipos.ipo_calendar.len());
 
     Ok(())
@@ -195,7 +202,10 @@ async fn news_sentiment_examples(api_key: &str) -> Result<()> {
     println!("  ✓ Got company news: {} articles", news.len());
 
     // Market-wide news
-    let market_news = client.news().market_news(NewsCategory::General, None).await?;
+    let market_news = client
+        .news()
+        .market_news(NewsCategory::General, None)
+        .await?;
     println!("  ✓ Got market news: {} articles", market_news.len());
 
     Ok(())
@@ -286,10 +296,7 @@ where
         match f().await {
             Ok(result) => return Ok(result),
             Err(e) if e.is_retryable() && attempt < max_attempts => {
-                let delay = e
-                    .retry_after()
-                    .unwrap_or(1)
-                    .max(1);
+                let delay = e.retry_after().unwrap_or(1).max(1);
                 sleep(Duration::from_secs(delay)).await;
                 continue;
             }
@@ -357,7 +364,7 @@ fn process_quote(quote: Quote) {
 // Production best practices - concurrent requests
 async fn concurrent_requests(client: &FinnhubClient) -> Vec<Result<Quote>> {
     let symbols = vec!["AAPL", "GOOGL", "MSFT", "AMZN", "FB"];
-    
+
     // Clone client for each concurrent request
     let client_ref = &client;
 
